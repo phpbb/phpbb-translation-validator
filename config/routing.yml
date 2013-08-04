@@ -1,0 +1,6 @@
+translation_validator:
+    pattern: /validate
+    defaults: { _controller: translation.validator.controller:validate }
+translation_validator_lang:
+    pattern: /validate/{lang}
+    defaults: { _controller: translation.validator.controller:validate }

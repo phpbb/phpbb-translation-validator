@@ -1,0 +1,18 @@
+imports:
+#    - { resource: parameters.yml }
+
+services:
+    translation.validator.controller:
+        class: phpbb_ext_official_translationvalidator_controller_validator
+        arguments:
+            - @auth
+            - @cache
+            - @config
+            - @dbal.conn
+            - @request
+            - @template
+            - @user
+            - @service_container
+            - @controller.helper
+            - %core.root_path%
+            - %core.php_ext%
