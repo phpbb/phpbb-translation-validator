@@ -1,0 +1,25 @@
+{
+	"name": "official/translationvalidator",
+	"type": "phpbb3-extension",
+	"description": "Validates files of translations to the english default package",
+	"homepage": "https://github.com/nickvergessen/phpbb3-translation-validator",
+	"version": "1.1.0",
+	"time": "2013-08-05 01:01:01",
+	"licence": "GPL-2.0",
+	"authors": [
+		{
+			"name": "Joas Schilling",
+			"username": "nickvergessen",
+			"email": "nickvergessen@gmx.de",
+			"homepage": "http://www.phpbb.com/",
+			"role": "Translations Manager"
+		}
+	],
+	"require": {
+		"php": ">=5.3",
+		"phpbb": ">=3.1.0-dev"
+	},
+	"extra": {
+		"display-name": "phpBB Translation Validator"
+	}
+}
