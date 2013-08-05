@@ -22,4 +22,8 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'TRANSLATION_VALIDATOR'		=> 'Translation Validator',
+	'INVALID_LANGUAGE'			=> 'Language package “%s” not found',
+
+	'ADDITIONAL_FILE'			=> 'Additional file “%s”',
+	'MISSING_FILE'				=> 'Missing file “%s”',
 ));

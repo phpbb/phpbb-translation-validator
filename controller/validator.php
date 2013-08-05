@@ -54,8 +54,20 @@ class phpbb_ext_official_translationvalidator_controller_validator
 	/**
 	* @return Symfony\Component\HttpFoundation\Response A Symfony Response object
 	*/
-	public function validate()
+	public function validate($lang, $validate)
 	{
+		try
+		{
+			$validator = $this->container->get('translation.validator')
+				->set_validate_against($validate)
+				->set_validate_language($lang)
+				->validate();
+		}
+		catch (Exception $e)
+		{
+			trigger_error($e->getMessage());
+		}
+
 		return $this->helper->render('validator_body.html', $this->user->lang('TRANSLATION_VALIDATOR'), 200);
 	}
 }

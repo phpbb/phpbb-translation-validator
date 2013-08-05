@@ -16,3 +16,14 @@ services:
             - @controller.helper
             - %core.root_path%
             - %core.php_ext%
+
+    translation.validator:
+        class: phpbb_ext_official_translationvalidator_validator
+        arguments:
+            - @translation.validator.error_collection
+            - @user
+            - %core.root_path%store/language-packages/
+
+    translation.validator.error_collection:
+        class: phpbb_ext_official_translationvalidator_error_collection
+        arguments:
