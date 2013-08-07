@@ -17,23 +17,25 @@ if (!defined('IN_PHPBB'))
 
 class phpbb_ext_official_translationvalidator_error_collection
 {
-	protected $notices;
-	protected $warnings;
-	protected $fails;
+	protected $messages;
+
+	public function __construct()
+	{
+		$this->reset();
+	}
+
+	public function reset()
+	{
+		$this->messages = array();
+	}
 
 	public function push($error_type, $error_msg)
 	{
-		switch ($error_type)
-		{
-			case 'notice':
-				$this->notices[] = $error_msg;
-			break;
-			case 'warning':
-				$this->warnings[] = $error_msg;
-			break;
-			case 'fail':
-				$this->fails[] = $error_msg;
-			break;
-		}
+		$this->messages[] = array($error_type, $error_msg);
+	}
+
+	public function get_messages()
+	{
+		return $this->messages;
 	}
 }

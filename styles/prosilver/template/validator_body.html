@@ -1,5 +1,76 @@
 <!-- INCLUDE overall_header.html -->
 
-<h3>Welcome to the validator!</h3>
+<h2>{TITLE}</h2>
+<br />
+
+<div class="post bg2">
+	<div class="inner">
+	<!-- IF .fail -->
+		<div class="postbody">
+				<h3 style="color: red;">{L_FAILS}</h3>
+				<div class="content">
+				<!-- BEGIN fail -->
+					{fail.MESSAGE}<br />
+				<!-- END fail -->
+				</div>
+			</div>
+	<!-- ELSE -->
+		<strong>{L_NO_FAILS}</strong>
+	<!-- ENDIF -->
+	</div>
+</div>
+<br />
+
+<div class="post bg2">
+	<div class="inner">
+	<!-- IF .warning -->
+		<div class="postbody">
+				<h3 style="color: orange;">{L_WARNINGS}</h3>
+				<div class="content">
+				<!-- BEGIN warning -->
+					{warning.MESSAGE}<br />
+				<!-- END warning -->
+				</div>
+			</div>
+	<!-- ELSE -->
+		<strong>{L_NO_WARNINGS}</strong>
+	<!-- ENDIF -->
+	</div>
+</div>
+<br />
+
+<div class="post bg2">
+	<div class="inner">
+	<!-- IF .notice -->
+		<div class="postbody">
+				<h3 style="color: blue;">{L_NOTICES}</h3>
+				<div class="content">
+				<!-- BEGIN notice -->
+					{notice.MESSAGE}<br />
+				<!-- END notice -->
+				</div>
+			</div>
+	<!-- ELSE -->
+		<strong>{L_NO_NOTICES}</strong>
+	<!-- ENDIF -->
+	</div>
+</div>
+<br />
+
+<!-- IF .debug -->
+<div class="post bg2">
+	<div class="inner">
+		<div class="postbody">
+				<h3 style="color: purple;">Debug</h3>
+				<div class="content">
+				<!-- BEGIN debug -->
+					{debug.MESSAGE}<br />
+				<!-- END debug -->
+				</div>
+			</div>
+	</div>
+</div>
+<br />
+<!-- ENDIF -->
 
 <!-- INCLUDE overall_footer.html -->

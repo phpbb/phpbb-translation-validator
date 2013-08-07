@@ -56,16 +56,28 @@ class phpbb_ext_official_translationvalidator_controller_validator
 	*/
 	public function validate($lang, $validate)
 	{
+		$validator = $this->container->get('translation.validator');
+
 		try
 		{
-			$validator = $this->container->get('translation.validator')
-				->set_validate_against($validate)
+			$validation_report = $validator->set_validate_against($validate)
 				->set_validate_language($lang)
 				->validate();
 		}
 		catch (Exception $e)
 		{
 			trigger_error($e->getMessage());
+		}
+
+		$this->template->assign_vars(array(
+			'TITLE'		=> $this->user->lang('TRANSLATION_VALIDATE_AGAINST', $lang, $validate),
+		));
+
+		foreach ($validation_report->get_messages() as $message)
+		{
+			$this->template->assign_block_vars($message[0], array(
+				'MESSAGE'		=> $message[1],
+			));
 		}
 
 		return $this->helper->render('validator_body.html', $this->user->lang('TRANSLATION_VALIDATOR'), 200);

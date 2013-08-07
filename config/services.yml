@@ -1,6 +1,9 @@
 imports:
 #    - { resource: parameters.yml }
 
+parameters:
+    translation.validator.package.dir: %core.root_path%store/language-packages/
+
 services:
     translation.validator.controller:
         class: phpbb_ext_official_translationvalidator_controller_validator
@@ -20,10 +23,33 @@ services:
     translation.validator:
         class: phpbb_ext_official_translationvalidator_validator
         arguments:
+            - @translation.validator.filelist
+            - @translation.validator.file
             - @translation.validator.error_collection
             - @user
-            - %core.root_path%store/language-packages/
+            - %translation.validator.package.dir%
 
     translation.validator.error_collection:
         class: phpbb_ext_official_translationvalidator_error_collection
         arguments:
+
+    translation.validator.file:
+        class: phpbb_ext_official_translationvalidator_validator_file
+        arguments:
+            - @translation.validator.key
+            - @translation.validator.error_collection
+            - @user
+            - %translation.validator.package.dir%
+
+    translation.validator.filelist:
+        class: phpbb_ext_official_translationvalidator_validator_filelist
+        arguments:
+            - @translation.validator.error_collection
+            - @user
+            - %translation.validator.package.dir%
+
+    translation.validator.key:
+        class: phpbb_ext_official_translationvalidator_validator_key
+        arguments:
+            - @translation.validator.error_collection
+            - @user

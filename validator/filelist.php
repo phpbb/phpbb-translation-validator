@@ -15,13 +15,11 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class phpbb_ext_official_translationvalidator_validator
+class phpbb_ext_official_translationvalidator_validator_filelist
 {
 	protected $error_collection;
 	protected $user;
 	protected $package_path;
-
-	protected $validate_files;
 
 	protected $language_file_list;
 	protected $validate_language_dir;
@@ -62,21 +60,8 @@ class phpbb_ext_official_translationvalidator_validator
 
 	public function validate()
 	{
-		$this->validate_files_exist();
-
-		if (empty($this->validate_files))
-		{
-			return false;
-		}
-	}
-
-	protected function validate_files_exist()
-	{
 		$this->against_file_list = $this->get_file_list($this->validate_against_dir);
 		$this->language_file_list = $this->get_file_list($this->validate_language_dir);
-
-		// We only further try to validate files that exist in both languages.
-		$this->validate_files = array_intersect($this->against_file_list, $this->language_file_list);
 
 		$missing_files = array_diff($this->against_file_list, $this->language_file_list);
 		if (!empty($missing_files))
@@ -95,6 +80,9 @@ class phpbb_ext_official_translationvalidator_validator
 				$this->error_collection->push('notice', $this->user->lang('ADDITIONAL_FILE', $additional_file));
 			}
 		}
+
+		// We only further try to validate files that exist in both languages.
+		return array_intersect($this->against_file_list, $this->language_file_list);
 	}
 
 	protected function get_file_list($dir)
@@ -119,7 +107,6 @@ class phpbb_ext_official_translationvalidator_validator
 			if ($fileInfo->isDir())
 			{
 				$sub_dir = $this->get_file_list($fileInfo->getPath() . '/' . $fileInfo->getFilename());
-				$files[] = $fileInfo->getFilename() . '/';
 				foreach ($sub_dir as $file)
 				{
 					$files[] = $fileInfo->getFilename() . '/' . $file;
