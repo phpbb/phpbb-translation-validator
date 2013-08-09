@@ -17,23 +17,64 @@ if (!defined('IN_PHPBB'))
 
 class phpbb_ext_official_translationvalidator_validator_file
 {
+	/**
+	* @var phpbb_ext_official_translationvalidator_validator_key
+	*/
 	protected $key_validator;
+
+	/**
+	* @var phpbb_ext_official_translationvalidator_error_collection
+	*/
 	protected $error_collection;
+
+	/**
+	* @var phpbb_user
+	*/
 	protected $user;
+
+	/**
+	* Path to the folder where the languages are.
+	* @var string
+	*/
 	protected $package_path;
 
-	protected $validate_files;
+	/**
+	* Path to the folder where the language to validate is,
+	* including $package_path.
+	* @var string
+	*/
 	protected $validate_language_dir;
+
+	/**
+	* Path to the folder where the language to compare against is,
+	* including $package_path.
+	* @var string
+	*/
 	protected $validate_against_dir;
 
-	public function __construct($key_validator, $error_collection, $user, $lang_path)
+	/**
+	* Construct
+	*
+	* @param	phpbb_ext_official_translationvalidator_validator_key	$key_validator			Validator for the language key elements
+	* @param	phpbb_ext_official_translationvalidator_error_collection	$error_collection	Collection where we push our messages to
+	* @param	phpbb_user	$user		Current user object, only required for lang()
+	* @param	string	$lang_path		Path to the folder where the languages are
+	* @return	phpbb_ext_official_translationvalidator_validator_file
+	*/
+	public function __construct(phpbb_ext_official_translationvalidator_validator_key $key_validator, $error_collection, phpbb_user $user, $lang_path)
 	{
 		$this->key_validator = $key_validator;
 		$this->error_collection = $error_collection;
 		$this->user = $user;
-		$this->package_path = $lang_path;
+		$this->package_path = (string) $lang_path;
 	}
 
+	/**
+	* Set the iso of the language we validate
+	*
+	* @param	string	$language
+	* @return	phpbb_ext_official_translationvalidator_validator_file
+	*/
 	public function set_validate_language($language)
 	{
 		$this->validate_language_dir = $this->package_path . $language;
@@ -46,6 +87,12 @@ class phpbb_ext_official_translationvalidator_validator_file
 		return $this;
 	}
 
+	/**
+	* Set the iso of the language we compare against
+	*
+	* @param	string	$language
+	* @return	phpbb_ext_official_translationvalidator_validator_file
+	*/
 	public function set_validate_against($language)
 	{
 		$this->validate_against_dir = $this->package_path . $language;
@@ -58,6 +105,12 @@ class phpbb_ext_official_translationvalidator_validator_file
 		return $this;
 	}
 
+	/**
+	* Decides which validation function to use
+	*
+	* @param	string	$file		File to validate
+	* @return	null
+	*/
 	public function validate($file)
 	{
 		if (strpos($file, 'email/') === 0 && substr($file, -4) === '.txt')
@@ -126,6 +179,19 @@ class phpbb_ext_official_translationvalidator_validator_file
 		}
 	}
 
+	/**
+	* Validates a email .txt file
+	*
+	* Emails must have a subject when the source file has one, otherwise must not have one.
+	* Emails must have a signature when the source file has one, otherwise must not have one.
+	* Emails should use template vars, used by the source file.
+	* Emails should not use additional template vars.
+	* Emails should not use any HTML.
+	* Emails should contain a newline at their end.
+	*
+	* @param	string	$file		File to validate
+	* @return	null
+	*/
 	public function validate_email($file)
 	{
 		$against_file = (string) file_get_contents($this->validate_against_dir . '/' . $file);
@@ -189,6 +255,23 @@ class phpbb_ext_official_translationvalidator_validator_file
 		}
 	}
 
+	/**
+	* Validates a help_*.php file
+	*
+	* Files must only contain the variable $help.
+	* This variable must be an array of arrays.
+	* Subarrays must only have the indexes 0 and 1,
+	* with 0 being the headline and 1 being the description.
+	*
+	* Files must contain an entry with 0 and 1 being '--',
+	* causing the column break in the page.
+	*
+	* @todo		Check for template vars and html
+	* @todo		Check for triple --- and other typos of it.
+	*
+	* @param	string	$file		File to validate
+	* @return	null
+	*/
 	public function validate_help_file($file)
 	{
 		include($this->validate_language_dir . '/' . $file);
@@ -218,6 +301,17 @@ class phpbb_ext_official_translationvalidator_validator_file
 		}
 	}
 
+	/**
+	* Validates the search_synonyms.php file
+	*
+	* Files must only contain the variable $synonyms.
+	* This variable must be an array of string => string entries.
+	*
+	* @todo		Check for template vars and html
+	*
+	* @param	string	$file		File to validate
+	* @return	null
+	*/
 	public function validate_search_synonyms_file($file)
 	{
 		include($this->validate_language_dir . '/' . $file);
@@ -238,6 +332,17 @@ class phpbb_ext_official_translationvalidator_validator_file
 		}
 	}
 
+	/**
+	* Validates the search_ignore_words.php file
+	*
+	* Files must only contain the variable $words.
+	* This variable must be an array of string entries.
+	*
+	* @todo		Check for template vars and html
+	*
+	* @param	string	$file		File to validate
+	* @return	null
+	*/
 	public function validate_search_ignore_words_file($file)
 	{
 		include($this->validate_language_dir . '/' . $file);
@@ -258,6 +363,14 @@ class phpbb_ext_official_translationvalidator_validator_file
 		}
 	}
 
+	/**
+	* Validates a index.htm file
+	*
+	* Only empty index.htm or the default htm file are allowed
+	*
+	* @param	string	$file		File to validate
+	* @return	null
+	*/
 	public function validate_index_file($file)
 	{
 		$validate_file = (string) file_get_contents($this->validate_language_dir . '/' . $file);
@@ -269,6 +382,17 @@ class phpbb_ext_official_translationvalidator_validator_file
 		}
 	}
 
+	/**
+	* Validates the iso.txt file
+	*
+	* Should only contain 3 lines:
+	* 1. English name of the language
+	* 2. Native name of the language
+	* 3. Line with information about the author
+	*
+	* @param	string	$file		File to validate
+	* @return	null
+	*/
 	public function validate_iso_file($file)
 	{
 		$iso_file = (string) file_get_contents($this->validate_language_dir . '/' . $file);
