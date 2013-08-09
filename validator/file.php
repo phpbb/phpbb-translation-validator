@@ -126,7 +126,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		}
 	}
 
-	protected function validate_email($file)
+	public function validate_email($file)
 	{
 		$against_file = (string) file_get_contents($this->validate_against_dir . '/' . $file);
 		$validate_file = (string) file_get_contents($this->validate_language_dir . '/' . $file);
@@ -160,6 +160,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		preg_match_all('/{.+?}/', implode("\n", $validate_file), $validate_template_vars);
 		preg_match_all('/{.+?}/', implode("\n", $against_file), $against_template_vars);
 
+
 		$additional_against = array_diff($against_template_vars[0], $validate_template_vars[0]);
 		$additional_validate = array_diff($validate_template_vars[0], $against_template_vars[0]);
 
@@ -172,6 +173,13 @@ class phpbb_ext_official_translationvalidator_validator_file
 		if (!empty($additional_against))
 		{
 			$this->error_collection->push('warning', $this->user->lang('EMAIL_MISSING_VARS', $file, implode(', ', $additional_against)));
+		}
+
+		$validate_html = array();
+		preg_match_all('/\<.+?\>/', implode("\n", $validate_file), $validate_html);
+		if (!empty($validate_html) && !empty($validate_html[0]))
+		{
+			$this->error_collection->push('fail', $this->user->lang('EMAIL_ADDITIONAL_HTML', $file, htmlspecialchars(implode(', ', $validate_html[0]))));
 		}
 
 		// Check for new liens at the end of the file

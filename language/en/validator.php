@@ -48,6 +48,7 @@ $lang = array_merge($lang, array(
 	'EMAIL_INVALID_SIG'			=> 'The email template “%1$s” should not have the signature appended',
 	'EMAIL_MISSING_NEWLINE'		=> 'The email template “%1$s” does not have a new line at the end of the file',
 	'EMAIL_ADDITIONAL_VARS'		=> 'The email template “%1$s” is using additional variables “%2$s”',
+	'EMAIL_ADDITIONAL_HTML'		=> 'The email template “%1$s” is using html “%2$s”',
 	'EMAIL_MISSING_VARS'		=> 'The email template “%1$s” is not using variables “%2$s”',
 
 	'KEY_NOT_VALIDATED'			=> 'Key “%2$s” in file “%1$s” was not validated',
