@@ -17,7 +17,7 @@ if (!defined('IN_PHPBB'))
 
 class phpbb_ext_official_translationvalidator_validator_filelist
 {
-	protected $error_collection;
+	protected $messages;
 	protected $user;
 	protected $package_path;
 
@@ -27,9 +27,9 @@ class phpbb_ext_official_translationvalidator_validator_filelist
 	protected $against_file_list;
 	protected $validate_against_dir;
 
-	public function __construct($error_collection, $user, $lang_path)
+	public function __construct($emessage_collection, $user, $lang_path)
 	{
-		$this->error_collection = $error_collection;
+		$this->messages = $emessage_collection;
 		$this->user = $user;
 		$this->package_path = $lang_path;
 	}
@@ -68,7 +68,7 @@ class phpbb_ext_official_translationvalidator_validator_filelist
 		{
 			foreach ($missing_files as $missing_file)
 			{
-				$this->error_collection->push('fail', $this->user->lang('MISSING_FILE', $missing_file));
+				$this->messages->push('fail', $this->user->lang('MISSING_FILE', $missing_file));
 			}
 		}
 
@@ -77,7 +77,7 @@ class phpbb_ext_official_translationvalidator_validator_filelist
 		{
 			foreach ($additional_files as $additional_file)
 			{
-				$this->error_collection->push('notice', $this->user->lang('ADDITIONAL_FILE', $additional_file));
+				$this->messages->push('notice', $this->user->lang('ADDITIONAL_FILE', $additional_file));
 			}
 		}
 

@@ -17,16 +17,16 @@ if (!defined('IN_PHPBB'))
 
 class phpbb_ext_official_translationvalidator_validator_key
 {
-	protected $error_collection;
+	protected $messages;
 	protected $user;
 
 	protected $validate_files;
 	protected $validate_language_dir;
 	protected $validate_against_dir;
 
-	public function __construct($error_collection, $user)
+	public function __construct($emessage_collection, $user)
 	{
-		$this->error_collection = $error_collection;
+		$this->messages = $emessage_collection;
 		$this->user = $user;
 	}
 
@@ -34,7 +34,7 @@ class phpbb_ext_official_translationvalidator_validator_key
 	{
 		if (gettype($against_language) !== gettype($validate_language))
 		{
-			$this->error_collection->push('fail', $this->user->lang('INVALID_TYPE', $file, $key, gettype($against_language), gettype($validate_language)));
+			$this->messages->push('fail', $this->user->lang('INVALID_TYPE', $file, $key, gettype($against_language), gettype($validate_language)));
 			return;
 		}
 
@@ -55,7 +55,7 @@ class phpbb_ext_official_translationvalidator_validator_key
 		{
 			if (empty($validate_language))
 			{
-				$this->error_collection->push('fail', $this->user->lang('LANG_ARRAY_EMPTY', $file, $key));
+				$this->messages->push('fail', $this->user->lang('LANG_ARRAY_EMPTY', $file, $key));
 			}
 		}
 		// Remove for 3.1
@@ -101,14 +101,14 @@ class phpbb_ext_official_translationvalidator_validator_key
 				else if (isset($key_types['integer']))
 				{
 					// Plurals?!
-					$this->error_collection->push('debug', $this->user->lang('LANG_ARRAY_UNSUPPORTED', $file, $key));
+					$this->messages->push('debug', $this->user->lang('LANG_ARRAY_UNSUPPORTED', $file, $key));
 					$this->validate_array_key($file, $key, $against_language, $validate_language);
 					return;
 				}
 			}
 			else
 			{
-				$this->error_collection->push('debug', $this->user->lang('LANG_ARRAY_MIXED', $file, $key, implode(', ', array_keys($key_types))));
+				$this->messages->push('debug', $this->user->lang('LANG_ARRAY_MIXED', $file, $key, implode(', ', array_keys($key_types))));
 			}
 		}
 
@@ -118,16 +118,16 @@ class phpbb_ext_official_translationvalidator_validator_key
 	{
 		if (!isset($validate_language['cat']))
 		{
-			$this->error_collection->push('fail', $this->user->lang('ACL_MISSING_CAT', $file, $key));
+			$this->messages->push('fail', $this->user->lang('ACL_MISSING_CAT', $file, $key));
 		}
 		else if ($validate_language['cat'] !== $against_language['cat'])
 		{
-			$this->error_collection->push('fail', $this->user->lang('ACL_INVALID_CAT', $file, $key, $against_language['cat'], $validate_language['cat']));
+			$this->messages->push('fail', $this->user->lang('ACL_INVALID_CAT', $file, $key, $against_language['cat'], $validate_language['cat']));
 		}
 
 		if (!isset($validate_language['lang']))
 		{
-			$this->error_collection->push('fail', $this->user->lang('ACL_MISSING_LANG', $file, $key));
+			$this->messages->push('fail', $this->user->lang('ACL_MISSING_LANG', $file, $key));
 		}
 		else
 		{
@@ -144,7 +144,7 @@ class phpbb_ext_official_translationvalidator_validator_key
 
 		if (!empty($missing_keys))
 		{
-			$this->error_collection->push('fail', $this->user->lang('LANG_ARRAY_MISSING', $file, $key, implode(', ', $missing_keys)));
+			$this->messages->push('fail', $this->user->lang('LANG_ARRAY_MISSING', $file, $key, implode(', ', $missing_keys)));
 		}
 
 		foreach ($against_language as $array_key => $lang)
@@ -168,7 +168,7 @@ class phpbb_ext_official_translationvalidator_validator_key
 		if (!empty($invalid_keys))
 		{
 			// Strangly used plural?
-			$this->error_collection->push('warning', $this->user->lang('LANG_ARRAY_INVALID', $file, $key, implode(', ', $invalid_keys)));
+			$this->messages->push('warning', $this->user->lang('LANG_ARRAY_INVALID', $file, $key, implode(', ', $invalid_keys)));
 		}
 	}
 
@@ -207,13 +207,13 @@ class phpbb_ext_official_translationvalidator_validator_key
 
 		if ($against_strings - $validate_strings !== 0)
 		{
-			$this->error_collection->push('warning', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'string', $against_strings, $validate_strings));
+			$this->messages->push('warning', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'string', $against_strings, $validate_strings));
 			return;
 		}
 
 		if ($against_integers - $validate_integers !== 0)
 		{
-			$this->error_collection->push('notice', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers));
+			$this->messages->push('notice', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers));
 			return;
 		}
 	}

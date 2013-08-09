@@ -25,7 +25,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 	/**
 	* @var phpbb_ext_official_translationvalidator_error_collection
 	*/
-	protected $error_collection;
+	protected $messages;
 
 	/**
 	* @var phpbb_user
@@ -56,15 +56,15 @@ class phpbb_ext_official_translationvalidator_validator_file
 	* Construct
 	*
 	* @param	phpbb_ext_official_translationvalidator_validator_key	$key_validator			Validator for the language key elements
-	* @param	phpbb_ext_official_translationvalidator_error_collection	$error_collection	Collection where we push our messages to
+	* @param	phpbb_ext_official_translationvalidator_error_collection	$emessage_collection	Collection where we push our messages to
 	* @param	phpbb_user	$user		Current user object, only required for lang()
 	* @param	string	$lang_path		Path to the folder where the languages are
 	* @return	phpbb_ext_official_translationvalidator_validator_file
 	*/
-	public function __construct(phpbb_ext_official_translationvalidator_validator_key $key_validator, $error_collection, phpbb_user $user, $lang_path)
+	public function __construct(phpbb_ext_official_translationvalidator_validator_key $key_validator, $emessage_collection, phpbb_user $user, $lang_path)
 	{
 		$this->key_validator = $key_validator;
-		$this->error_collection = $error_collection;
+		$this->messages = $emessage_collection;
 		$this->user = $user;
 		$this->package_path = (string) $lang_path;
 	}
@@ -143,7 +143,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		}
 		else
 		{
-			$this->error_collection->push('debug', $this->user->lang('FILE_NOT_VALIDATED', $file));
+			$this->messages->push('debug', $this->user->lang('FILE_NOT_VALIDATED', $file));
 		}
 	}
 
@@ -163,7 +163,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		{
 			if (!isset($validate[$against_lang_key]))
 			{
-				$this->error_collection->push('fail', $this->user->lang('MISSING_KEY', $file, $against_lang_key));
+				$this->messages->push('fail', $this->user->lang('MISSING_KEY', $file, $against_lang_key));
 				continue;
 			}
 
@@ -174,7 +174,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		{
 			if (!isset($against[$validate_lang_key]))
 			{
-				$this->error_collection->push('warning', $this->user->lang('INVALID_KEY', $file, $validate_lang_key));
+				$this->messages->push('warning', $this->user->lang('INVALID_KEY', $file, $validate_lang_key));
 			}
 		}
 	}
@@ -203,23 +203,23 @@ class phpbb_ext_official_translationvalidator_validator_file
 		// One language contains a subject, the other one does not
 		if (strpos($against_file[0], 'Subject: ') === 0 && strpos($validate_file[0], 'Subject: ') !== 0)
 		{
-			$this->error_collection->push('fail', $this->user->lang('EMAIL_MISSING_SUBJECT', $file));
+			$this->messages->push('fail', $this->user->lang('EMAIL_MISSING_SUBJECT', $file));
 		}
 		else if (strpos($against_file[0], 'Subject: ') !== 0 && strpos($validate_file[0], 'Subject: ') === 0)
 		{
-			$this->error_collection->push('fail', $this->user->lang('EMAIL_INVALID_SUBJECT', $file));
+			$this->messages->push('fail', $this->user->lang('EMAIL_INVALID_SUBJECT', $file));
 		}
 
 		// One language contains the signature, the other one does not
 		if ((end($against_file) === '{EMAIL_SIG}' || prev($against_file) === '{EMAIL_SIG}')
 			&& end($validate_file) !== '{EMAIL_SIG}' && prev($validate_file) !== '{EMAIL_SIG}')
 		{
-			$this->error_collection->push('fail', $this->user->lang('EMAIL_MISSING_SIG', $file));
+			$this->messages->push('fail', $this->user->lang('EMAIL_MISSING_SIG', $file));
 		}
 		else if ((end($validate_file) === '{EMAIL_SIG}' || prev($validate_file) === '{EMAIL_SIG}')
 			&& end($against_file) !== '{EMAIL_SIG}' && prev($against_file) !== '{EMAIL_SIG}')
 		{
-			$this->error_collection->push('fail', $this->user->lang('EMAIL_INVALID_SIG', $file));
+			$this->messages->push('fail', $this->user->lang('EMAIL_INVALID_SIG', $file));
 		}
 
 		$validate_template_vars = $against_template_vars = array();
@@ -233,25 +233,25 @@ class phpbb_ext_official_translationvalidator_validator_file
 		// Check the used template variables
 		if (!empty($additional_validate))
 		{
-			$this->error_collection->push('warning', $this->user->lang('EMAIL_ADDITIONAL_VARS', $file, implode(', ', $additional_validate)));
+			$this->messages->push('warning', $this->user->lang('EMAIL_ADDITIONAL_VARS', $file, implode(', ', $additional_validate)));
 		}
 
 		if (!empty($additional_against))
 		{
-			$this->error_collection->push('warning', $this->user->lang('EMAIL_MISSING_VARS', $file, implode(', ', $additional_against)));
+			$this->messages->push('warning', $this->user->lang('EMAIL_MISSING_VARS', $file, implode(', ', $additional_against)));
 		}
 
 		$validate_html = array();
 		preg_match_all('/\<.+?\>/', implode("\n", $validate_file), $validate_html);
 		if (!empty($validate_html) && !empty($validate_html[0]))
 		{
-			$this->error_collection->push('fail', $this->user->lang('EMAIL_ADDITIONAL_HTML', $file, htmlspecialchars(implode(', ', $validate_html[0]))));
+			$this->messages->push('fail', $this->user->lang('EMAIL_ADDITIONAL_HTML', $file, htmlspecialchars(implode(', ', $validate_html[0]))));
 		}
 
 		// Check for new liens at the end of the file
 		if (end($validate_file) !== '')
 		{
-			$this->error_collection->push('notice', $this->user->lang('EMAIL_MISSING_NEWLINE', $file));
+			$this->messages->push('notice', $this->user->lang('EMAIL_MISSING_NEWLINE', $file));
 		}
 	}
 
@@ -279,7 +279,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		$defined_variables = get_defined_vars();
 		if (sizeof($defined_variables) != 2 || !isset($defined_variables['help']) || gettype($defined_variables['help']) != 'array')
 		{
-			$this->error_collection->push('fail', $this->user->lang('FILE_INVALID_VARS', $file, 'help'));
+			$this->messages->push('fail', $this->user->lang('FILE_INVALID_VARS', $file, 'help'));
 			return;
 		}
 
@@ -288,7 +288,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		{
 			if (gettype($help) != 'array' || sizeof($help) != 2 || !isset($help[0]) || !isset($help[1]))
 			{
-				$this->error_collection->push('fail', $this->user->lang('FILE_HELP_INVALID_ENTRY', $file, htmlspecialchars(serialize($help))));
+				$this->messages->push('fail', $this->user->lang('FILE_HELP_INVALID_ENTRY', $file, htmlspecialchars(serialize($help))));
 			}
 			else if ($help[0] == '--' && $help[1] == '--')
 			{
@@ -297,7 +297,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		}
 		if ($column_breaks != 1)
 		{
-			$this->error_collection->push('fail', $this->user->lang('FILE_HELP_ONE_BREAK', $file));
+			$this->messages->push('fail', $this->user->lang('FILE_HELP_ONE_BREAK', $file));
 		}
 	}
 
@@ -319,7 +319,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		$defined_variables = get_defined_vars();
 		if (sizeof($defined_variables) != 2 || !isset($defined_variables['synonyms']) || gettype($defined_variables['synonyms']) != 'array')
 		{
-			$this->error_collection->push('fail', $this->user->lang('FILE_INVALID_VARS', $file, 'synonyms'));
+			$this->messages->push('fail', $this->user->lang('FILE_INVALID_VARS', $file, 'synonyms'));
 			return;
 		}
 
@@ -327,7 +327,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		{
 			if (gettype($synonym1) != 'string' || gettype($synonym2) != 'string')
 			{
-				$this->error_collection->push('fail', $this->user->lang('FILE_SEARCH_INVALID_TYPES', $file, htmlspecialchars(serialize($synonym1)), htmlspecialchars(serialize($synonym2))));
+				$this->messages->push('fail', $this->user->lang('FILE_SEARCH_INVALID_TYPES', $file, htmlspecialchars(serialize($synonym1)), htmlspecialchars(serialize($synonym2))));
 			}
 		}
 	}
@@ -350,7 +350,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		$defined_variables = get_defined_vars();
 		if (sizeof($defined_variables) != 2 || !isset($defined_variables['words']) || gettype($defined_variables['words']) != 'array')
 		{
-			$this->error_collection->push('fail', $this->user->lang('FILE_INVALID_VARS', $file, 'words'));
+			$this->messages->push('fail', $this->user->lang('FILE_INVALID_VARS', $file, 'words'));
 			return;
 		}
 
@@ -358,7 +358,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		{
 			if (gettype($word) != 'string')
 			{
-				$this->error_collection->push('fail', $this->user->lang('FILE_SEARCH_INVALID_TYPE', $file, htmlspecialchars(serialize($word))));
+				$this->messages->push('fail', $this->user->lang('FILE_SEARCH_INVALID_TYPE', $file, htmlspecialchars(serialize($word))));
 			}
 		}
 	}
@@ -378,7 +378,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		// Empty index.htm file or one that displayes an empty white page
 		if ($validate_file !== '' && md5($validate_file) != '16703867d439efbd7c373dc2269e25a7')
 		{
-			$this->error_collection->push('fail', $this->user->lang('INVALID_INDEX_FILE', $file));
+			$this->messages->push('fail', $this->user->lang('INVALID_INDEX_FILE', $file));
 		}
 	}
 
@@ -400,7 +400,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 
 		if (sizeof($iso_file) != 3)
 		{
-			$this->error_collection->push('fail', $this->user->lang('INVALID_ISO_FILE', $file));
+			$this->messages->push('fail', $this->user->lang('INVALID_ISO_FILE', $file));
 		}
 	}
 }

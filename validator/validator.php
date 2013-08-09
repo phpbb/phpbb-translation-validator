@@ -19,7 +19,7 @@ class phpbb_ext_official_translationvalidator_validator
 {
 	protected $filelist_validator;
 	protected $file_validator;
-	protected $error_collection;
+	protected $messages;
 	protected $user;
 	protected $package_path;
 
@@ -27,11 +27,11 @@ class phpbb_ext_official_translationvalidator_validator
 	protected $validate_language_dir;
 	protected $validate_against_dir;
 
-	public function __construct($filelist_validator, $file_validator, $error_collection, $user, $lang_path)
+	public function __construct($filelist_validator, $file_validator, $emessage_collection, $user, $lang_path)
 	{
 		$this->filelist_validator = $filelist_validator;
 		$this->file_validator = $file_validator;
-		$this->error_collection = $error_collection;
+		$this->messages = $emessage_collection;
 		$this->user = $user;
 		$this->package_path = $lang_path;
 	}
@@ -80,6 +80,6 @@ class phpbb_ext_official_translationvalidator_validator
 			$this->file_validator->validate($file);
 		}
 
-		return $this->error_collection;
+		return $this->messages;
 	}
 }
