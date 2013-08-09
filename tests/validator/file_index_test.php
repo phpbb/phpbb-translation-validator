@@ -24,6 +24,6 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_test extends 
 	public function test_validate_index($iso_file, $expected)
 	{
 		$this->validator->validate_index_file($iso_file);
-		$this->assertEquals($expected, $this->error_collection->get_messages());
+		$this->assertEquals($expected, $this->message_collection->get_messages());
 	}
 }

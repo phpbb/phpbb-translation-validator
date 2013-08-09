@@ -30,7 +30,7 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_search_test e
 	public function test_validate_search_synonyms($iso_file, $expected)
 	{
 		$this->validator->validate_search_synonyms_file($iso_file);
-		$this->assertEquals($expected, $this->error_collection->get_messages());
+		$this->assertEquals($expected, $this->message_collection->get_messages());
 	}
 
 	static public function validate_search_ignore_words_data()
@@ -50,6 +50,6 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_search_test e
 	public function test_validate_search_ignore_words($iso_file, $expected)
 	{
 		$this->validator->validate_search_ignore_words_file($iso_file);
-		$this->assertEquals($expected, $this->error_collection->get_messages());
+		$this->assertEquals($expected, $this->message_collection->get_messages());
 	}
 }

@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class phpbb_ext_official_translationvalidator_error_collection
+class phpbb_ext_official_translationvalidator_message_collection
 {
 	protected $messages;
 
@@ -29,9 +29,9 @@ class phpbb_ext_official_translationvalidator_error_collection
 		$this->messages = array();
 	}
 
-	public function push($error_type, $error_msg)
+	public function push($message_type, $message)
 	{
-		$this->messages[] = array($error_type, $error_msg);
+		$this->messages[] = array($message_type, $message);
 	}
 
 	public function get_messages()

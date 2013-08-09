@@ -25,31 +25,31 @@ services:
         arguments:
             - @translation.validator.filelist
             - @translation.validator.file
-            - @translation.validator.error_collection
+            - @translation.validator.message_collection
             - @user
             - %translation.validator.package.dir%
 
-    translation.validator.error_collection:
-        class: phpbb_ext_official_translationvalidator_error_collection
+    translation.validator.message_collection:
+        class: phpbb_ext_official_translationvalidator_message_collection
         arguments:
 
     translation.validator.file:
         class: phpbb_ext_official_translationvalidator_validator_file
         arguments:
             - @translation.validator.key
-            - @translation.validator.error_collection
+            - @translation.validator.message_collection
             - @user
             - %translation.validator.package.dir%
 
     translation.validator.filelist:
         class: phpbb_ext_official_translationvalidator_validator_filelist
         arguments:
-            - @translation.validator.error_collection
+            - @translation.validator.message_collection
             - @user
             - %translation.validator.package.dir%
 
     translation.validator.key:
         class: phpbb_ext_official_translationvalidator_validator_key
         arguments:
-            - @translation.validator.error_collection
+            - @translation.validator.message_collection
             - @user
