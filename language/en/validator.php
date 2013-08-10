@@ -62,9 +62,10 @@ $lang = array_merge($lang, array(
 	'FILE_HELP_INVALID_ENTRY'	=> 'The help file “%1$s” has an invalid entry: “%2$s”',
 	'FILE_HELP_ONE_BREAK'		=> "The help file “%s” has should have exactly one column break entry: “array( 0 => '--', 1 => '--'),”",
 	'FILE_INVALID_VARS'			=> '“%1$s” should only contain the “$%2$s” array',
+	'FILE_MISSING_IN_PHPBB'		=> '“%s” should check whether for the IN_PHPBB constant to be set',
 	'FILE_SEARCH_INVALID_TYPE'	=> 'The search file “%1$s” should only contain entries of type “string”',
 	'FILE_SEARCH_INVALID_TYPES'	=> 'The search file “%1$s” should only contain entries of type “string => string”',
-	'FILE_MISSING_IN_PHPBB'		=> '“%s” should check whether for the IN_PHPBB constant to be set',
+	'FILE_UNIX_ENDINGS'			=> '“%s” is not using Linux line endings (LF)',
 
 	'FAILS'					=> 'Fails',
 	'NOTICES'				=> 'Notices',

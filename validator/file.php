@@ -113,6 +113,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 	*/
 	public function validate($file)
 	{
+		$this->validate_line_endings($file);
 		if (substr($file, -4) === '.php')
 		{
 			$this->validate_defined_in_phpbb($file);
@@ -452,6 +453,22 @@ class phpbb_ext_official_translationvalidator_validator_file
 		if (!preg_match("#defined([ ]+){0,1}\(([ ]+){0,1}'IN_PHPBB'#", $file_contents))
 		{
 			$this->messages->push('fail', $this->user->lang('FILE_MISSING_IN_PHPBB', $file));
+		}
+	}
+
+	/**
+	* Validates whether a file checks whether the file uses Linux line endings
+	*
+	* @param	string	$file		File to validate
+	* @return	null
+	*/
+	public function validate_line_endings($file)
+	{
+		$file_contents = (string) file_get_contents($this->validate_language_dir . '/' . $file);
+
+		if (strpos($file_contents, "\r") !== false)
+		{
+			$this->messages->push('fail', $this->user->lang('FILE_UNIX_ENDINGS', $file));
 		}
 	}
 }
