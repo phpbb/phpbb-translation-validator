@@ -29,19 +29,20 @@ $lang = array_merge($lang, array(
 	'ACL_INVALID_CAT'			=> 'Permission “%2$s” in file “%1$s” should have cat “%3$s” but has “%4$s”',
 	'ACL_MISSING_CAT'			=> 'Permission “%2$s” in file “%1$s” is missing the “cat” key',
 	'ACL_MISSING_LANG'			=> 'Permission “%2$s” in file “%1$s” is missing the “lang” key',
+
 	'LANG_ARRAY_EMPTY'			=> 'Array “%2$s” in file “%1$s” should not be empty',
 	'LANG_ARRAY_INVALID'		=> 'Array “%2$s” in file “%1$s” has invalid keys: “%3$s”',
 	'LANG_ARRAY_MISSING'		=> 'Array “%2$s” in file “%1$s” is missing keys: “%3$s”',
 	'LANG_ARRAY_MIXED'			=> 'Array “%2$s” in file “%1$s” has mixed types: %3$s',
 	'LANG_ARRAY_UNSUPPORTED'	=> 'Array “%2$s” in file “%1$s” has unsupported type integer',
+
 	'ADDITIONAL_FILE'			=> 'Additional file “%s”',
 	'INVALID_INDEX_FILE'		=> '“%s” should be empty',
 	'INVALID_ISO_FILE'			=> '“%s” should only contain 3 lines',
 	'INVALID_KEY'				=> 'Invalid key “%2$s” in file “%1$s”',
 	'INVALID_NUM_ARGUMENTS'		=> 'Key “%2$s” in file “%1$s” should have “%4$s” %3$s arguments, but has “%5$s”',
 	'INVALID_TYPE'				=> 'Key “%2$s” in file “%1$s” should be type “%3$s” but is type “%4$s”',
-	'MISSING_FILE'				=> 'Missing file “%s”',
-	'MISSING_KEY'				=> 'Missing key “%2$s” in file “%1$s”',
+
 	'EMAIL_MISSING_SUBJECT'		=> 'The email template “%1$s” is missing a subject-line',
 	'EMAIL_INVALID_SUBJECT'		=> 'The email template “%1$s” should not have a subject-line',
 	'EMAIL_MISSING_SIG'			=> 'The email template “%1$s” is missing the signature',
@@ -50,6 +51,10 @@ $lang = array_merge($lang, array(
 	'EMAIL_ADDITIONAL_VARS'		=> 'The email template “%1$s” is using additional variables “%2$s”',
 	'EMAIL_ADDITIONAL_HTML'		=> 'The email template “%1$s” is using html “%2$s”',
 	'EMAIL_MISSING_VARS'		=> 'The email template “%1$s” is not using variables “%2$s”',
+
+	'LANG_MISSING_FILE'			=> 'Missing file “%s”',
+	'LANG_MISSING_KEY'			=> 'Missing key “%2$s” in file “%1$s”',
+	'LANG_OUTPUT'				=> 'File “%1$s” produces output',
 
 	'KEY_NOT_VALIDATED'			=> 'Key “%2$s” in file “%1$s” was not validated',
 	'FILE_NOT_VALIDATED'		=> 'File “%s” was not validated',

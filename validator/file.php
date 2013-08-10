@@ -149,14 +149,32 @@ class phpbb_ext_official_translationvalidator_validator_file
 
 	public function validate_lang_file($file)
 	{
-		$against = $validate = array();
+		ob_start();
+		include($this->validate_language_dir . '/' . $file);
+
+		$defined_variables = get_defined_vars();
+		if (sizeof($defined_variables) != 2 || !isset($defined_variables['lang']) || gettype($defined_variables['lang']) != 'array')
+		{
+			$this->messages->push('fail', $this->user->lang('FILE_INVALID_VARS', $file, 'lang'));
+			if (!isset($defined_variables['lang']) || gettype($defined_variables['lang']) != 'array')
+			{
+				return;
+			}
+		}
+
+		$output = ob_get_contents();
+		ob_end_clean();
+
+		if ($output !== '')
+		{
+			$this->messages->push('fail', $this->user->lang('LANG_OUTPUT', $file, htmlspecialchars($output)));
+		}
+
+		$validate = $lang;
+		unset($lang);
 
 		include($this->validate_against_dir . '/' . $file);
 		$against = $lang;
-		unset($lang);
-
-		include($this->validate_language_dir . '/' . $file);
-		$validate = $lang;
 		unset($lang);
 
 		foreach ($against as $against_lang_key => $against_language)
