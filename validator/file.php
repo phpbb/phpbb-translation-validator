@@ -23,7 +23,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 	protected $key_validator;
 
 	/**
-	* @var phpbb_ext_official_translationvalidator_error_collection
+	* @var phpbb_ext_official_translationvalidator_message_collection
 	*/
 	protected $messages;
 
@@ -56,7 +56,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 	* Construct
 	*
 	* @param	phpbb_ext_official_translationvalidator_validator_key	$key_validator			Validator for the language key elements
-	* @param	phpbb_ext_official_translationvalidator_error_collection	$emessage_collection	Collection where we push our messages to
+	* @param	phpbb_ext_official_translationvalidator_message_collection	$emessage_collection	Collection where we push our messages to
 	* @param	phpbb_user	$user		Current user object, only required for lang()
 	* @param	string	$lang_path		Path to the folder where the languages are
 	* @return	phpbb_ext_official_translationvalidator_validator_file

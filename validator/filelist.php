@@ -17,23 +17,69 @@ if (!defined('IN_PHPBB'))
 
 class phpbb_ext_official_translationvalidator_validator_filelist
 {
+	/**
+	* @var phpbb_ext_official_translationvalidator_message_collection
+	*/
 	protected $messages;
+
+	/**
+	* @var phpbb_user
+	*/
 	protected $user;
+
+	/**
+	* Path to the folder where the languages are.
+	* @var string
+	*/
 	protected $package_path;
 
-	protected $language_file_list;
+	/**
+	* Path to the folder where the language to validate is,
+	* including $package_path.
+	* @var string
+	*/
 	protected $validate_language_dir;
 
-	protected $against_file_list;
+	/**
+	* Path to the folder where the language to compare against is,
+	* including $package_path.
+	* @var string
+	*/
 	protected $validate_against_dir;
 
-	public function __construct($emessage_collection, $user, $lang_path)
+	/**
+	* List of files contained in $validate_language_dir
+	* @var array
+	*/
+	protected $language_file_list;
+
+	/**
+	* List of files contained in $validate_against_dir
+	* @var array
+	*/
+	protected $against_file_list;
+
+	/**
+	* Construct
+	*
+	* @param	phpbb_ext_official_translationvalidator_message_collection	$message_collection	Collection where we push our messages to
+	* @param	phpbb_user	$user		Current user object, only required for lang()
+	* @param	string	$lang_path		Path to the folder where the languages are
+	* @return	phpbb_ext_official_translationvalidator_validator_filelist
+	*/
+	public function __construct($message_collection, $user, $lang_path)
 	{
-		$this->messages = $emessage_collection;
+		$this->messages = $message_collection;
 		$this->user = $user;
 		$this->package_path = $lang_path;
 	}
 
+	/**
+	* Set the iso of the language we validate
+	*
+	* @param	string	$language
+	* @return	phpbb_ext_official_translationvalidator_validator_file
+	*/
 	public function set_validate_language($language)
 	{
 		$this->validate_language_dir = $this->package_path . $language;
@@ -46,6 +92,12 @@ class phpbb_ext_official_translationvalidator_validator_filelist
 		return $this;
 	}
 
+	/**
+	* Set the iso of the language we compare against
+	*
+	* @param	string	$language
+	* @return	phpbb_ext_official_translationvalidator_validator_file
+	*/
 	public function set_validate_against($language)
 	{
 		$this->validate_against_dir = $this->package_path . $language;
@@ -58,6 +110,15 @@ class phpbb_ext_official_translationvalidator_validator_filelist
 		return $this;
 	}
 
+	/**
+	* Validates the directories
+	*
+	* Directories should not miss any files.
+	* Directories must not contain additional php files.
+	* Directories should not contain additional files.
+	*
+	* @return	array	List of files we can continue to validate.
+	*/
 	public function validate()
 	{
 		$this->against_file_list = $this->get_file_list($this->validate_against_dir);
@@ -77,7 +138,8 @@ class phpbb_ext_official_translationvalidator_validator_filelist
 		{
 			foreach ($additional_files as $additional_file)
 			{
-				$this->messages->push('notice', $this->user->lang('ADDITIONAL_FILE', $additional_file));
+				$level = (substr($additional_file, -4) == '.php') ? 'fail' : 'notice';
+				$this->messages->push($level, $this->user->lang('ADDITIONAL_FILE', $additional_file));
 			}
 		}
 
@@ -85,6 +147,14 @@ class phpbb_ext_official_translationvalidator_validator_filelist
 		return array_intersect($this->against_file_list, $this->language_file_list);
 	}
 
+	/**
+	* Returns a list of files in that directory
+	*
+	* Works recursive with any depth
+	*
+	* @param	string	$dir	Directory to go through
+	* @return	array	List of files (including directories from within $dir
+	*/
 	protected function get_file_list($dir)
 	{
 		try 
