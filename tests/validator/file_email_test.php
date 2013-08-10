@@ -1,13 +1,13 @@
 <?php
 /**
 *
-* @package phpBB Gallery Testing
-* @copyright (c) 2013 nickvergessen
+* @package phpBB Translation Validator
+* @copyright (c) 2013 phpBB Group
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
 
-class phpbb_ext_official_translationvalidator_tests_validator_file_email_test extends phpbb_ext_official_translationvalidator_tests_validator_test_base
+class phpbb_ext_official_translationvalidator_tests_validator_file_email_test extends phpbb_ext_official_translationvalidator_tests_validator_file_test_base
 {
 	static public function validate_email_data()
 	{
