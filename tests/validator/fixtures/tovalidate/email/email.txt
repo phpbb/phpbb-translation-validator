@@ -7,6 +7,8 @@ The account owned by "{USERNAME}" has been deactivated or newly created, you sho
 Use this link to view the user's profile:
 {U_USER_DETAILS}
 
+<!-- IF AUTHOR_NAME -->Allow Template Syntax<!-- ENDIF --> 
+
 Use this link to activate the account:
 {U_ACTIVATE*NOT_USING_NORMAL_VAR*}
 

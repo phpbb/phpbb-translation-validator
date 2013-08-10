@@ -280,7 +280,13 @@ class phpbb_ext_official_translationvalidator_validator_file
 		preg_match_all('/\<.+?\>/', implode("\n", $validate_file), $validate_html);
 		if (!empty($validate_html) && !empty($validate_html[0]))
 		{
-			$this->messages->push('fail', $this->user->lang('EMAIL_ADDITIONAL_HTML', $file, htmlspecialchars(implode(', ', $validate_html[0]))));
+			foreach ($validate_html[0] as $possible_html)
+			{
+				if (substr($possible_html, 0, 5) !== '<!-- ' || substr($possible_html, -4) !== ' -->')
+				{
+					$this->messages->push('fail', $this->user->lang('EMAIL_ADDITIONAL_HTML', $file, htmlspecialchars($possible_html)));
+				}
+			}
 		}
 
 		// Check for new liens at the end of the file

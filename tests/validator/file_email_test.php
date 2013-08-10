@@ -17,7 +17,8 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_email_test ex
 				array('fail', 'EMAIL_MISSING_SIG-email/email.txt'),
 				array('warning', 'EMAIL_ADDITIONAL_VARS-email/email.txt-{TEMPLATE_VAR_DOES_NOT_EXIST}, {U_ACTIVATE*NOT_USING_NORMAL_VAR*}'),
 				array('warning', 'EMAIL_MISSING_VARS-email/email.txt-{U_ACTIVATE}'),
-				array('fail', 'EMAIL_ADDITIONAL_HTML-email/email.txt-&lt;a href=&quot;localhost&quot;&gt;, &lt;/a&gt;'),
+				array('fail', 'EMAIL_ADDITIONAL_HTML-email/email.txt-&lt;a href=&quot;localhost&quot;&gt;'),
+				array('fail', 'EMAIL_ADDITIONAL_HTML-email/email.txt-&lt;/a&gt;'),
 				array('notice', 'EMAIL_MISSING_NEWLINE-email/email.txt'),
 			)),
 			array('email/invalid_sig.txt', array(
