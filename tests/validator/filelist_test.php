@@ -27,17 +27,38 @@ class phpbb_ext_official_translationvalidator_tests_validator_filelist_test exte
 		$this->validator->set_validate_language('tovalidate');
 	}
 
+	protected $messages = array(
+		'fail' => array(
+			'MISSING_FILE-missing.php',
+			'MISSING_FILE-missing.txt',
+			'MISSING_FILE-subdir/missing.php',
+			'ADDITIONAL_FILE-additional.php',
+			'ADDITIONAL_FILE-subdir/additional.php',
+		),
+		'notice' => array(
+			'ADDITIONAL_FILE-additional.txt',
+		),
+	);
+
 	public function test_validate_filelist()
 	{
 		$this->validator->validate();
-		$this->assertEquals(array(
-			array('fail', 'MISSING_FILE-missing.php'),
-			array('fail', 'MISSING_FILE-missing.txt'),
-			array('fail', 'MISSING_FILE-subdir/missing.php'),
-			array('fail', 'ADDITIONAL_FILE-additional.php'),
-			array('notice', 'ADDITIONAL_FILE-additional.txt'),
-			array('fail', 'ADDITIONAL_FILE-subdir/additional.php'),
-		), $this->message_collection->get_messages());
+		$errors = $this->message_collection->get_messages();
+
+		foreach ($this->messages['fail'] as $error)
+		{
+			$this->assertContains(array('fail', $error), $errors, 'Missing expected error: ' . $error);
+		}
+
+		foreach ($this->messages['notice'] as $notice)
+		{
+			$this->assertContains(array('notice', $notice), $errors, 'Missing expected notice: ' . $notice);
+		}
+
+		foreach ($errors as $error)
+		{
+			$this->assertContains($error[1], $this->messages[$error[0]], 'Unexpected message: ' . $error);
+		}
 	}
 
 	public function return_callback()
