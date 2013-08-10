@@ -147,6 +147,17 @@ class phpbb_ext_official_translationvalidator_validator_file
 		}
 	}
 
+	/**
+	* Validates a normal language file
+	*
+	* Files should not produce any output.
+	* Files should only define the $lang variable.
+	* Files must have all language keys defined in the source file.
+	* Files should not have additional language keys.
+	*
+	* @param	string	$file		File to validate
+	* @return	null
+	*/
 	public function validate_lang_file($file)
 	{
 		ob_start();
