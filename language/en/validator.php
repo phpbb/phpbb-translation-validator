@@ -64,6 +64,7 @@ $lang = array_merge($lang, array(
 	'FILE_INVALID_VARS'			=> '“%1$s” should only contain the “$%2$s” array',
 	'FILE_SEARCH_INVALID_TYPE'	=> 'The search file “%1$s” should only contain entries of type “string”',
 	'FILE_SEARCH_INVALID_TYPES'	=> 'The search file “%1$s” should only contain entries of type “string => string”',
+	'FILE_MISSING_IN_PHPBB'		=> '“%s” should check whether for the IN_PHPBB constant to be set',
 
 	'FAILS'					=> 'Fails',
 	'NOTICES'				=> 'Notices',

@@ -113,6 +113,11 @@ class phpbb_ext_official_translationvalidator_validator_file
 	*/
 	public function validate($file)
 	{
+		if (substr($file, -4) === '.php')
+		{
+			$this->validate_defined_in_phpbb($file);
+		}
+
 		if (strpos($file, 'email/') === 0 && substr($file, -4) === '.txt')
 		{
 			$this->validate_email($file);
@@ -430,6 +435,23 @@ class phpbb_ext_official_translationvalidator_validator_file
 		if (sizeof($iso_file) != 3)
 		{
 			$this->messages->push('fail', $this->user->lang('INVALID_ISO_FILE', $file));
+		}
+	}
+
+	/**
+	* Validates whether a file checks for the IN_PHPBB constant
+	*
+	* @param	string	$file		File to validate
+	* @return	null
+	*/
+	public function validate_defined_in_phpbb($file)
+	{
+		$file_contents = (string) file_get_contents($this->validate_language_dir . '/' . $file);
+
+		// Regex copied from MPV
+		if (!preg_match("#defined([ ]+){0,1}\(([ ]+){0,1}'IN_PHPBB'#", $file_contents))
+		{
+			$this->messages->push('fail', $this->user->lang('FILE_MISSING_IN_PHPBB', $file));
 		}
 	}
 }
