@@ -203,7 +203,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		{
 			if (!isset($against[$validate_lang_key]))
 			{
-				$this->messages->push('warning', $this->user->lang('INVALID_KEY', $file, $validate_lang_key));
+				$this->messages->push('fail', $this->user->lang('INVALID_KEY', $file, $validate_lang_key));
 			}
 		}
 	}

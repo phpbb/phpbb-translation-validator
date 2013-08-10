@@ -16,7 +16,7 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_lang_test ext
 				array('fail', 'FILE_INVALID_VARS-language/lang.php-lang'),
 				array('fail', 'LANG_OUTPUT-language/lang.php-' . "\n\n"),
 				array('fail', 'MISSING_KEY-language/lang.php-7_DAYS'),
-				array('warning', 'INVALID_KEY-language/lang.php-8_DAYS'),
+				array('fail', 'INVALID_KEY-language/lang.php-8_DAYS'),
 			)),
 			array('language/lang2.php', array(
 				array('fail', 'FILE_INVALID_VARS-language/lang2.php-lang'),
