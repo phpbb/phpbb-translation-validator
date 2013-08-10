@@ -7,6 +7,9 @@
 *
 */
 
+/**
+* @codeCoverageIgnore
+*/
 class phpbb_ext_database_test_connection_manager extends phpbb_database_test_connection_manager
 {
 	public function load_schema()

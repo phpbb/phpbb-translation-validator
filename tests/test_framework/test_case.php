@@ -7,6 +7,9 @@
 *
 */
 
+/**
+* @codeCoverageIgnore
+*/
 abstract class phpbb_ext_test_case extends phpbb_test_case
 {
 	public function get_test_case_helpers()

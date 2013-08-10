@@ -7,6 +7,9 @@
 *
 */
 
+/**
+* @codeCoverageIgnore
+*/
 abstract class phpbb_ext_database_test_case extends phpbb_database_test_case
 {
 	protected $db;

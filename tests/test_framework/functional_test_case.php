@@ -7,6 +7,9 @@
 *
 */
 
+/**
+* @codeCoverageIgnore
+*/
 class phpbb_ext_functional_test_case extends phpbb_functional_test_case
 {
 }

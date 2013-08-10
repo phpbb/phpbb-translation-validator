@@ -7,6 +7,9 @@
 *
 */
 
+/**
+* @codeCoverageIgnore
+*/
 class phpbb_ext_test_case_helpers extends phpbb_test_case_helpers
 {
 	/**
