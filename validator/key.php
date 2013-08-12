@@ -30,6 +30,15 @@ class phpbb_ext_official_translationvalidator_validator_key
 		$this->user = $user;
 	}
 
+	/**
+	* Validates type of the language and decides on further validation
+	*
+	* @param	string	$file		File to validate
+	* @param	string	$key		Key to validate
+	* @param	mixed	$against_language		Original language
+	* @param	mixed	$validate_language		Translated language
+	* @return	null
+	*/
 	public function validate($file, $key, $against_language, $validate_language)
 	{
 		if (gettype($against_language) !== gettype($validate_language))
@@ -49,7 +58,7 @@ class phpbb_ext_official_translationvalidator_validator_key
 	}
 
 	// Arrays (Plurals, permissions and more)
-	protected function validate_array($file, $key, $against_language, $validate_language)
+	public function validate_array($file, $key, $against_language, $validate_language)
 	{
 		if ($key === 'dateformats')
 		{
@@ -114,7 +123,7 @@ class phpbb_ext_official_translationvalidator_validator_key
 
 	}
 
-	protected function validate_acl($file, $key, $against_language, $validate_language)
+	public function validate_acl($file, $key, $against_language, $validate_language)
 	{
 		if (!isset($validate_language['cat']))
 		{
@@ -135,7 +144,7 @@ class phpbb_ext_official_translationvalidator_validator_key
 		}
 	}
 
-	protected function validate_array_key($file, $key, $against_language, $validate_language)
+	public function validate_array_key($file, $key, $against_language, $validate_language)
 	{
 		$cat_validate_keys = array_keys($validate_language);
 		$cat_against_keys = array_keys($against_language);
@@ -172,15 +181,13 @@ class phpbb_ext_official_translationvalidator_validator_key
 		}
 	}
 
-	protected function validate_lang($file, $key, $against_language, $validate_language)
+	public function validate_lang($file, $key, $against_language, $validate_language)
 	{
 		$this->validate_string($file, $key, $against_language, $validate_language);
 	}
 
-	protected function validate_string($file, $key, $against_language, $validate_language)
+	public function validate_string($file, $key, $against_language, $validate_language)
 	{
-		// @todo: Reusing a replacement should be allowed: "we <s> do xyz on <s>" vs "we <s> do xyz here"
-		// @todo: Ommiting a replacement should be allowed: "one post" vs "<i> post"
 		$against_strings = substr_count($against_language, '%s');
 		$against_integers = substr_count($against_language, '%d');
 		$validate_strings = substr_count($validate_language, '%s');
@@ -207,14 +214,68 @@ class phpbb_ext_official_translationvalidator_validator_key
 
 		if ($against_strings - $validate_strings !== 0)
 		{
-			$this->messages->push('warning', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'string', $against_strings, $validate_strings));
-			return;
+			$level = ($against_strings - $validate_strings > 0) ? 'warning' : 'fail';
+			$this->messages->push($level, $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'string', $against_strings, $validate_strings));
 		}
 
 		if ($against_integers - $validate_integers !== 0)
 		{
-			$this->messages->push('notice', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers));
-			return;
+			$level = ($against_integers - $validate_integers > 0) ? 'notice' : 'fail';
+			$this->messages->push($level, $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers));
+		}
+
+		$this->validate_html($file, $key, $against_language, $validate_language);
+	}
+
+	/**
+	* Validates the html usage in a string
+	*
+	* Checks whether the used HTML tags are also used in the original language.
+	* Omitting tags is okay, as long as both (start and end) are omitted.
+	*
+	* @param	string	$file		File to validate
+	* @param	string	$key		Key to validate
+	* @param	string	$against_language		Original language string
+	* @param	string	$validate_language		Translated language string
+	* @return	null
+	*/
+	public function validate_html($file, $key, $against_language, $validate_language)
+	{
+		$against_html = $validate_html = array();
+		preg_match_all('/\<.+?\>/', $against_language, $against_html);
+		preg_match_all('/\<.+?\>/', $validate_language, $validate_html);
+
+		if (!empty($validate_html) && !empty($validate_html[0]))
+		{
+			foreach ($validate_html[0] as $possible_html)
+			{
+				$ignore_additional = false;
+
+				$opening_tag = $possible_html[1] !== '/';
+				if (!$opening_tag && strpos($possible_html, ' ') !== false)
+				{
+					$ignore_additional = true;
+					$this->messages->push('fail', $this->user->lang('LANG_INVALID_HTML', $file, $key, htmlspecialchars($possible_html)));
+				}
+
+				/**
+				* @todo: check whether:
+				*
+				*	- Tags that where opened are closed afterwards
+				*	- Tags that where closed where opened before
+				if ($opening_tag)
+				{
+					$tag = (strpos($possible_html, ' ') !== false) ? substr($possible_html, 1, strpos($possible_html, ' ')) : substr($possible_html, 1, strpos($possible_html, '>') - 1);
+					$this->messages->push('fail', $this->user->lang('LANG_UNCLOSED_HTML', $file, $key, $tag));
+				}
+				*/
+
+				if (!$ignore_additional && !in_array($possible_html, $against_html[0]))
+				{
+					$this->messages->push('fail', $this->user->lang('LANG_ADDITIONAL_HTML', $file, $key, htmlspecialchars($possible_html)));
+				}
+
+			}
 		}
 	}
 }

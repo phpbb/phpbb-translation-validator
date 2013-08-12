@@ -35,6 +35,8 @@ $lang = array_merge($lang, array(
 	'LANG_ARRAY_MISSING'		=> 'Array “%2$s” in file “%1$s” is missing keys: “%3$s”',
 	'LANG_ARRAY_MIXED'			=> 'Array “%2$s” in file “%1$s” has mixed types: %3$s',
 	'LANG_ARRAY_UNSUPPORTED'	=> 'Array “%2$s” in file “%1$s” has unsupported type integer',
+	'LANG_ADDITIONAL_HTML'		=> 'String “%2$s” in file “%1$s” is using additional html “%3$s”',
+	'LANG_INVALID_HTML'			=> 'String “%2$s” in file “%1$s” is using additional html “%3$s”',
 
 	'ADDITIONAL_FILE'			=> 'Additional file “%s”',
 	'INVALID_INDEX_FILE'		=> '“%s” should be empty',
