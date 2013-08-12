@@ -1,3 +1,1 @@
-<?php
-
-$line_endings = 'crlf';
+<?php$line_endings = 'crlf';
