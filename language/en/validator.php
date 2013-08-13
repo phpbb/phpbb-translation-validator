@@ -31,8 +31,8 @@ $lang = array_merge($lang, array(
 	'ACL_MISSING_LANG'			=> 'Permission “%2$s” in file “%1$s” is missing the “lang” key',
 
 	'LANG_ARRAY_EMPTY'			=> 'Array “%2$s” in file “%1$s” should not be empty',
-	'LANG_ARRAY_INVALID'		=> 'Array “%2$s” in file “%1$s” has invalid keys: “%3$s”',
-	'LANG_ARRAY_MISSING'		=> 'Array “%2$s” in file “%1$s” is missing keys: “%3$s”',
+	'LANG_ARRAY_INVALID'		=> 'Array “%2$s” in file “%1$s” has invalid key: %3$s',
+	'LANG_ARRAY_MISSING'		=> 'Array “%2$s” in file “%1$s” is missing key: %3$s',
 	'LANG_ARRAY_MIXED'			=> 'Array “%2$s” in file “%1$s” has mixed types: %3$s',
 	'LANG_ARRAY_UNSUPPORTED'	=> 'Array “%2$s” in file “%1$s” has unsupported type integer',
 	'LANG_ADDITIONAL_HTML'		=> 'String “%2$s” in file “%1$s” is using additional html “%3$s”',

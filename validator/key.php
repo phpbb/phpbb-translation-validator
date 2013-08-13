@@ -195,6 +195,21 @@ class phpbb_ext_official_translationvalidator_validator_key
 		}
 	}
 
+	/**
+	* Validates an array entry
+	*
+	* Arrays that have strings as key, must have the same keys in the foreign language
+	* Arrays that have integers as keys, might have different ones (plurals)
+	* Additional keys can not be further validated
+	*
+	* Function works recursive
+	*
+	* @param	string	$file		File to validate
+	* @param	string	$key		Key to validate
+	* @param	array	$against_language		Original language
+	* @param	array	$validate_language		Translated language
+	* @return	null
+	*/
 	public function validate_array_key($file, $key, $against_language, $validate_language)
 	{
 		if (gettype($against_language) !== gettype($validate_language))
@@ -208,16 +223,15 @@ class phpbb_ext_official_translationvalidator_validator_key
 		$missing_keys = array_diff($cat_against_keys, $cat_validate_keys);
 		$invalid_keys = array_diff($cat_validate_keys, $cat_against_keys);
 
-		if (!empty($missing_keys))
-		{
-			$this->messages->push('fail', $this->user->lang('LANG_ARRAY_MISSING', $file, $key, implode(', ', $missing_keys)));
-		}
-
 		foreach ($against_language as $array_key => $lang)
 		{
+			// Only error for string keys, plurals might force different keys
 			if (!isset($validate_language[$array_key]))
 			{
-				// Key missing, but we displayed a fail before...
+				if (gettype($array_key) == 'string')
+				{
+					$this->messages->push('fail', $this->user->lang('LANG_ARRAY_MISSING', $file, $key, $array_key));
+				}
 				continue;
 			}
 
@@ -233,8 +247,19 @@ class phpbb_ext_official_translationvalidator_validator_key
 
 		if (!empty($invalid_keys))
 		{
-			// Strangly used plural?
-			$this->messages->push('warning', $this->user->lang('LANG_ARRAY_INVALID', $file, $key, implode(', ', $invalid_keys)));
+			foreach ($invalid_keys as $array_key)
+			{
+				if (gettype($array_key) == 'string')
+				{
+					$this->messages->push('fail', $this->user->lang('LANG_ARRAY_INVALID', $file, $key, $array_key));
+				}
+				else
+				{
+					// Strangly used plural?
+					$this->messages->push('warning', $this->user->lang('LANG_ARRAY_INVALID', $file, $key, $array_key));
+				}
+				$this->messages->push('warning', $this->user->lang('KEY_NOT_VALIDATED', $file, $key . '.' . $array_key));
+			}
 		}
 	}
 
