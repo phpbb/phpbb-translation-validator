@@ -19,13 +19,54 @@ class phpbb_ext_official_translationvalidator_validator
 {
 	protected $filelist_validator;
 	protected $file_validator;
+
+	/**
+	* @var phpbb_ext_official_translationvalidator_message_collection
+	*/
 	protected $messages;
+
+	/**
+	* @var phpbb_user
+	*/
 	protected $user;
+
+	/**
+	* Path to the folder where the languages are.
+	* @var string
+	*/
 	protected $package_path;
 
+	/**
+	* List of files to check for in both directories
+	* @var array
+	*/
 	protected $validate_files;
-	protected $validate_language_dir;
-	protected $validate_against_dir;
+
+	/**
+	* Language to validate
+	* @var string
+	*/
+	protected $origin_language;
+
+	/**
+	* Path to the folder where the language to validate is,
+	* including $package_path.
+	* @var string
+	*/
+	protected $origin_language_dir;
+
+	/**
+	* Language to compare against
+	* @var string
+	*/
+	protected $upstream_language;
+
+	/**
+	* Path to the folder where the language to compare against is,
+	* including $package_path.
+	* @var string
+	*/
+	protected $upstream_language_dir;
 
 	public function __construct($filelist_validator, $file_validator, $emessage_collection, $user, $lang_path)
 	{
@@ -36,32 +77,34 @@ class phpbb_ext_official_translationvalidator_validator
 		$this->package_path = $lang_path;
 	}
 
-	public function set_validate_language($language)
+	public function set_origin_language($language)
 	{
-		$this->validate_language_dir = $this->package_path . $language;
+		$this->origin_language = $language;
+		$this->origin_language_dir = $this->package_path . $this->origin_language;
 
-		if (!file_exists($this->validate_language_dir))
+		if (!file_exists($this->origin_language_dir))
 		{
 			throw new OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
 		}
 
-		$this->filelist_validator->set_validate_language($language);
-		$this->file_validator->set_validate_language($language);
+		$this->filelist_validator->set_origin_language($language);
+		$this->file_validator->set_origin_language($language);
 
 		return $this;
 	}
 
-	public function set_validate_against($language)
+	public function set_upstream_language($language)
 	{
-		$this->validate_against_dir = $this->package_path . $language;
+		$this->upstream_language = $language;
+		$this->upstream_language_dir = $this->package_path . $this->upstream_language;
 
-		if (!file_exists($this->validate_against_dir))
+		if (!file_exists($this->upstream_language_dir))
 		{
 			throw new OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
 		}
 
-		$this->filelist_validator->set_validate_against($language);
-		$this->file_validator->set_validate_against($language);
+		$this->filelist_validator->set_upstream_language($language);
+		$this->file_validator->set_upstream_language($language);
 
 		return $this;
 	}
@@ -72,12 +115,12 @@ class phpbb_ext_official_translationvalidator_validator
 
 		if (empty($this->validate_files))
 		{
-			return false;
+			return $this->messages;
 		}
 
-		foreach ($this->validate_files as $file)
+		foreach ($this->validate_files as $upstream_file => $origin_file)
 		{
-			$this->file_validator->validate($file);
+			$this->file_validator->validate($upstream_file, $origin_file);
 		}
 
 		return $this->messages;

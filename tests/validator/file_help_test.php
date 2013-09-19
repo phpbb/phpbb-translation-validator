@@ -31,7 +31,7 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_help_test ext
 	*/
 	public function test_validate_help($file, $expected)
 	{
-		$this->validator->validate_help_file($file);
+		$this->validator->validate_help_file($file, $file);
 		$this->assertEquals($expected, $this->message_collection->get_messages());
 	}
 }

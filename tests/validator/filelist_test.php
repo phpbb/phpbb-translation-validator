@@ -23,8 +23,8 @@ class phpbb_ext_official_translationvalidator_tests_validator_filelist_test exte
 			->will($this->returnCallback(array($this, 'return_callback')));
 
 		$this->validator = new phpbb_ext_official_translationvalidator_validator_filelist($this->message_collection, $user, dirname(__FILE__) . '/fixtures/filelist/');
-		$this->validator->set_validate_against('original');
-		$this->validator->set_validate_language('tovalidate');
+		$this->validator->set_upstream_language('original');
+		$this->validator->set_origin_language('tovalidate');
 	}
 
 	protected $messages = array(

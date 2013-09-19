@@ -34,30 +34,42 @@ class phpbb_ext_official_translationvalidator_validator_filelist
 	protected $package_path;
 
 	/**
+	* Language to validate
+	* @var string
+	*/
+	protected $origin_language;
+
+	/**
 	* Path to the folder where the language to validate is,
 	* including $package_path.
 	* @var string
 	*/
-	protected $validate_language_dir;
+	protected $origin_language_dir;
+
+	/**
+	* List of files contained in $origin_language_dir
+	* @var array
+	*/
+	protected $origin_file_list;
+
+	/**
+	* Language to compare against
+	* @var string
+	*/
+	protected $upstream_language;
 
 	/**
 	* Path to the folder where the language to compare against is,
 	* including $package_path.
 	* @var string
 	*/
-	protected $validate_against_dir;
+	protected $upstream_language_dir;
 
 	/**
-	* List of files contained in $validate_language_dir
+	* List of files contained in $upstream_language_dir
 	* @var array
 	*/
-	protected $language_file_list;
-
-	/**
-	* List of files contained in $validate_against_dir
-	* @var array
-	*/
-	protected $against_file_list;
+	protected $upstream_file_list;
 
 	/**
 	* Construct
@@ -80,11 +92,12 @@ class phpbb_ext_official_translationvalidator_validator_filelist
 	* @param	string	$language
 	* @return	phpbb_ext_official_translationvalidator_validator_file
 	*/
-	public function set_validate_language($language)
+	public function set_origin_language($language)
 	{
-		$this->validate_language_dir = $this->package_path . $language;
+		$this->origin_language = $language;
+		$this->origin_language_dir = $this->package_path . $this->origin_language;
 
-		if (!file_exists($this->validate_language_dir))
+		if (!file_exists($this->origin_language_dir))
 		{
 			throw new OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
 		}
@@ -98,11 +111,12 @@ class phpbb_ext_official_translationvalidator_validator_filelist
 	* @param	string	$language
 	* @return	phpbb_ext_official_translationvalidator_validator_file
 	*/
-	public function set_validate_against($language)
+	public function set_upstream_language($language)
 	{
-		$this->validate_against_dir = $this->package_path . $language;
+		$this->upstream_language = $language;
+		$this->upstream_language_dir = $this->package_path . $this->upstream_language;
 
-		if (!file_exists($this->validate_against_dir))
+		if (!file_exists($this->upstream_language_dir))
 		{
 			throw new OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
 		}
@@ -121,30 +135,34 @@ class phpbb_ext_official_translationvalidator_validator_filelist
 	*/
 	public function validate()
 	{
-		$this->against_file_list = $this->get_file_list($this->validate_against_dir);
-		$this->language_file_list = $this->get_file_list($this->validate_language_dir);
+		$this->upstream_file_list = $this->get_file_list($this->upstream_language_dir);
+		$this->origin_file_list = $this->get_file_list($this->origin_language_dir);
 
-		$missing_files = array_diff($this->against_file_list, $this->language_file_list);
-		if (!empty($missing_files))
+		$valid_files = array();
+		foreach ($this->upstream_file_list as $upsteam_file)
 		{
-			foreach ($missing_files as $missing_file)
+			$test_origin_file = str_replace('/' . $this->upstream_language . '/', '/' . $this->origin_language . '/', $upsteam_file);
+			if (!in_array($test_origin_file, $this->origin_file_list))
 			{
-				$this->messages->push('fail', $this->user->lang('MISSING_FILE', $missing_file));
+				$this->messages->push('fail', $this->user->lang('MISSING_FILE', $test_origin_file));
+			}
+			else if (substr($upsteam_file, -4) != '.gif' && substr($upsteam_file, -12) != 'imageset.cfg')
+			{
+				$valid_files[$upsteam_file] = $test_origin_file;
 			}
 		}
 
-		$additional_files = array_diff($this->language_file_list, $this->against_file_list);
-		if (!empty($additional_files))
+		foreach ($this->origin_file_list as $origin_file)
 		{
-			foreach ($additional_files as $additional_file)
+			$test_upstream_file = str_replace('/' . $this->origin_language . '/', '/' . $this->upstream_language . '/', $origin_file);
+			if (!in_array($test_upstream_file, $this->upstream_file_list))
 			{
-				$level = (substr($additional_file, -4) == '.php') ? 'fail' : 'notice';
-				$this->messages->push($level, $this->user->lang('ADDITIONAL_FILE', $additional_file));
+				$level = (substr($test_upstream_file, -4) == '.php') ? 'fail' : 'notice';
+				$this->messages->push($level, $this->user->lang('ADDITIONAL_FILE', $test_upstream_file));
 			}
 		}
 
-		// We only further try to validate files that exist in both languages.
-		return array_intersect($this->against_file_list, $this->language_file_list);
+		return $valid_files;
 	}
 
 	/**

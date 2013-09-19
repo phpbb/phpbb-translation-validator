@@ -22,7 +22,7 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_defined_in_ph
 	*/
 	public function test_validate_defined_in_phpbb($file, $expected)
 	{
-		$this->validator->validate_defined_in_phpbb($file);
+		$this->validator->validate_defined_in_phpbb($file, $file);
 		$this->assertEquals($expected, $this->message_collection->get_messages());
 	}
 }

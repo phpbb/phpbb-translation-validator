@@ -39,7 +39,6 @@ $lang = array_merge($lang, array(
 	'LANG_INVALID_HTML'			=> 'String “%2$s” in file “%1$s” is using invalid html “%3$s”',
 	'LANG_UNCLOSED_HTML'		=> 'String “%2$s” in file “%1$s” is missing closing tag for html “%3$s”',
 
-	'ADDITIONAL_FILE'			=> 'Additional file “%s”',
 	'INVALID_INDEX_FILE'		=> '“%s” should be empty',
 	'INVALID_ISO_FILE'			=> '“%s” should only contain 3 lines',
 	'INVALID_KEY'				=> 'Invalid key “%2$s” in file “%1$s”',
@@ -55,7 +54,8 @@ $lang = array_merge($lang, array(
 	'EMAIL_ADDITIONAL_HTML'		=> 'The email template “%1$s” is using html “%2$s”',
 	'EMAIL_MISSING_VARS'		=> 'The email template “%1$s” is not using variables “%2$s”',
 
-	'LANG_MISSING_FILE'			=> 'Missing file “%s”',
+	'ADDITIONAL_FILE'			=> 'Additional file “%s”',
+	'MISSING_FILE'				=> 'Missing file “%s”',
 	'LANG_MISSING_KEY'			=> 'Missing key “%2$s” in file “%1$s”',
 	'LANG_OUTPUT'				=> 'File “%1$s” produces output',
 

@@ -24,8 +24,8 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_test_base ext
 
 		$key_validator = new phpbb_ext_official_translationvalidator_validator_key($this->message_collection, $user);
 		$this->validator = new phpbb_ext_official_translationvalidator_validator_file($key_validator, $this->message_collection, $user, dirname(__FILE__) . '/fixtures/');
-		$this->validator->set_validate_against('original');
-		$this->validator->set_validate_language('tovalidate');
+		$this->validator->set_upstream_language('original');
+		$this->validator->set_origin_language('tovalidate');
 	}
 
 	public function return_callback()

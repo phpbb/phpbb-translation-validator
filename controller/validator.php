@@ -60,8 +60,8 @@ class phpbb_ext_official_translationvalidator_controller_validator
 
 		try
 		{
-			$validation_report = $validator->set_validate_against($validate)
-				->set_validate_language($lang)
+			$validation_report = $validator->set_upstream_language($validate)
+				->set_origin_language($lang)
 				->validate();
 		}
 		catch (Exception $e)

@@ -22,7 +22,7 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_line_endings_
 	*/
 	public function test_validate_line_endings($file, $expected)
 	{
-		$this->validator->validate_line_endings($file);
+		$this->validator->validate_line_endings($file, $file);
 		$this->assertEquals($expected, $this->message_collection->get_messages());
 	}
 }
