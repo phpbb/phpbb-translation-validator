@@ -29,9 +29,14 @@ class phpbb_ext_official_translationvalidator_message_collection
 		$this->messages = array();
 	}
 
-	public function push($message_type, $message)
+	public function push($message_type, $message, $source_language = null, $origin_language = null)
 	{
-		$this->messages[] = array($message_type, $message);
+		$this->messages[] = array(
+			'type'		=> $message_type,
+			'message'	=> $message,
+			'source'	=> $source_language,
+			'origin'	=> $origin_language,
+		);
 	}
 
 	public function get_messages()

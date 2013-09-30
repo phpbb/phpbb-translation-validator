@@ -75,8 +75,10 @@ class phpbb_ext_official_translationvalidator_controller_validator
 
 		foreach ($validation_report->get_messages() as $message)
 		{
-			$this->template->assign_block_vars($message[0], array(
-				'MESSAGE'		=> $message[1],
+			$this->template->assign_block_vars($message['type'], array(
+				'MESSAGE'		=> $message['message'],
+				'SOURCE_LANG'	=> htmlspecialchars($message['source']),
+				'ORIGIN_LANG'	=> htmlspecialchars($message['origin']),
 			));
 		}
 

@@ -310,13 +310,13 @@ class phpbb_ext_official_translationvalidator_validator_key
 		if ($against_strings - $validate_strings !== 0)
 		{
 			$level = ($against_strings - $validate_strings > 0) ? 'warning' : 'fail';
-			$this->messages->push($level, $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'string', $against_strings, $validate_strings));
+			$this->messages->push($level, $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'string', $against_strings, $validate_strings), $against_language, $validate_language);
 		}
 
 		if ($against_integers - $validate_integers !== 0)
 		{
 			$level = ($against_integers - $validate_integers > 0) ? 'notice' : 'fail';
-			$this->messages->push($level, $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers));
+			$this->messages->push($level, $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers), $against_language, $validate_language);
 		}
 
 		$this->validate_html($file, $key, $against_language, $validate_language);
@@ -361,7 +361,7 @@ class phpbb_ext_official_translationvalidator_validator_key
 				// The closing tag contains a space
 				if (!$opening_tag && strpos($possible_html, ' ') !== false)
 				{
-					$this->messages->push('fail', $this->user->lang('LANG_INVALID_HTML', $file, $key, htmlspecialchars($possible_html)));
+					$this->messages->push('fail', $this->user->lang('LANG_INVALID_HTML', $file, $key, htmlspecialchars($possible_html)), $against_language, $validate_language);
 					$ignore_additional = true;
 				}
 
@@ -374,7 +374,7 @@ class phpbb_ext_official_translationvalidator_validator_key
 					{
 						if (!$failed_unclosed)
 						{
-							$this->messages->push('fail', $this->user->lang('LANG_UNCLOSED_HTML', $file, $key, $tag));
+							$this->messages->push('fail', $this->user->lang('LANG_UNCLOSED_HTML', $file, $key, $tag), $against_language, $validate_language);
 						}
 						$failed_unclosed = true;
 					}
@@ -387,7 +387,7 @@ class phpbb_ext_official_translationvalidator_validator_key
 				{
 					if (!$failed_unclosed)
 					{
-						$this->messages->push('fail', $this->user->lang('LANG_UNCLOSED_HTML', $file, $key, end($open_tags)));
+						$this->messages->push('fail', $this->user->lang('LANG_UNCLOSED_HTML', $file, $key, end($open_tags)), $against_language, $validate_language);
 					}
 					$failed_unclosed = true;
 				}
@@ -400,7 +400,7 @@ class phpbb_ext_official_translationvalidator_validator_key
 				if (!$ignore_additional && !in_array($possible_html, $against_html[0]) && !isset($this->additional_html_found[$file][$key][htmlspecialchars($possible_html)]))
 				{
 					$this->additional_html_found[$file][$key][htmlspecialchars($possible_html)] = true;
-					$this->messages->push('fail', $this->user->lang('LANG_ADDITIONAL_HTML', $file, $key, htmlspecialchars($possible_html)));
+					$this->messages->push('fail', $this->user->lang('LANG_ADDITIONAL_HTML', $file, $key, htmlspecialchars($possible_html)), $against_language, $validate_language);
 				}
 
 			}
@@ -409,7 +409,7 @@ class phpbb_ext_official_translationvalidator_validator_key
 			{
 				if (!$failed_unclosed)
 				{
-					$this->messages->push('fail', $this->user->lang('LANG_UNCLOSED_HTML', $file, $key, $open_tags[0]));
+					$this->messages->push('fail', $this->user->lang('LANG_UNCLOSED_HTML', $file, $key, $open_tags[0]), $against_language, $validate_language);
 				}
 			}
 		}

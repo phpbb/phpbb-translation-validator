@@ -7,13 +7,37 @@
 	<div class="inner">
 	<!-- IF .fail -->
 		<div class="postbody">
-				<h3 style="color: red;">{L_FAILS}</h3>
-				<div class="content">
+			<h3 style="color: red;">{L_FAILS}</h3>
+
+			<div class="content">
 				<!-- BEGIN fail -->
-					{fail.MESSAGE}<br />
+					<!-- IF fail.SOURCE_LANG or fail.ORIGIN_LANG -->
+						<a href="" data-toggle-id="fails{fail.S_ROW_COUNT}">{fail.MESSAGE}</a><br />
+					<!-- ELSE -->
+						{fail.MESSAGE}<br />
+					<!-- ENDIF -->
+
+					<!-- IF fail.SOURCE_LANG or fail.ORIGIN_LANG -->
+						<div id="fails{fail.S_ROW_COUNT}" style="display: none;">
+						<!-- IF fail.SOURCE_LANG -->
+							<br />
+							<div class="codebox"><p>{L_CODE}{L_COLON} <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></p><code>
+								{fail.SOURCE_LANG}
+							</code></div>
+						<!-- ENDIF -->
+
+						<!-- IF fail.ORIGIN_LANG -->
+							<br />
+							<div class="codebox"><p>{L_CODE}{L_COLON} <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></p><code>
+								{fail.ORIGIN_LANG}
+							</code></div>
+						<!-- ENDIF -->
+						</div>
+					<!-- ENDIF -->
+					<hr />
 				<!-- END fail -->
-				</div>
 			</div>
+		</div>
 	<!-- ELSE -->
 		<strong>{L_NO_FAILS}</strong>
 	<!-- ENDIF -->
@@ -25,13 +49,37 @@
 	<div class="inner">
 	<!-- IF .warning -->
 		<div class="postbody">
-				<h3 style="color: orange;">{L_WARNINGS}</h3>
-				<div class="content">
+			<h3 style="color: orange;">{L_WARNINGS}</h3>
+
+			<div class="content">
 				<!-- BEGIN warning -->
-					{warning.MESSAGE}<br />
+					<!-- IF warning.SOURCE_LANG or warning.ORIGIN_LANG -->
+						<a href="" data-toggle-id="warning{warning.S_ROW_COUNT}">{warning.MESSAGE}</a><br />
+					<!-- ELSE -->
+						{warning.MESSAGE}<br />
+					<!-- ENDIF -->
+
+					<!-- IF warning.SOURCE_LANG or warning.ORIGIN_LANG -->
+						<div id="warning{warning.S_ROW_COUNT}" style="display: none;">
+						<!-- IF warning.SOURCE_LANG -->
+							<br />
+							<div class="codebox"><p>{L_CODE}{L_COLON} <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></p><code>
+								{warning.SOURCE_LANG}
+							</code></div>
+						<!-- ENDIF -->
+
+						<!-- IF warning.ORIGIN_LANG -->
+							<br />
+							<div class="codebox"><p>{L_CODE}{L_COLON} <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></p><code>
+								{warning.ORIGIN_LANG}
+							</code></div>
+						<!-- ENDIF -->
+						</div>
+					<!-- ENDIF -->
+					<hr />
 				<!-- END warning -->
-				</div>
 			</div>
+		</div>
 	<!-- ELSE -->
 		<strong>{L_NO_WARNINGS}</strong>
 	<!-- ENDIF -->
@@ -43,13 +91,37 @@
 	<div class="inner">
 	<!-- IF .notice -->
 		<div class="postbody">
-				<h3 style="color: blue;">{L_NOTICES}</h3>
-				<div class="content">
+			<h3 style="color: blue;">{L_NOTICES}</h3>
+
+			<div class="content">
 				<!-- BEGIN notice -->
-					{notice.MESSAGE}<br />
+					<!-- IF notice.SOURCE_LANG or v.ORIGIN_LANG -->
+						<a href="" data-toggle-id="notice{notice.S_ROW_COUNT}">{notice.MESSAGE}</a><br />
+					<!-- ELSE -->
+						{notice.MESSAGE}<br />
+					<!-- ENDIF -->
+
+					<!-- IF notice.SOURCE_LANG or notice.ORIGIN_LANG -->
+						<div id="notice{notice.S_ROW_COUNT}" style="display: none;">
+						<!-- IF notice.SOURCE_LANG -->
+							<br />
+							<div class="codebox"><p>{L_CODE}{L_COLON} <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></p><code>
+								{notice.SOURCE_LANG}
+							</code></div>
+						<!-- ENDIF -->
+
+						<!-- IF notice.ORIGIN_LANG -->
+							<br />
+							<div class="codebox"><p>{L_CODE}{L_COLON} <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></p><code>
+								{notice.ORIGIN_LANG}
+							</code></div>
+						<!-- ENDIF -->
+						</div>
+					<!-- ENDIF -->
+					<hr />
 				<!-- END notice -->
-				</div>
 			</div>
+		</div>
 	<!-- ELSE -->
 		<strong>{L_NO_NOTICES}</strong>
 	<!-- ENDIF -->
@@ -61,16 +133,41 @@
 <div class="post bg2">
 	<div class="inner">
 		<div class="postbody">
-				<h3 style="color: purple;">Debug</h3>
-				<div class="content">
+			<h3 style="color: purple;">Debug</h3>
+
+			<div class="content">
 				<!-- BEGIN debug -->
-					{debug.MESSAGE}<br />
+					<!-- IF debug.SOURCE_LANG or debug.ORIGIN_LANG -->
+						<a href="" data-toggle-id="debug{debug.S_ROW_COUNT}">{debug.MESSAGE}</a><br />
+					<!-- ELSE -->
+						{debug.MESSAGE}<br />
+					<!-- ENDIF -->
+
+					<!-- IF debug.SOURCE_LANG or debug.ORIGIN_LANG -->
+						<div id="debug{debug.S_ROW_COUNT}" style="display: none;">
+						<!-- IF debug.SOURCE_LANG -->
+							<br />
+							<div class="codebox"><p>{L_CODE}{L_COLON} <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></p><code>
+								{debug.SOURCE_LANG}
+							</code></div>
+						<!-- ENDIF -->
+
+						<!-- IF debug.ORIGIN_LANG -->
+							<br />
+							<div class="codebox"><p>{L_CODE}{L_COLON} <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></p><code>
+								{debug.ORIGIN_LANG}
+							</code></div>
+						<!-- ENDIF -->
+						</div>
+					<!-- ENDIF -->
+					<hr />
 				<!-- END debug -->
-				</div>
 			</div>
+		</div>
 	</div>
 </div>
 <br />
 <!-- ENDIF -->
 
+<!-- INCLUDEJS validator.js -->
 <!-- INCLUDE overall_footer.html -->
