@@ -290,7 +290,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 
 		if (!empty($additional_against))
 		{
-			$this->messages->push('warning', $this->user->lang('EMAIL_MISSING_VARS', $origin_file, implode(', ', $additional_against)));
+			$this->messages->push('fail', $this->user->lang('EMAIL_MISSING_VARS', $origin_file, implode(', ', $additional_against)));
 		}
 
 		$validate_html = array();
@@ -309,7 +309,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 		// Check for new liens at the end of the file
 		if (end($validate_file) !== '')
 		{
-			$this->messages->push('notice', $this->user->lang('EMAIL_MISSING_NEWLINE', $origin_file));
+			$this->messages->push('debug', $this->user->lang('EMAIL_MISSING_NEWLINE', $origin_file));
 		}
 	}
 

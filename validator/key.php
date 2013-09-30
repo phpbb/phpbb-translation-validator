@@ -309,13 +309,12 @@ class phpbb_ext_official_translationvalidator_validator_key
 
 		if ($against_strings - $validate_strings !== 0)
 		{
-			$level = ($against_strings - $validate_strings > 0) ? 'warning' : 'fail';
-			$this->messages->push($level, $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'string', $against_strings, $validate_strings), $against_language, $validate_language);
+			$this->messages->push('fail', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'string', $against_strings, $validate_strings), $against_language, $validate_language);
 		}
 
 		if ($against_integers - $validate_integers !== 0)
 		{
-			$level = ($against_integers - $validate_integers > 0) ? 'notice' : 'fail';
+			$level = ($against_integers == 1 && $validate_integers == 0) ? 'warning' : 'fail';
 			$this->messages->push($level, $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers), $against_language, $validate_language);
 		}
 
@@ -346,6 +345,17 @@ class phpbb_ext_official_translationvalidator_validator_key
 	*/
 	public function validate_html($file, $key, $against_language, $validate_language)
 	{
+		if (substr($file, -12) == '/install.php' && in_array($key, array(
+			'INSTALL_CONGRATS_EXPLAIN',
+			'INSTALL_INTRO_BODY',
+			'SUPPORT_BODY',
+			'UPDATE_INSTALLATION_EXPLAIN',
+		)))
+		{
+			$against_language = '<p>' . $against_language . '</p>';
+			$validate_language = '<p>' . $validate_language . '</p>';
+		}
+
 		$against_html = $validate_html = $open_tags = array();
 		preg_match_all('/\<.+?\>/', $against_language, $against_html);
 		preg_match_all('/\<.+?\>/', $validate_language, $validate_html);
@@ -396,11 +406,27 @@ class phpbb_ext_official_translationvalidator_validator_key
 					array_pop($open_tags);
 				}
 
+				$possible_html_specialchars = htmlspecialchars($possible_html);
 				// HTML tag is not used in original language
-				if (!$ignore_additional && !in_array($possible_html, $against_html[0]) && !isset($this->additional_html_found[$file][$key][htmlspecialchars($possible_html)]))
+				if (!$ignore_additional && !in_array($possible_html, $against_html[0]) && !isset($this->additional_html_found[$file][$key][$possible_html_specialchars]))
 				{
-					$this->additional_html_found[$file][$key][htmlspecialchars($possible_html)] = true;
-					$this->messages->push('fail', $this->user->lang('LANG_ADDITIONAL_HTML', $file, $key, htmlspecialchars($possible_html)), $against_language, $validate_language);
+					$this->additional_html_found[$file][$key][$possible_html_specialchars] = true;
+					$level = (in_array($possible_html_specialchars, array(
+						'&lt;i&gt;',
+						'&lt;/i&gt;',
+						'&lt;b&gt;',
+						'&lt;/b&gt;',
+					))) ? 'warning' : ((in_array($possible_html_specialchars, array(
+						'&lt;em&gt;',
+						'&lt;/em&gt;',
+						'&lt;strong&gt;',
+						'&lt;/strong&gt;',
+						'&lt;u&gt;',
+						'&lt;/u&gt;',
+						'&lt;/a&gt;',
+						'&lt;br /&gt;',
+					))) ? 'notice' : 'fail');
+					$this->messages->push($level, $this->user->lang('LANG_ADDITIONAL_HTML', $file, $key, $possible_html_specialchars), $against_language, $validate_language);
 				}
 
 			}
