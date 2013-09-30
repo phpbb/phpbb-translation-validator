@@ -280,17 +280,21 @@ class phpbb_ext_official_translationvalidator_validator_file
 
 
 		$additional_against = array_diff($against_template_vars[0], $validate_template_vars[0]);
-		$additional_validate = array_diff($validate_template_vars[0], $against_template_vars[0]);
+		$additional_validate = array_diff($validate_template_vars[0], array_merge(array(
+			'{U_BOARD}',
+			'{EMAIL_SIG}',
+			'{SITENAME}',
+		), $against_template_vars[0]));
 
 		// Check the used template variables
 		if (!empty($additional_validate))
 		{
-			$this->messages->push('warning', $this->user->lang('EMAIL_ADDITIONAL_VARS', $origin_file, implode(', ', $additional_validate)));
+			$this->messages->push('fail', $this->user->lang('EMAIL_ADDITIONAL_VARS', $origin_file, implode(', ', $additional_validate)));
 		}
 
 		if (!empty($additional_against))
 		{
-			$this->messages->push('fail', $this->user->lang('EMAIL_MISSING_VARS', $origin_file, implode(', ', $additional_against)));
+			$this->messages->push('warning', $this->user->lang('EMAIL_MISSING_VARS', $origin_file, implode(', ', $additional_against)));
 		}
 
 		$validate_html = array();
