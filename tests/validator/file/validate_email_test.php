@@ -24,6 +24,7 @@ class validate_email_test extends \official\translationvalidator\tests\validator
 				array('type' => 'debug', 'message' => 'EMAIL_MISSING_NEWLINE-email/email.txt'),
 			)),
 			array('email/invalid_sig.txt', array(
+				array('type' => 'fail', 'message' => 'EMAIL_UTF8-email/invalid_sig.txt'),
 				array('type' => 'fail', 'message' => 'EMAIL_INVALID_SIG-email/invalid_sig.txt'),
 				array('type' => 'fail', 'message' => 'EMAIL_ADDITIONAL_VARS-email/invalid_sig.txt-{YEHAA}'),
 			)),

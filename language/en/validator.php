@@ -46,6 +46,7 @@ $lang = array_merge($lang, array(
 	'INVALID_NUM_ARGUMENTS'		=> 'Key “%2$s” in file “%1$s” should have “%4$s” %3$s arguments, but has “%5$s”',
 	'INVALID_TYPE'				=> 'Key “%2$s” in file “%1$s” should be type “%3$s” but is type “%4$s”',
 
+	'EMAIL_UTF8'				=> 'The email template “%1$s” is saved as UTF8 with BOM, should be UTF8 <strong>without</strong> BOM',
 	'EMAIL_MISSING_SUBJECT'		=> 'The email template “%1$s” is missing a subject-line',
 	'EMAIL_INVALID_SUBJECT'		=> 'The email template “%1$s” should not have a subject-line',
 	'EMAIL_MISSING_SIG'			=> 'The email template “%1$s” is missing the signature',

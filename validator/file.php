@@ -254,6 +254,13 @@ class file
 		$against_file = explode("\n", $against_file);
 		$validate_file = explode("\n", $validate_file);
 
+		// Is the file saved as UTF8 with BOM?
+		if (substr($validate_file[0], 0, 3) === "\xEF\xBB\xBF")
+		{
+			$this->messages->push('fail', $this->user->lang('EMAIL_UTF8', $origin_file));
+			$validate_file[0] = substr($validate_file[0], 3);
+		}
+
 		// One language contains a subject, the other one does not
 		if (strpos($against_file[0], 'Subject: ') === 0 && strpos($validate_file[0], 'Subject: ') !== 0)
 		{
