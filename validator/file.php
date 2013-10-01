@@ -134,6 +134,7 @@ class file
 		if (substr($origin_file, -4) === '.php')
 		{
 			$this->validate_defined_in_phpbb($upstream_file, $origin_file);
+			$this->validate_utf8withoutbom($upstream_file, $origin_file);
 		}
 
 		if (strpos($origin_file, 'language/' . $this->origin_language . '/email/') === 0 && substr($origin_file, -4) === '.txt')
@@ -495,6 +496,26 @@ class file
 		if (!preg_match("#defined([ ]+){0,1}\(([ ]+){0,1}'IN_PHPBB'#", $file_contents))
 		{
 			$this->messages->push('fail', $this->user->lang('FILE_MISSING_IN_PHPBB', $origin_file));
+		}
+	}
+
+	/**
+	* Validates whether a file checks for the IN_PHPBB constant
+	*
+	* @param	string	$upstream_file		Source file for comparison
+	* @param	string	$origin_file		File to validate
+	* @return	null
+	*/
+	public function validate_utf8withoutbom($upstream_file, $origin_file)
+	{
+		$validate_file = (string) file_get_contents($this->origin_language_dir . '/' . $origin_file);
+		$validate_file = explode("\n", $validate_file);
+		$validate_file = $validate_file[0];
+
+		// Is the file saved as UTF8 with BOM?
+		if (substr($validate_file, 0, 3) === "\xEF\xBB\xBF")
+		{
+			$this->messages->push('fail', $this->user->lang('FILE_SAVED_UTF8', $origin_file));
 		}
 	}
 
