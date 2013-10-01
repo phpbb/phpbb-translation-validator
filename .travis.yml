@@ -7,7 +7,7 @@ php:
 
 env:
   - DB=mysql
-  - DB=postgres
+  #- DB=postgres
 
 before_script:
   # checkout phpBB and move your extension in place
