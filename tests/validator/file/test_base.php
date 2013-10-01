@@ -7,7 +7,9 @@
 *
 */
 
-class phpbb_ext_official_translationvalidator_tests_validator_file_test_base extends phpbb_ext_test_case
+namespace official\translationvalidator\tests\validator\file;
+
+class test_base extends \phpbb_ext_test_case
 {
 	protected $validator;
 	protected $message_collection;
@@ -16,14 +18,14 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_test_base ext
 	{
 		parent::setUp();
 
-		$this->message_collection = new phpbb_ext_official_translationvalidator_message_collection();
-		$user = $this->getMock('phpbb_user', array('lang'));
+		$this->message_collection = new \official\translationvalidator\message_collection();
+		$user = $this->getMock('\phpbb\user', array('lang'));
 		$user->expects($this->any())
 			->method('lang')
 			->will($this->returnCallback(array($this, 'return_callback')));
 
-		$key_validator = new phpbb_ext_official_translationvalidator_validator_key($this->message_collection, $user);
-		$this->validator = new phpbb_ext_official_translationvalidator_validator_file($key_validator, $this->message_collection, $user, dirname(__FILE__) . '/fixtures/');
+		$key_validator = new \official\translationvalidator\validator\key($this->message_collection, $user);
+		$this->validator = new \official\translationvalidator\validator\file($key_validator, $this->message_collection, $user, dirname(__FILE__) . '/fixtures/');
 		$this->validator->set_upstream_language('original');
 		$this->validator->set_origin_language('tovalidate');
 	}

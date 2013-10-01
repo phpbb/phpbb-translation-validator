@@ -7,6 +7,8 @@
 *
 */
 
+namespace official\translationvalidator\validator;
+
 /**
 * @ignore
 */
@@ -15,18 +17,25 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class phpbb_ext_official_translationvalidator_validator
+class validator
 {
+	/**
+	* @var \official\translationvalidator\validator\filelist
+	*/
 	protected $filelist_validator;
+
+	/**
+	* @var \official\translationvalidator\validator\file
+	*/
 	protected $file_validator;
 
 	/**
-	* @var phpbb_ext_official_translationvalidator_message_collection
+	* @var \official\translationvalidator\message_collection
 	*/
 	protected $messages;
 
 	/**
-	* @var phpbb_user
+	* @var \phpbb\user
 	*/
 	protected $user;
 
@@ -68,7 +77,7 @@ class phpbb_ext_official_translationvalidator_validator
 	*/
 	protected $upstream_language_dir;
 
-	public function __construct($filelist_validator, $file_validator, $emessage_collection, $user, $lang_path)
+	public function __construct(\official\translationvalidator\validator\filelist $filelist_validator, \official\translationvalidator\validator\file $file_validator, \official\translationvalidator\message_collection $emessage_collection, \phpbb\user $user, $lang_path)
 	{
 		$this->filelist_validator = $filelist_validator;
 		$this->file_validator = $file_validator;
@@ -84,7 +93,7 @@ class phpbb_ext_official_translationvalidator_validator
 
 		if (!file_exists($this->origin_language_dir))
 		{
-			throw new OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
+			throw new \OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
 		}
 
 		$this->filelist_validator->set_origin_language($language);
@@ -100,7 +109,7 @@ class phpbb_ext_official_translationvalidator_validator
 
 		if (!file_exists($this->upstream_language_dir))
 		{
-			throw new OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
+			throw new \OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
 		}
 
 		$this->filelist_validator->set_upstream_language($language);

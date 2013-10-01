@@ -7,6 +7,8 @@
 *
 */
 
+namespace official\translationvalidator\validator;
+
 /**
 * @ignore
 */
@@ -15,18 +17,25 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class phpbb_ext_official_translationvalidator_validator_key
+class key
 {
+	/**
+	* @var \official\translationvalidator\message_collection
+	*/
 	protected $messages;
+
+	/**
+	* @var \phpbb\user
+	*/
 	protected $user;
 
 	protected $validate_files;
 	protected $validate_language_dir;
 	protected $validate_against_dir;
 
-	public function __construct($emessage_collection, $user)
+	public function __construct(\official\translationvalidator\message_collection $message_collection, \phpbb\user $user)
 	{
-		$this->messages = $emessage_collection;
+		$this->messages = $message_collection;
 		$this->user = $user;
 	}
 

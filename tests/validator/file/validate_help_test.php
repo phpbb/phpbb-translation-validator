@@ -7,7 +7,9 @@
 *
 */
 
-class phpbb_ext_official_translationvalidator_tests_validator_file_help_test extends phpbb_ext_official_translationvalidator_tests_validator_file_test_base
+namespace official\translationvalidator\tests\validator\file;
+
+class validate_help_test extends \official\translationvalidator\tests\validator\file\test_base
 {
 	static public function validate_help_data()
 	{

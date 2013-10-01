@@ -7,6 +7,8 @@
 *
 */
 
+namespace official\translationvalidator\validator;
+
 /**
 * @ignore
 */
@@ -15,20 +17,20 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class phpbb_ext_official_translationvalidator_validator_file
+class file
 {
 	/**
-	* @var phpbb_ext_official_translationvalidator_validator_key
+	* @var \official\translationvalidator\validator\key
 	*/
 	protected $key_validator;
 
 	/**
-	* @var phpbb_ext_official_translationvalidator_message_collection
+	* @var \official\translationvalidator\message_collection
 	*/
 	protected $messages;
 
 	/**
-	* @var phpbb_user
+	* @var \phpbb\user
 	*/
 	protected $user;
 
@@ -67,13 +69,13 @@ class phpbb_ext_official_translationvalidator_validator_file
 	/**
 	* Construct
 	*
-	* @param	phpbb_ext_official_translationvalidator_validator_key	$key_validator			Validator for the language key elements
-	* @param	phpbb_ext_official_translationvalidator_message_collection	$emessage_collection	Collection where we push our messages to
-	* @param	phpbb_user	$user		Current user object, only required for lang()
+	* @param	\official\translationvalidator\validator\key	$key_validator			Validator for the language key elements
+	* @param	\official\translationvalidator\message_collection 	$emessage_collection	Collection where we push our messages to
+	* @param	\phpbb\user	$user		Current user object, only required for lang()
 	* @param	string	$lang_path		Path to the folder where the languages are
-	* @return	phpbb_ext_official_translationvalidator_validator_file
+	* @return	\official\translationvalidator\validator\file
 	*/
-	public function __construct(phpbb_ext_official_translationvalidator_validator_key $key_validator, $emessage_collection, phpbb_user $user, $lang_path)
+	public function __construct(\official\translationvalidator\validator\key $key_validator, \official\translationvalidator\message_collection $emessage_collection, \phpbb\user $user, $lang_path)
 	{
 		$this->key_validator = $key_validator;
 		$this->messages = $emessage_collection;
@@ -85,7 +87,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 	* Set the iso of the language we validate
 	*
 	* @param	string	$language
-	* @return	phpbb_ext_official_translationvalidator_validator_file
+	* @return	\official\translationvalidator\validator\file
 	*/
 	public function set_origin_language($language)
 	{
@@ -94,7 +96,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 
 		if (!file_exists($this->origin_language_dir))
 		{
-			throw new OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
+			throw new \OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
 		}
 
 		return $this;
@@ -104,7 +106,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 	* Set the iso of the language we compare against
 	*
 	* @param	string	$language
-	* @return	phpbb_ext_official_translationvalidator_validator_file
+	* @return	\official\translationvalidator\validator\file
 	*/
 	public function set_upstream_language($language)
 	{
@@ -113,7 +115,7 @@ class phpbb_ext_official_translationvalidator_validator_file
 
 		if (!file_exists($this->upstream_language_dir))
 		{
-			throw new OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
+			throw new \OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
 		}
 
 		return $this;

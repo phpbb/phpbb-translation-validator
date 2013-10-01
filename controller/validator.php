@@ -7,6 +7,7 @@
 *
 */
 
+namespace official\translationvalidator\controller;
 /**
 * @ignore
 */
@@ -15,26 +16,26 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class phpbb_ext_official_translationvalidator_controller_validator
+class validator
 {
 	/**
 	* Constructor
 	* NOTE: The parameters of this method must match in order and type with
 	* the dependencies defined in the services.yml file for this service.
 	*
-	* @param phpbb_auth		$auth		Auth object
-	* @param phpbb_cache_service	$cache		Cache object
-	* @param phpbb_config	$config		Config object
-	* @param phpbb_db_driver	$db		Database object
-	* @param phpbb_request	$request	Request object
-	* @param phpbb_template	$template	Template object
-	* @param phpbb_user		$user		User object
-	* @param ContainerBuilder	$container	Container object
-	* @param phpbb_controller_helper		$helper		Controller helper object
+	* @param \phpbb\auth\auth		$auth		Auth object
+	* @param \phpbb\cache\service	$cache		Cache object
+	* @param \phpbb\config\config	$config		Config object
+	* @param \phpbb\db\driver\driver	$db		Database object
+	* @param \phpbb\request\request	$request	Request object
+	* @param \phpbb\template\template	$template	Template object
+	* @param \phpbb\user		$user		User object
+	* @param \Symfony\Component\DependencyInjection\ContainerBuilder	$container	Container object
+	* @param \phpbb\controller\helper		$helper		Controller helper object
 	* @param string			$root_path	phpBB root path
 	* @param string			$php_ext	phpEx
 	*/
-	public function __construct(phpbb_auth $auth, phpbb_cache_service $cache, phpbb_config $config, phpbb_db_driver $db, phpbb_request $request, phpbb_template $template, phpbb_user $user, Symfony\Component\DependencyInjection\ContainerBuilder $container, phpbb_controller_helper $helper, $root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, \phpbb\db\driver\driver $db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, \Symfony\Component\DependencyInjection\ContainerBuilder $container, \phpbb\controller\helper $helper, $root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->cache = $cache;

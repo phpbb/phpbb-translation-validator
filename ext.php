@@ -7,6 +7,8 @@
 *
 */
 
+namespace official\translationvalidator;
+
 /**
 * @ignore
 */
@@ -15,6 +17,6 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class phpbb_ext_official_translationvalidator_ext extends phpbb_extension_base
+class ext extends \phpbb\extension\base
 {
 }

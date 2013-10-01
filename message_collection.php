@@ -7,6 +7,8 @@
 *
 */
 
+namespace official\translationvalidator;
+
 /**
 * @ignore
 */
@@ -15,7 +17,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class phpbb_ext_official_translationvalidator_message_collection
+class message_collection
 {
 	protected $messages;
 

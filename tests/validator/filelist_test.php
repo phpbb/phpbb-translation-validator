@@ -7,7 +7,9 @@
 *
 */
 
-class phpbb_ext_official_translationvalidator_tests_validator_filelist_test extends phpbb_ext_test_case
+namespace official\translationvalidator\tests\validator;
+
+class filelist_test extends \official\translationvalidator\tests\validator\file\test_base
 {
 	protected $validator;
 	protected $message_collection;
@@ -16,13 +18,13 @@ class phpbb_ext_official_translationvalidator_tests_validator_filelist_test exte
 	{
 		parent::setUp();
 
-		$this->message_collection = new phpbb_ext_official_translationvalidator_message_collection();
-		$user = $this->getMock('phpbb_user', array('lang'));
+		$this->message_collection = new \official\translationvalidator\message_collection();
+		$user = $this->getMock('\phpbb\user', array('lang'));
 		$user->expects($this->any())
 			->method('lang')
 			->will($this->returnCallback(array($this, 'return_callback')));
 
-		$this->validator = new phpbb_ext_official_translationvalidator_validator_filelist($this->message_collection, $user, dirname(__FILE__) . '/fixtures/filelist/');
+		$this->validator = new \official\translationvalidator\validator\filelist($this->message_collection, $user, dirname(__FILE__) . '/fixtures/');
 		$this->validator->set_upstream_language('original');
 		$this->validator->set_origin_language('tovalidate');
 	}
