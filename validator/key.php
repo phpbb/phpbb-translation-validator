@@ -359,6 +359,10 @@ class key
 			'INSTALL_INTRO_BODY',
 			'SUPPORT_BODY',
 			'UPDATE_INSTALLATION_EXPLAIN',
+			'OVERVIEW_BODY',
+		)) || substr($file, -8) == '/ucp.php' && in_array($key, array(
+			'TERMS_OF_USE_CONTENT',
+			'PRIVACY_POLICY',
 		)))
 		{
 			$against_language = '<p>' . $against_language . '</p>';
