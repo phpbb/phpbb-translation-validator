@@ -13,17 +13,17 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_email_test ex
 	{
 		return array(
 			array('email/email.txt', array(
-				array('fail', 'EMAIL_MISSING_SUBJECT-email/email.txt'),
-				array('fail', 'EMAIL_MISSING_SIG-email/email.txt'),
-				array('warning', 'EMAIL_ADDITIONAL_VARS-email/email.txt-{TEMPLATE_VAR_DOES_NOT_EXIST}, {U_ACTIVATE*NOT_USING_NORMAL_VAR*}'),
-				array('warning', 'EMAIL_MISSING_VARS-email/email.txt-{U_ACTIVATE}'),
-				array('fail', 'EMAIL_ADDITIONAL_HTML-email/email.txt-&lt;a href=&quot;localhost&quot;&gt;'),
-				array('fail', 'EMAIL_ADDITIONAL_HTML-email/email.txt-&lt;/a&gt;'),
-				array('notice', 'EMAIL_MISSING_NEWLINE-email/email.txt'),
+				array('type' => 'fail', 'message' => 'EMAIL_MISSING_SUBJECT-email/email.txt', 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'EMAIL_MISSING_SIG-email/email.txt', 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'EMAIL_ADDITIONAL_VARS-email/email.txt-{TEMPLATE_VAR_DOES_NOT_EXIST}, {U_ACTIVATE*NOT_USING_NORMAL_VAR*}', 'source' => null, 'origin' => null),
+				array('type' => 'warning', 'message' => 'EMAIL_MISSING_VARS-email/email.txt-{U_ACTIVATE}', 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'EMAIL_ADDITIONAL_HTML-email/email.txt-&lt;a href=&quot;localhost&quot;&gt;', 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'EMAIL_ADDITIONAL_HTML-email/email.txt-&lt;/a&gt;', 'source' => null, 'origin' => null),
+				array('type' => 'debug', 'message' => 'EMAIL_MISSING_NEWLINE-email/email.txt', 'source' => null, 'origin' => null),
 			)),
 			array('email/invalid_sig.txt', array(
-				array('fail', 'EMAIL_INVALID_SIG-email/invalid_sig.txt'),
-				array('warning', 'EMAIL_ADDITIONAL_VARS-email/invalid_sig.txt-{EMAIL_SIG}'),
+				array('type' => 'fail', 'message' => 'EMAIL_INVALID_SIG-email/invalid_sig.txt', 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'EMAIL_ADDITIONAL_VARS-email/invalid_sig.txt-{YEHAA}', 'source' => null, 'origin' => null),
 			)),
 		);
 	}

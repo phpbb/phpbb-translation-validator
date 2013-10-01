@@ -14,7 +14,7 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_test extends 
 		return array(
 			array('index/empty_index.htm', array()),
 			array('index/default_index.htm', array()),
-			array('index/invalid_index.htm', array(array('fail', 'INVALID_INDEX_FILE-index/invalid_index.htm'))),
+			array('index/invalid_index.htm', array(array('type' => 'fail', 'message' => 'INVALID_INDEX_FILE-index/invalid_index.htm', 'source' => null, 'origin' => null))),
 		);
 	}
 

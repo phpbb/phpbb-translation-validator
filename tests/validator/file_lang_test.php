@@ -13,13 +13,13 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_lang_test ext
 	{
 		return array(
 			array('language/lang.php', array(
-				array('fail', 'FILE_INVALID_VARS-language/lang.php-lang'),
-				array('fail', 'LANG_OUTPUT-language/lang.php-' . "\n\n"),
-				array('fail', 'MISSING_KEY-language/lang.php-7_DAYS'),
-				array('fail', 'INVALID_KEY-language/lang.php-8_DAYS'),
+				array('type' => 'fail', 'message' => 'FILE_INVALID_VARS-language/lang.php-lang', 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'LANG_OUTPUT-language/lang.php-' . "\n\n", 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'MISSING_KEY-language/lang.php-7_DAYS', 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'INVALID_KEY-language/lang.php-8_DAYS', 'source' => null, 'origin' => null),
 			)),
 			array('language/lang2.php', array(
-				array('fail', 'FILE_INVALID_VARS-language/lang2.php-lang'),
+				array('type' => 'fail', 'message' => 'FILE_INVALID_VARS-language/lang2.php-lang', 'source' => null, 'origin' => null),
 			)),
 		);
 	}

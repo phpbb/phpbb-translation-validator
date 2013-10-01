@@ -13,8 +13,8 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_iso_test exte
 	{
 		return array(
 			array('iso/valid_iso.txt', array()),
-			array('iso/more_iso.txt', array(array('fail', 'INVALID_ISO_FILE-iso/more_iso.txt'))),
-			array('iso/fewer_iso.txt', array(array('fail', 'INVALID_ISO_FILE-iso/fewer_iso.txt'))),
+			array('iso/more_iso.txt', array(array('type' => 'fail', 'message' => 'INVALID_ISO_FILE-iso/more_iso.txt', 'source' => null, 'origin' => null))),
+			array('iso/fewer_iso.txt', array(array('type' => 'fail', 'message' => 'INVALID_ISO_FILE-iso/fewer_iso.txt', 'source' => null, 'origin' => null))),
 		);
 	}
 

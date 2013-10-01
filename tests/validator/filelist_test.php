@@ -47,17 +47,17 @@ class phpbb_ext_official_translationvalidator_tests_validator_filelist_test exte
 
 		foreach ($this->messages['fail'] as $error)
 		{
-			$this->assertContains(array('fail', $error), $errors, 'Missing expected error: ' . $error);
+			$this->assertContains(array('type' => 'fail', 'message' => $error, 'source' => null, 'origin' => null), $errors, 'Missing expected error: ' . $error);
 		}
 
 		foreach ($this->messages['notice'] as $notice)
 		{
-			$this->assertContains(array('notice', $notice), $errors, 'Missing expected notice: ' . $notice);
+			$this->assertContains(array('type' => 'notice', 'message' => $notice, 'source' => null, 'origin' => null), $errors, 'Missing expected notice: ' . $notice);
 		}
 
 		foreach ($errors as $error)
 		{
-			$this->assertContains($error[1], $this->messages[$error[0]], 'Unexpected message: ' . $error);
+			$this->assertContains($error['message'], $this->messages[$error['type']], 'Unexpected message: ' . $error);
 		}
 	}
 

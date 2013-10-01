@@ -15,23 +15,25 @@ class phpbb_ext_official_translationvalidator_tests_validator_key_validate_html_
 			array('None', 'foobar', 'foobar', array()),
 			array('Same', '<em>foobar</em>', '<em>foobar</em>', array()),
 			array('Different html', '<em>foobar</em>', '<strong>foobar</strong>', array(
-				array('fail', 'LANG_ADDITIONAL_HTML--Different html-&lt;strong&gt;'),
-				array('fail', 'LANG_ADDITIONAL_HTML--Different html-&lt;/strong&gt;'),
+				array('type' => 'notice', 'message' => 'LANG_ADDITIONAL_HTML--Different html-&lt;strong&gt;', 'source' => '<em>foobar</em>', 'origin' => '<strong>foobar</strong>'),
+				array('type' => 'notice', 'message' => 'LANG_ADDITIONAL_HTML--Different html-&lt;/strong&gt;', 'source' => '<em>foobar</em>', 'origin' => '<strong>foobar</strong>'),
 			)),
-			array('Additional html', '<em>foobar</em>', '<em>foobar</em> <strong>foobar</strong>', array(
-				array('fail', 'LANG_ADDITIONAL_HTML--Additional html-&lt;strong&gt;'),
-				array('fail', 'LANG_ADDITIONAL_HTML--Additional html-&lt;/strong&gt;'),
+			array('Additional html', '<em>foobar</em>', '<em>foobar</em> <strong>foobar</strong> <invalid>foobar</invalid>', array(
+				array('type' => 'notice', 'message' => 'LANG_ADDITIONAL_HTML--Additional html-&lt;strong&gt;', 'source' => '<em>foobar</em>', 'origin' => '<em>foobar</em> <strong>foobar</strong> <invalid>foobar</invalid>'),
+				array('type' => 'notice', 'message' => 'LANG_ADDITIONAL_HTML--Additional html-&lt;/strong&gt;', 'source' => '<em>foobar</em>', 'origin' => '<em>foobar</em> <strong>foobar</strong> <invalid>foobar</invalid>'),
+				array('type' => 'fail', 'message' => 'LANG_ADDITIONAL_HTML--Additional html-&lt;invalid&gt;', 'source' => '<em>foobar</em>', 'origin' => '<em>foobar</em> <strong>foobar</strong> <invalid>foobar</invalid>'),
+				array('type' => 'fail', 'message' => 'LANG_ADDITIONAL_HTML--Additional html-&lt;/invalid&gt;', 'source' => '<em>foobar</em>', 'origin' => '<em>foobar</em> <strong>foobar</strong> <invalid>foobar</invalid>'),
 			)),
 			array('Additional unclosed html', '<em>foobar</em>', '<em>foobar</em> <strong>foobar', array(
-				array('fail', 'LANG_ADDITIONAL_HTML--Additional unclosed html-&lt;strong&gt;'),
-				array('fail', 'LANG_UNCLOSED_HTML--Additional unclosed html-strong'),
+				array('type' => 'notice', 'message' => 'LANG_ADDITIONAL_HTML--Additional unclosed html-&lt;strong&gt;', 'source' => '<em>foobar</em>', 'origin' => '<em>foobar</em> <strong>foobar'),
+				array('type' => 'fail', 'message' => 'LANG_UNCLOSED_HTML--Additional unclosed html-strong', 'source' => '<em>foobar</em>', 'origin' => '<em>foobar</em> <strong>foobar'),
 			)),
 			array('Invalid html', '<em>foobar</em>', '<em>foobar</em><em>foobar</e m>', array(
-				array('fail', 'LANG_INVALID_HTML--Invalid html-&lt;/e m&gt;'),
-				array('fail', 'LANG_UNCLOSED_HTML--Invalid html-em'),
+				array('type' => 'fail', 'message' => 'LANG_INVALID_HTML--Invalid html-&lt;/e m&gt;', 'source' => '<em>foobar</em>', 'origin' => '<em>foobar</em><em>foobar</e m>'),
+				array('type' => 'fail', 'message' => 'LANG_UNCLOSED_HTML--Invalid html-em', 'source' => '<em>foobar</em>', 'origin' => '<em>foobar</em><em>foobar</e m>'),
 			)),
 			array('Unclosed html', '<em>foobar</em>', '<em>foo<em>foobar</em>bar', array(
-				array('fail', 'LANG_UNCLOSED_HTML--Unclosed html-em'),
+				array('type' => 'fail', 'message' => 'LANG_UNCLOSED_HTML--Unclosed html-em', 'source' => '<em>foobar</em>', 'origin' => '<em>foo<em>foobar</em>bar'),
 			)),
 		);
 	}

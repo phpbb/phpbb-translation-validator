@@ -13,22 +13,22 @@ class phpbb_ext_official_translationvalidator_tests_validator_key_validate_datef
 	{
 		return array(
 			array('EmptyArray', 'foobar', array(), array(
-				array('fail', 'LANG_ARRAY_EMPTY--EmptyArray'),
+				array('type' => 'fail', 'message' => 'LANG_ARRAY_EMPTY--EmptyArray', 'source' => null, 'origin' => null),
 			)),
 			array('InvalidArray', 'foobar', array('Array' => array()), array(
-				array('fail', 'INVALID_TYPE--InvalidArray.Array-string-array'),
+				array('type' => 'fail', 'message' => 'INVALID_TYPE--InvalidArray.Array-string-array', 'source' => null, 'origin' => null),
 			)),
 			array('InvalidInteger', 'foobar', array('Integer' => 0), array(
-				array('fail', 'INVALID_TYPE--InvalidInteger.Integer-string-integer'),
+				array('type' => 'fail', 'message' => 'INVALID_TYPE--InvalidInteger.Integer-string-integer', 'source' => null, 'origin' => null),
 			)),
 			array('ValidString', 'foobar', array('String' => 'foobar'), array()),
 			array('UsingHTML', 'foobar', array('String' => 'foo<em>bar</em>'), array(
-				array('fail', 'LANG_ADDITIONAL_HTML--UsingHTML.String-&lt;em&gt;'),
-				array('fail', 'LANG_ADDITIONAL_HTML--UsingHTML.String-&lt;/em&gt;'),
+				array('type' => 'notice', 'message' => 'LANG_ADDITIONAL_HTML--UsingHTML.String-&lt;em&gt;', 'source' => '', 'origin' => 'foo<em>bar</em>'),
+				array('type' => 'notice', 'message' => 'LANG_ADDITIONAL_HTML--UsingHTML.String-&lt;/em&gt;', 'source' => '', 'origin' => 'foo<em>bar</em>'),
 			)),
 			array('UsingHTMLKey', 'foobar', array('Str<em>i</em>ng' => 'foo'), array(
-				array('fail', 'LANG_ADDITIONAL_HTML--UsingHTMLKey.Str<em>i</em>ng-&lt;em&gt;'),
-				array('fail', 'LANG_ADDITIONAL_HTML--UsingHTMLKey.Str<em>i</em>ng-&lt;/em&gt;'),
+				array('type' => 'notice', 'message' => 'LANG_ADDITIONAL_HTML--UsingHTMLKey.Str<em>i</em>ng-&lt;em&gt;', 'source' => '', 'origin' => 'Str<em>i</em>ng'),
+				array('type' => 'notice', 'message' => 'LANG_ADDITIONAL_HTML--UsingHTMLKey.Str<em>i</em>ng-&lt;/em&gt;', 'source' => '', 'origin' => 'Str<em>i</em>ng'),
 			)),
 		);
 	}

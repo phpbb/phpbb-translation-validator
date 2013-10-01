@@ -23,16 +23,16 @@ class phpbb_ext_official_translationvalidator_tests_validator_key_validate_strin
 			array('Mixed reordered', 'foobar %d %s', 'foo %s %d bar', array()),
 			array('Mixed reordered #$', 'foobar %d %s', 'foo %2$s %1$d bar', array()),
 			array('Mixed missing int', 'foobar %d %s', 'foo %s bar', array(
-				array('notice', 'INVALID_NUM_ARGUMENTS--Mixed missing int-integer-1-0'),
+				array('type' => 'warning', 'message' => 'INVALID_NUM_ARGUMENTS--Mixed missing int-integer-1-0', 'source' =>  'foobar %d %s', 'origin' => 'foo %s bar'),
 			)),
 			array('Mixed missing string', 'foobar %d %s', 'foo %d bar', array(
-				array('warning', 'INVALID_NUM_ARGUMENTS--Mixed missing string-string-1-0'),
+				array('type' => 'fail', 'message' => 'INVALID_NUM_ARGUMENTS--Mixed missing string-string-1-0', 'source' =>  'foobar %d %s', 'origin' => 'foo %d bar'),
 			)),
 			array('Mixed invalid int', 'foobar %d %s', 'foo %s %d %d bar', array(
-				array('fail', 'INVALID_NUM_ARGUMENTS--Mixed invalid int-integer-1-2'),
+				array('type' => 'fail', 'message' => 'INVALID_NUM_ARGUMENTS--Mixed invalid int-integer-1-2', 'source' =>  'foobar %d %s', 'origin' => 'foo %s %d %d bar'),
 			)),
 			array('Mixed invalid string', 'foobar %d %s', 'foo %s %s %d bar', array(
-				array('fail', 'INVALID_NUM_ARGUMENTS--Mixed invalid string-string-1-2'),
+				array('type' => 'fail', 'message' => 'INVALID_NUM_ARGUMENTS--Mixed invalid string-string-1-2', 'source' =>  'foobar %d %s', 'origin' => 'foo %s %s %d bar'),
 			)),
 		);
 	}

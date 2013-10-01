@@ -13,13 +13,13 @@ class phpbb_ext_official_translationvalidator_tests_validator_key_validate_acl_t
 	{
 		return array(
 			array('MissingCat', array('lang' => 'foo', 'cat' => 'bar'), array('lang' => 'foo'), array(
-				array('fail', 'ACL_MISSING_CAT--MissingCat'),
+				array('type' => 'fail', 'message' => 'ACL_MISSING_CAT--MissingCat', 'source' => null, 'origin' => null),
 			)),
 			array('MissingLang', array('lang' => 'foo', 'cat' => 'bar'), array('cat' => 'bar'), array(
-				array('fail', 'ACL_MISSING_LANG--MissingLang'),
+				array('type' => 'fail', 'message' => 'ACL_MISSING_LANG--MissingLang', 'source' => null, 'origin' => null),
 			)),
 			array('InvalidCat', array('lang' => 'foo', 'cat' => 'bar'), array('lang' => 'foo', 'cat' => 'notBar'), array(
-				array('fail', 'ACL_INVALID_CAT--InvalidCat-bar-notBar'),
+				array('type' => 'fail', 'message' => 'ACL_INVALID_CAT--InvalidCat-bar-notBar', 'source' => null, 'origin' => null),
 			)),
 		);
 	}

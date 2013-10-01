@@ -13,7 +13,7 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_defined_in_ph
 	{
 		return array(
 			array('in_phpbb/valid.php', array()),
-			array('in_phpbb/invalid.php', array(array('fail', 'FILE_MISSING_IN_PHPBB-in_phpbb/invalid.php'))),
+			array('in_phpbb/invalid.php', array(array('type' => 'fail', 'message' => 'FILE_MISSING_IN_PHPBB-in_phpbb/invalid.php', 'source' => null, 'origin' => null))),
 		);
 	}
 

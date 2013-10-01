@@ -13,15 +13,15 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_help_test ext
 	{
 		return array(
 			array('help/valid.php', array()),
-			array('help/no_help.php', array(array('fail', 'FILE_INVALID_VARS-help/no_help.php-help'))),
-			array('help/invalid_help_var.php', array(array('fail', 'FILE_INVALID_VARS-help/invalid_help_var.php-help'))),
-			array('help/additional_variable.php', array(array('fail', 'FILE_INVALID_VARS-help/additional_variable.php-help'))),
+			array('help/no_help.php', array(array('type' => 'fail', 'message' => 'FILE_INVALID_VARS-help/no_help.php-help', 'source' => null, 'origin' => null))),
+			array('help/invalid_help_var.php', array(array('type' => 'fail', 'message' => 'FILE_INVALID_VARS-help/invalid_help_var.php-help', 'source' => null, 'origin' => null))),
+			array('help/additional_variable.php', array(array('type' => 'fail', 'message' => 'FILE_INVALID_VARS-help/additional_variable.php-help', 'source' => null, 'origin' => null))),
 			array('help/invalid_help.php', array(
-				array('fail', 'FILE_HELP_INVALID_ENTRY-help/invalid_help.php-a:1:{i:0;s:2:&quot;--&quot;;}'),
-				array('fail', 'FILE_HELP_INVALID_ENTRY-help/invalid_help.php-a:2:{i:0;s:2:&quot;--&quot;;i:2;s:2:&quot;--&quot;;}'),
-				array('fail', 'FILE_HELP_INVALID_ENTRY-help/invalid_help.php-a:1:{s:3:&quot;lol&quot;;s:3:&quot;bar&quot;;}'),
-				array('fail', 'FILE_HELP_INVALID_ENTRY-help/invalid_help.php-s:3:&quot;foo&quot;;'),
-				array('fail', 'FILE_HELP_ONE_BREAK-help/invalid_help.php'),
+				array('type' => 'fail', 'message' => 'FILE_HELP_INVALID_ENTRY-help/invalid_help.php-a:1:{i:0;s:2:&quot;--&quot;;}', 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'FILE_HELP_INVALID_ENTRY-help/invalid_help.php-a:2:{i:0;s:2:&quot;--&quot;;i:2;s:2:&quot;--&quot;;}', 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'FILE_HELP_INVALID_ENTRY-help/invalid_help.php-a:1:{s:3:&quot;lol&quot;;s:3:&quot;bar&quot;;}', 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'FILE_HELP_INVALID_ENTRY-help/invalid_help.php-s:3:&quot;foo&quot;;', 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'FILE_HELP_ONE_BREAK-help/invalid_help.php', 'source' => null, 'origin' => null),
 			)),
 		);
 	}

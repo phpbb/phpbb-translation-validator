@@ -13,7 +13,7 @@ class phpbb_ext_official_translationvalidator_tests_validator_file_line_endings_
 	{
 		return array(
 			array('line_endings/valid.php', array()),
-			array('line_endings/invalid.php', array(array('fail', 'FILE_UNIX_ENDINGS-line_endings/invalid.php'))),
+			array('line_endings/invalid.php', array(array('type' => 'fail', 'message' => 'FILE_UNIX_ENDINGS-line_endings/invalid.php', 'source' => null, 'origin' => null))),
 		);
 	}
 
