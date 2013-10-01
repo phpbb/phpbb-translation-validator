@@ -406,7 +406,15 @@ class key
 						$open_tags[] = $tag;
 					}
 				}
-				else if (empty($open_tags) || end($open_tags) != $tag)
+				else if (empty($open_tags))
+				{
+					if (!$failed_unclosed)
+					{
+						$this->messages->push('fail', $this->user->lang('LANG_CLOSING_UNOPENED_HTML', $file, $key, $tag), $against_language, $validate_language);
+					}
+					$failed_unclosed = true;
+				}
+				else if (end($open_tags) != $tag)
 				{
 					if (!$failed_unclosed)
 					{
