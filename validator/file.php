@@ -257,23 +257,23 @@ class file
 		// One language contains a subject, the other one does not
 		if (strpos($against_file[0], 'Subject: ') === 0 && strpos($validate_file[0], 'Subject: ') !== 0)
 		{
-			$this->messages->push('fail', $this->user->lang('EMAIL_MISSING_SUBJECT', $origin_file));
+			$this->messages->push('fail', $this->user->lang('EMAIL_MISSING_SUBJECT', $origin_file), implode("\n", $against_file), implode("\n", $validate_file));
 		}
 		else if (strpos($against_file[0], 'Subject: ') !== 0 && strpos($validate_file[0], 'Subject: ') === 0)
 		{
-			$this->messages->push('fail', $this->user->lang('EMAIL_INVALID_SUBJECT', $origin_file));
+			$this->messages->push('fail', $this->user->lang('EMAIL_INVALID_SUBJECT', $origin_file), implode("\n", $against_file), implode("\n", $validate_file));
 		}
 
 		// One language contains the signature, the other one does not
 		if ((end($against_file) === '{EMAIL_SIG}' || prev($against_file) === '{EMAIL_SIG}')
 			&& end($validate_file) !== '{EMAIL_SIG}' && prev($validate_file) !== '{EMAIL_SIG}')
 		{
-			$this->messages->push('fail', $this->user->lang('EMAIL_MISSING_SIG', $origin_file));
+			$this->messages->push('fail', $this->user->lang('EMAIL_MISSING_SIG', $origin_file), implode("\n", $against_file), implode("\n", $validate_file));
 		}
 		else if ((end($validate_file) === '{EMAIL_SIG}' || prev($validate_file) === '{EMAIL_SIG}')
 			&& end($against_file) !== '{EMAIL_SIG}' && prev($against_file) !== '{EMAIL_SIG}')
 		{
-			$this->messages->push('fail', $this->user->lang('EMAIL_INVALID_SIG', $origin_file));
+			$this->messages->push('fail', $this->user->lang('EMAIL_INVALID_SIG', $origin_file), implode("\n", $against_file), implode("\n", $validate_file));
 		}
 
 		$validate_template_vars = $against_template_vars = array();
@@ -291,12 +291,12 @@ class file
 		// Check the used template variables
 		if (!empty($additional_validate))
 		{
-			$this->messages->push('fail', $this->user->lang('EMAIL_ADDITIONAL_VARS', $origin_file, implode(', ', $additional_validate)));
+			$this->messages->push('fail', $this->user->lang('EMAIL_ADDITIONAL_VARS', $origin_file, implode(', ', $additional_validate)), implode("\n", $against_file), implode("\n", $validate_file));
 		}
 
 		if (!empty($additional_against))
 		{
-			$this->messages->push('warning', $this->user->lang('EMAIL_MISSING_VARS', $origin_file, implode(', ', $additional_against)));
+			$this->messages->push('warning', $this->user->lang('EMAIL_MISSING_VARS', $origin_file, implode(', ', $additional_against)), implode("\n", $against_file), implode("\n", $validate_file));
 		}
 
 		$validate_html = array();
@@ -307,7 +307,7 @@ class file
 			{
 				if (substr($possible_html, 0, 5) !== '<!-- ' || substr($possible_html, -4) !== ' -->')
 				{
-					$this->messages->push('fail', $this->user->lang('EMAIL_ADDITIONAL_HTML', $origin_file, htmlspecialchars($possible_html)));
+					$this->messages->push('fail', $this->user->lang('EMAIL_ADDITIONAL_HTML', $origin_file, htmlspecialchars($possible_html)), implode("\n", $against_file), implode("\n", $validate_file));
 				}
 			}
 		}
@@ -315,7 +315,7 @@ class file
 		// Check for new liens at the end of the file
 		if (end($validate_file) !== '')
 		{
-			$this->messages->push('debug', $this->user->lang('EMAIL_MISSING_NEWLINE', $origin_file));
+			$this->messages->push('debug', $this->user->lang('EMAIL_MISSING_NEWLINE', $origin_file), implode("\n", $against_file), implode("\n", $validate_file));
 		}
 	}
 

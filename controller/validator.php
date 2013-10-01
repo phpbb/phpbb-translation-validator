@@ -78,8 +78,8 @@ class validator
 		{
 			$this->template->assign_block_vars($message['type'], array(
 				'MESSAGE'		=> $message['message'],
-				'SOURCE_LANG'	=> htmlspecialchars($message['source']),
-				'ORIGIN_LANG'	=> htmlspecialchars($message['origin']),
+				'SOURCE_LANG'	=> str_replace("\n", '<br />', htmlspecialchars($message['source'])),
+				'ORIGIN_LANG'	=> str_replace("\n", '<br />', htmlspecialchars($message['origin'])),
 			));
 		}
 
