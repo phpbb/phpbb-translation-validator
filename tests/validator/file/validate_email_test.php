@@ -15,17 +15,17 @@ class validate_email_test extends \official\translationvalidator\tests\validator
 	{
 		return array(
 			array('email/email.txt', array(
-				array('type' => 'fail', 'message' => 'EMAIL_MISSING_SUBJECT-email/email.txt', 'source' => null, 'origin' => null),
-				array('type' => 'fail', 'message' => 'EMAIL_MISSING_SIG-email/email.txt', 'source' => null, 'origin' => null),
-				array('type' => 'fail', 'message' => 'EMAIL_ADDITIONAL_VARS-email/email.txt-{TEMPLATE_VAR_DOES_NOT_EXIST}, {U_ACTIVATE*NOT_USING_NORMAL_VAR*}', 'source' => null, 'origin' => null),
-				array('type' => 'warning', 'message' => 'EMAIL_MISSING_VARS-email/email.txt-{U_ACTIVATE}', 'source' => null, 'origin' => null),
-				array('type' => 'fail', 'message' => 'EMAIL_ADDITIONAL_HTML-email/email.txt-&lt;a href=&quot;localhost&quot;&gt;', 'source' => null, 'origin' => null),
-				array('type' => 'fail', 'message' => 'EMAIL_ADDITIONAL_HTML-email/email.txt-&lt;/a&gt;', 'source' => null, 'origin' => null),
-				array('type' => 'debug', 'message' => 'EMAIL_MISSING_NEWLINE-email/email.txt', 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'EMAIL_MISSING_SUBJECT-email/email.txt'),
+				array('type' => 'fail', 'message' => 'EMAIL_MISSING_SIG-email/email.txt'),
+				array('type' => 'fail', 'message' => 'EMAIL_ADDITIONAL_VARS-email/email.txt-{TEMPLATE_VAR_DOES_NOT_EXIST}, {U_ACTIVATE*NOT_USING_NORMAL_VAR*}'),
+				array('type' => 'warning', 'message' => 'EMAIL_MISSING_VARS-email/email.txt-{U_ACTIVATE}'),
+				array('type' => 'fail', 'message' => 'EMAIL_ADDITIONAL_HTML-email/email.txt-&lt;a href=&quot;localhost&quot;&gt;'),
+				array('type' => 'fail', 'message' => 'EMAIL_ADDITIONAL_HTML-email/email.txt-&lt;/a&gt;'),
+				array('type' => 'debug', 'message' => 'EMAIL_MISSING_NEWLINE-email/email.txt'),
 			)),
 			array('email/invalid_sig.txt', array(
-				array('type' => 'fail', 'message' => 'EMAIL_INVALID_SIG-email/invalid_sig.txt', 'source' => null, 'origin' => null),
-				array('type' => 'fail', 'message' => 'EMAIL_ADDITIONAL_VARS-email/invalid_sig.txt-{YEHAA}', 'source' => null, 'origin' => null),
+				array('type' => 'fail', 'message' => 'EMAIL_INVALID_SIG-email/invalid_sig.txt'),
+				array('type' => 'fail', 'message' => 'EMAIL_ADDITIONAL_VARS-email/invalid_sig.txt-{YEHAA}'),
 			)),
 		);
 	}
@@ -36,6 +36,15 @@ class validate_email_test extends \official\translationvalidator\tests\validator
 	public function test_validate_email($file, $expected)
 	{
 		$this->validator->validate_email($file, $file);
-		$this->assertEquals($expected, $this->message_collection->get_messages());
+		$errors = $this->message_collection->get_messages();
+
+		$clean_errors = array();
+		foreach ($errors as $error)
+		{
+			unset($error['source']);
+			unset($error['origin']);
+			$clean_errors[] = $error;
+		}
+		$this->assertEquals($expected, $clean_errors);
 	}
 }
