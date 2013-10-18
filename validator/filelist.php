@@ -138,6 +138,8 @@ class filelist
 	public function validate()
 	{
 		$this->upstream_file_list = $this->get_file_list($this->upstream_language_dir);
+		// License file is required but missing from en/, so we add it here
+		$this->upstream_file_list[] = 'language/' . $this->upstream_language . '/LICENSE';
 		$this->origin_file_list = $this->get_file_list($this->origin_language_dir);
 
 		$valid_files = array();
@@ -159,8 +161,21 @@ class filelist
 			$test_upstream_file = str_replace('/' . $this->origin_language . '/', '/' . $this->upstream_language . '/', $origin_file);
 			if (!in_array($test_upstream_file, $this->upstream_file_list))
 			{
-				$level = (substr($test_upstream_file, -4) == '.php') ? 'fail' : 'notice';
-				$this->messages->push($level, $this->user->lang('ADDITIONAL_FILE', $test_upstream_file));
+				if (in_array($origin_file, array(
+						'language/' . $this->origin_language . '/AUTHORS',
+						'language/' . $this->origin_language . '/CHANGELOG',
+						'language/' . $this->origin_language . '/README',
+						'language/' . $this->origin_language . '/VERSION',
+					)))
+				{
+					$level = 'debug';
+					$this->messages->push('debug', $this->user->lang('ADDITIONAL_FILE', $origin_file));
+				}
+				else
+				{
+					$level = (substr($origin_file, -4) == '.php') ? 'fail' : 'warning';
+					$this->messages->push($level, $this->user->lang('ADDITIONAL_FILE', $origin_file));
+				}
 			}
 		}
 

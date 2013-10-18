@@ -34,11 +34,18 @@ class filelist_test extends \official\translationvalidator\tests\validator\file\
 			'MISSING_FILE-missing.php',
 			'MISSING_FILE-missing.txt',
 			'MISSING_FILE-subdir/missing.php',
+			'MISSING_FILE-language/tovalidate/LICENSE',
 			'ADDITIONAL_FILE-additional.php',
 			'ADDITIONAL_FILE-subdir/additional.php',
 		),
-		'notice' => array(
+		'warning' => array(
 			'ADDITIONAL_FILE-additional.txt',
+		),
+		'debug' => array(
+			'ADDITIONAL_FILE-language/tovalidate/AUTHORS',
+			'ADDITIONAL_FILE-language/tovalidate/CHANGELOG',
+			'ADDITIONAL_FILE-language/tovalidate/README',
+			'ADDITIONAL_FILE-language/tovalidate/VERSION',
 		),
 	);
 
@@ -52,9 +59,14 @@ class filelist_test extends \official\translationvalidator\tests\validator\file\
 			$this->assertContains(array('type' => 'fail', 'message' => $error, 'source' => null, 'origin' => null), $errors, 'Missing expected error: ' . $error);
 		}
 
-		foreach ($this->messages['notice'] as $notice)
+		foreach ($this->messages['warning'] as $warning)
 		{
-			$this->assertContains(array('type' => 'notice', 'message' => $notice, 'source' => null, 'origin' => null), $errors, 'Missing expected notice: ' . $notice);
+			$this->assertContains(array('type' => 'warning', 'message' => $warning, 'source' => null, 'origin' => null), $errors, 'Missing expected warning: ' . $notice);
+		}
+
+		foreach ($this->messages['debug'] as $debug)
+		{
+			$this->assertContains(array('type' => 'debug', 'message' => $debug, 'source' => null, 'origin' => null), $errors, 'Missing expected debug: ' . $notice);
 		}
 
 		foreach ($errors as $error)

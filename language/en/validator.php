@@ -58,7 +58,7 @@ $lang = array_merge($lang, array(
 
 	'ADDITIONAL_FILE'			=> 'Additional file “%s”',
 	'MISSING_FILE'				=> 'Missing file “%s”',
-	'LANG_MISSING_KEY'			=> 'Missing key “%2$s” in file “%1$s”',
+	'MISSING_KEY'				=> 'Missing key “%2$s” in file “%1$s”',
 	'LANG_OUTPUT'				=> 'File “%1$s” produces output',
 
 	'KEY_NOT_VALIDATED'			=> 'Key “%2$s” in file “%1$s” was not validated',
