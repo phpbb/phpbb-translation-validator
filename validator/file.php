@@ -357,6 +357,7 @@ class file
 		}
 
 		$column_breaks = 0;
+		$entry = 1;
 		foreach ($help as $help)
 		{
 			if (gettype($help) != 'array' || sizeof($help) != 2 || !isset($help[0]) || !isset($help[1]))
@@ -367,7 +368,19 @@ class file
 			{
 				$column_breaks++;
 			}
+
+			if (isset($help[0]))
+			{
+				$this->key_validator->validate($origin_file, $entry . '.0', '', $help[0]);
+			}
+
+			if (isset($help[1]))
+			{
+				$this->key_validator->validate($origin_file, $entry . '.1', '', $help[1]);
+			}
+			$entry++;
 		}
+
 		if ($column_breaks != 1)
 		{
 			$this->messages->push('fail', $this->user->lang('FILE_HELP_ONE_BREAK', $origin_file));
