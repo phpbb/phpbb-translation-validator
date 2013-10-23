@@ -6,7 +6,7 @@ parameters:
 
 services:
     translation.validator.controller:
-        class: \official\translationvalidator\controller\validator
+        class: official\translationvalidator\controller\validator
         arguments:
             - @auth
             - @cache
@@ -21,7 +21,7 @@ services:
             - %core.php_ext%
 
     translation.validator:
-        class: \official\translationvalidator\validator\validator
+        class: official\translationvalidator\validator\validator
         arguments:
             - @translation.validator.filelist
             - @translation.validator.file
@@ -30,11 +30,11 @@ services:
             - %translation.validator.package.dir%
 
     translation.validator.message_collection:
-        class: \official\translationvalidator\message_collection
+        class: official\translationvalidator\message_collection
         arguments:
 
     translation.validator.file:
-        class: \official\translationvalidator\validator\file
+        class: official\translationvalidator\validator\file
         arguments:
             - @translation.validator.key
             - @translation.validator.message_collection
@@ -42,14 +42,14 @@ services:
             - %translation.validator.package.dir%
 
     translation.validator.filelist:
-        class: \official\translationvalidator\validator\filelist
+        class: official\translationvalidator\validator\filelist
         arguments:
             - @translation.validator.message_collection
             - @user
             - %translation.validator.package.dir%
 
     translation.validator.key:
-        class: \official\translationvalidator\validator\key
+        class: official\translationvalidator\validator\key
         arguments:
             - @translation.validator.message_collection
             - @user
