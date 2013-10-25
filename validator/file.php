@@ -161,6 +161,10 @@ class file
 		{
 			$this->validate_index_file($upstream_file, $origin_file);
 		}
+		else if ($origin_file === 'language/' . $this->origin_language . '/LICENSE')
+		{
+			$this->validate_license_file($upstream_file, $origin_file);
+		}
 		else if ($origin_file === 'language/' . $this->origin_language . '/iso.txt')
 		{
 			$this->validate_iso_file($upstream_file, $origin_file);
@@ -448,6 +452,25 @@ class file
 			{
 				$this->messages->push('fail', $this->user->lang('FILE_SEARCH_INVALID_TYPE', $origin_file, htmlspecialchars(serialize($word))));
 			}
+		}
+	}
+
+	/**
+	* Validates the LICENSE file
+	*
+	* Only "GNU GENERAL PUBLIC LICENSE Version 2" is allowed
+	*
+	* @param	string	$upstream_file		Source file for comparison
+	* @param	string	$origin_file		File to validate
+	* @return	null
+	*/
+	public function validate_license_file($upstream_file, $origin_file)
+	{
+		$validate_file = (string) file_get_contents($this->origin_language_dir . '/' . $origin_file);
+
+		if (md5($validate_file) != 'e060338598cd2cd6b8503733fdd40a11')
+		{
+			$this->messages->push('fail', $this->user->lang('INVALID_LICENSE_FILE', $origin_file));
 		}
 	}
 
