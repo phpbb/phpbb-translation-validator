@@ -40,11 +40,14 @@ $lang = array_merge($lang, array(
 	'LANG_UNCLOSED_HTML'		=> 'String “%2$s” in file “%1$s” is missing closing tag for html “%3$s”',
 	'LANG_CLOSING_UNOPENED_HTML'=> 'String “%2$s” in file “%1$s” is closing tag for html “%3$s” which was not opened before',
 
+	'INVALID_DIRECTION'			=> 'The text direction “%2$s” (see file “%1$s”), which you are trying to use, does not exist. Currently only ltr (left-to-right) and rtl (right-to-left) are allowed.',
 	'INVALID_INDEX_FILE'		=> '“%s” should be empty',
 	'INVALID_ISO_FILE'			=> '“%s” should only contain 3 lines',
 	'INVALID_LICENSE_FILE'		=> '“%s” must be a file containing only the “GNU GENERAL PUBLIC LICENSE Version 2, June 1991” license',
 	'INVALID_KEY'				=> 'Invalid key “%2$s” in file “%1$s”',
 	'INVALID_NUM_ARGUMENTS'		=> 'Key “%2$s” in file “%1$s” should have “%4$s” %3$s arguments, but has “%5$s”',
+	'INVALID_PLURAL_RULE'		=> 'Plural rule “%2$d” (see file “%1$s”), which you are trying to use, does not exist. For more information see <a href="https://wiki.phpbb.com/Plural_Rules">https://wiki.phpbb.com/Plural_Rules</a>.',
+	'INVALID_USER_LANG'			=> 'The user language “%2$s” (see file “%1$s”), which you are trying to use, does not match the language.',
 	'INVALID_TYPE'				=> 'Key “%2$s” in file “%1$s” should be type “%3$s” but is type “%4$s”',
 
 	'EMAIL_UTF8'				=> 'The email template “%1$s” is saved as UTF8 with BOM, should be UTF8 <strong>without</strong> BOM',

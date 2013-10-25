@@ -29,10 +29,48 @@ class key
 	*/
 	protected $user;
 
+	/**
+	* Language to validate
+	* @var string
+	*/
+	protected $origin_language;
+
+	/**
+	* Language to compare against
+	* @var string
+	*/
+	protected $upstream_language;
+
 	public function __construct(\official\translationvalidator\message_collection $message_collection, \phpbb\user $user)
 	{
 		$this->messages = $message_collection;
 		$this->user = $user;
+	}
+
+	/**
+	* Set the iso of the language we validate
+	*
+	* @param	string	$language
+	* @return	\official\translationvalidator\validator\file
+	*/
+	public function set_origin_language($language)
+	{
+		$this->origin_language = $language;
+
+		return $this;
+	}
+
+	/**
+	* Set the iso of the language we compare against
+	*
+	* @param	string	$language
+	* @return	\official\translationvalidator\validator\file
+	*/
+	public function set_upstream_language($language)
+	{
+		$this->upstream_language = $language;
+
+		return $this;
 	}
 
 	/**
@@ -52,7 +90,31 @@ class key
 			return;
 		}
 
-		if (gettype($against_language) === 'string')
+		if ($key === 'PLURAL_RULE')
+		{
+			if ($validate_language < 0 || $validate_language > 15)
+			{
+				$this->messages->push('fail', $this->user->lang('INVALID_PLURAL_RULE', $file, $validate_language));
+				return;
+			}
+		}
+		else if ($key === 'DIRECTION')
+		{
+			if (!in_array($validate_language, array('ltr', 'rtl')))
+			{
+				$this->messages->push('fail', $this->user->lang('INVALID_DIRECTION', $file, $validate_language));
+				return;
+			}
+		}
+		else if ($key === 'USER_LANG')
+		{
+			if (str_replace('_', '-', $this->origin_language) !== $validate_language && strpos($validate_language, $this->origin_language . '-') !== 0)
+			{
+				$this->messages->push('fail', $this->user->lang('INVALID_USER_LANG', $file, $validate_language));
+				return;
+			}
+		}
+		else if (gettype($against_language) === 'string')
 		{
 			$this->validate_string($file, $key, $against_language, $validate_language);
 		}

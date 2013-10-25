@@ -99,6 +99,8 @@ class file
 			throw new \OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
 		}
 
+		$this->key_validator->set_origin_language($language);
+
 		return $this;
 	}
 
@@ -117,6 +119,8 @@ class file
 		{
 			throw new \OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
 		}
+
+		$this->key_validator->set_upstream_language($language);
 
 		return $this;
 	}
