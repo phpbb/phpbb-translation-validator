@@ -42,6 +42,7 @@ $lang = array_merge($lang, array(
 
 	'INVALID_INDEX_FILE'		=> '“%s” should be empty',
 	'INVALID_ISO_FILE'			=> '“%s” should only contain 3 lines',
+	'INVALID_LICENSE_FILE'		=> '“%s” must be a file containing only the “GNU GENERAL PUBLIC LICENSE Version 2, June 1991” license',
 	'INVALID_KEY'				=> 'Invalid key “%2$s” in file “%1$s”',
 	'INVALID_NUM_ARGUMENTS'		=> 'Key “%2$s” in file “%1$s” should have “%4$s” %3$s arguments, but has “%5$s”',
 	'INVALID_TYPE'				=> 'Key “%2$s” in file “%1$s” should be type “%3$s” but is type “%4$s”',
