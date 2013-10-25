@@ -29,10 +29,6 @@ class key
 	*/
 	protected $user;
 
-	protected $validate_files;
-	protected $validate_language_dir;
-	protected $validate_against_dir;
-
 	public function __construct(\official\translationvalidator\message_collection $message_collection, \phpbb\user $user)
 	{
 		$this->messages = $message_collection;
@@ -70,11 +66,12 @@ class key
 	* Decides which array validation function should be used, based on the key
 	*
 	* Supports:
-	*	- Permissions
-	*	- Timezone
 	*	- Dateformats
+	*	- Datetime
+	*	- Timezones
+	*	- BBCode Tokens
+	*	- Report Reasons
 	*	- Plurals
-	*	- Custom Arrays (sometimes we abuse them)
 	*
 	* @param	string	$file		File to validate
 	* @param	string	$key		Key to validate
@@ -84,24 +81,38 @@ class key
 	*/
 	public function validate_array($file, $key, $against_language, $validate_language)
 	{
+		//var_dump($key, $against_language); echo '<br /><br />';
 		if ($key === 'dateformats')
 		{
 			$this->validate_dateformats($file, $key, $against_language, $validate_language);
 		}
-		// Remove for 3.1
-		else if (strpos($key, 'acl_') === 0)
+		else if ($key === 'datetime')
 		{
-			$this->validate_acl($file, $key, $against_language, $validate_language);
+			#$this->validate_dateformats($file, $key, $against_language, $validate_language);
 		}
-		// Remove for 3.1
-		else if ($key === 'permission_cat' || $key === 'permission_type')
+		else if ($key === 'timezones')
 		{
-			$this->validate_array_key($file, $key, $against_language, $validate_language);
+			#$this->validate_dateformats($file, $key, $against_language, $validate_language);
 		}
-		// Remove for 3.1
-		else if ($key === 'tz' || $key === 'tz_zones')
+		else if ($key === 'tokens')
 		{
-			$this->validate_array_key($file, $key, $against_language, $validate_language);
+			#$this->validate_array_key($file, $key, $against_language, $validate_language);
+		}
+		else if ($key === 'report_reasons')
+		{
+			#$this->validate_array_key($file, $key, $against_language, $validate_language);
+		}
+		else if ($key === 'PM_ACTION')
+		{
+			#$this->validate_array_key($file, $key, $against_language, $validate_language);
+		}
+		else if ($key === 'PM_CHECK')
+		{
+			#$this->validate_array_key($file, $key, $against_language, $validate_language);
+		}
+		else if ($key === 'PM_RULE')
+		{
+			#$this->validate_array_key($file, $key, $against_language, $validate_language);
 		}
 		// Fix for 3.1 - Plurals are normal there...
 		else if ($key === 'NUM_POSTS_IN_QUEUE' || $key === 'USER_LAST_REMINDED')
