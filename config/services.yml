@@ -2,7 +2,7 @@ imports:
 #    - { resource: parameters.yml }
 
 parameters:
-    translation.validator.package.dir: %core.root_path%store/language-packages/3.1/
+    translation.validator.package.dir: %core.root_path%store/language-packages/
 
 services:
     translation.validator.controller:

@@ -55,14 +55,16 @@ class validator
 	/**
 	* @return Symfony\Component\HttpFoundation\Response A Symfony Response object
 	*/
-	public function validate($lang, $validate)
+	public function validate($version, $origin, $upstream)
 	{
 		$validator = $this->container->get('translation.validator');
 
 		try
 		{
-			$validation_report = $validator->set_upstream_language($validate)
-				->set_origin_language($lang)
+			$validation_report = $validator
+				->set_version($version)
+				->set_upstream_language($upstream)
+				->set_origin_language($origin)
 				->validate();
 		}
 		catch (Exception $e)
@@ -71,7 +73,7 @@ class validator
 		}
 
 		$this->template->assign_vars(array(
-			'TITLE'		=> $this->user->lang('TRANSLATION_VALIDATE_AGAINST', $lang, $validate),
+			'TITLE'		=> $this->user->lang('TRANSLATION_VALIDATE_AGAINST', $origin, $upstream),
 		));
 
 		foreach ($validation_report->get_sorted_messages() as $message)

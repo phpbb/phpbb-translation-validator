@@ -35,10 +35,22 @@ class file
 	protected $user;
 
 	/**
-	* Path to the folder where the languages are.
+	* Path to the folder where the language versions are.
 	* @var string
 	*/
 	protected $package_path;
+
+	/**
+	* Path to the folder where the languages of a specific version are.
+	* @var string
+	*/
+	protected $version_package_path;
+
+	/**
+	* phpBB Version we are validating (Should be '3.0' or '3.1' for now)
+	* @var string
+	*/
+	protected $phpbb_version;
 
 	/**
 	* Language to validate
@@ -70,17 +82,19 @@ class file
 	* Construct
 	*
 	* @param	\official\translationvalidator\validator\key	$key_validator			Validator for the language key elements
-	* @param	\official\translationvalidator\message_collection 	$emessage_collection	Collection where we push our messages to
+	* @param	\official\translationvalidator\message_collection 	$message_collection	Collection where we push our messages to
 	* @param	\phpbb\user	$user		Current user object, only required for lang()
 	* @param	string	$lang_path		Path to the folder where the languages are
 	* @return	\official\translationvalidator\validator\file
 	*/
-	public function __construct(\official\translationvalidator\validator\key $key_validator, \official\translationvalidator\message_collection $emessage_collection, \phpbb\user $user, $lang_path)
+	public function __construct(\official\translationvalidator\validator\key $key_validator, \official\translationvalidator\message_collection $message_collection, \phpbb\user $user, $lang_path)
 	{
 		$this->key_validator = $key_validator;
-		$this->messages = $emessage_collection;
+		$this->messages = $message_collection;
 		$this->user = $user;
-		$this->package_path = (string) $lang_path;
+		$this->package_path = $lang_path;
+		$this->version_package_path = $lang_path;
+		$this->phpbb_version = '3.0';
 	}
 
 	/**
@@ -92,7 +106,7 @@ class file
 	public function set_origin_language($language)
 	{
 		$this->origin_language = $language;
-		$this->origin_language_dir = $this->package_path . $this->origin_language;
+		$this->origin_language_dir = $this->version_package_path . $this->origin_language;
 
 		if (!file_exists($this->origin_language_dir))
 		{
@@ -113,7 +127,7 @@ class file
 	public function set_upstream_language($language)
 	{
 		$this->upstream_language = $language;
-		$this->upstream_language_dir = $this->package_path . $this->upstream_language;
+		$this->upstream_language_dir = $this->version_package_path . $this->upstream_language;
 
 		if (!file_exists($this->upstream_language_dir))
 		{
@@ -121,6 +135,27 @@ class file
 		}
 
 		$this->key_validator->set_upstream_language($language);
+
+		return $this;
+	}
+
+	/**
+	* Set the phpbb version we validate
+	*
+	* @param	string	$version	Should be 3.0 or 3.1 for now
+	* @return	\official\translationvalidator\validator\file
+	*/
+	public function set_version($version)
+	{
+		$this->phpbb_version = $version;
+		$this->version_package_path = $this->package_path . $this->phpbb_version . '/';
+
+		if (!file_exists($this->version_package_path))
+		{
+			throw new \OutOfBoundsException($this->user->lang('INVALID_VERSION', $version));
+		}
+
+		$this->key_validator->set_version($version);
 
 		return $this;
 	}

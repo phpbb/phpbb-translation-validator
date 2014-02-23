@@ -30,10 +30,22 @@ class filelist
 	protected $user;
 
 	/**
-	* Path to the folder where the languages are.
+	* Path to the folder where the language versions are.
 	* @var string
 	*/
 	protected $package_path;
+
+	/**
+	* Path to the folder where the languages of a specific version are.
+	* @var string
+	*/
+	protected $version_package_path;
+
+	/**
+	* phpBB Version we are validating (Should be '3.0' or '3.1' for now)
+	* @var string
+	*/
+	protected $phpbb_version;
 
 	/**
 	* Language to validate
@@ -86,6 +98,8 @@ class filelist
 		$this->messages = $message_collection;
 		$this->user = $user;
 		$this->package_path = $lang_path;
+		$this->version_package_path = $lang_path;
+		$this->phpbb_version = '3.0';
 	}
 
 	/**
@@ -97,7 +111,7 @@ class filelist
 	public function set_origin_language($language)
 	{
 		$this->origin_language = $language;
-		$this->origin_language_dir = $this->package_path . $this->origin_language;
+		$this->origin_language_dir = $this->version_package_path . $this->origin_language;
 
 		if (!file_exists($this->origin_language_dir))
 		{
@@ -116,11 +130,30 @@ class filelist
 	public function set_upstream_language($language)
 	{
 		$this->upstream_language = $language;
-		$this->upstream_language_dir = $this->package_path . $this->upstream_language;
+		$this->upstream_language_dir = $this->version_package_path . $this->upstream_language;
 
 		if (!file_exists($this->upstream_language_dir))
 		{
 			throw new \OutOfBoundsException($this->user->lang('INVALID_LANGUAGE', $language));
+		}
+
+		return $this;
+	}
+
+	/**
+	* Set the phpbb version we validate
+	*
+	* @param	string	$version	Should be 3.0 or 3.1 for now
+	* @return	\official\translationvalidator\validator\filelist
+	*/
+	public function set_version($version)
+	{
+		$this->phpbb_version = $version;
+		$this->version_package_path = $this->package_path . $this->phpbb_version . '/';
+
+		if (!file_exists($this->version_package_path))
+		{
+			throw new \OutOfBoundsException($this->user->lang('INVALID_VERSION', $version));
 		}
 
 		return $this;

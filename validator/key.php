@@ -41,17 +41,30 @@ class key
 	*/
 	protected $upstream_language;
 
+	/**
+	* phpBB Version we are validating (Should be '3.0' or '3.1' for now)
+	* @var string
+	*/
+	protected $phpbb_version;
+
+	/**
+	* Construct
+	*
+	* @param	\official\translationvalidator\message_collection 	$message_collection	Collection where we push our messages to
+	* @param	\phpbb\user	$user		Current user object, only required for lang()
+	*/
 	public function __construct(\official\translationvalidator\message_collection $message_collection, \phpbb\user $user)
 	{
 		$this->messages = $message_collection;
 		$this->user = $user;
+		$this->phpbb_version = '3.0';
 	}
 
 	/**
 	* Set the iso of the language we validate
 	*
 	* @param	string	$language
-	* @return	\official\translationvalidator\validator\file
+	* @return	\official\translationvalidator\validator\key
 	*/
 	public function set_origin_language($language)
 	{
@@ -64,11 +77,24 @@ class key
 	* Set the iso of the language we compare against
 	*
 	* @param	string	$language
-	* @return	\official\translationvalidator\validator\file
+	* @return	\official\translationvalidator\validator\key
 	*/
 	public function set_upstream_language($language)
 	{
 		$this->upstream_language = $language;
+
+		return $this;
+	}
+
+	/**
+	* Set the phpbb version we validate
+	*
+	* @param	string	$version	Should be 3.0 or 3.1 for now
+	* @return	\official\translationvalidator\validator\key
+	*/
+	public function set_version($version)
+	{
+		$this->phpbb_version = $version;
 
 		return $this;
 	}
@@ -90,7 +116,7 @@ class key
 			return;
 		}
 
-		if ($key === 'PLURAL_RULE')
+		if ($this->phpbb_version !== '3.0' && $key === 'PLURAL_RULE')
 		{
 			if ($validate_language < 0 || $validate_language > 15)
 			{
@@ -323,7 +349,7 @@ class key
 			}
 			else
 			{
-				$this->validate_array_key($file, $key . '.' . $array_key, $lang, $validate_language[$array_key]);
+				$this->validate_array($file, $key . '.' . $array_key, $lang, $validate_language[$array_key]);
 			}
 		}
 
