@@ -174,36 +174,34 @@ class key
 		{
 			$this->validate_dateformats($file, $key, $against_language, $validate_language);
 		}
-		else if ($key === 'datetime')
+		else if (
+			$key === 'datetime' ||
+			$key === 'timezones' ||
+			$key === 'tokens' ||
+			$key === 'report_reasons' ||
+			$key === 'PM_ACTION' ||
+			$key === 'PM_CHECK' ||
+			$key === 'PM_RULE'
+		)
 		{
-			#$this->validate_dateformats($file, $key, $against_language, $validate_language);
+			$this->validate_array_key($file, $key, $against_language, $validate_language);
 		}
-		else if ($key === 'timezones')
+		// ACL array in 3.0, removed in 3.1
+		else if ($this->phpbb_version === '3.0' && strpos($key, 'acl_') === 0)
 		{
-			#$this->validate_dateformats($file, $key, $against_language, $validate_language);
+			$this->validate_acl($file, $key, $against_language, $validate_language);
 		}
-		else if ($key === 'tokens')
+		// Some special arrays in 3.0, removed in 3.1
+		else if ($this->phpbb_version === '3.0' && (
+			$key === 'permission_cat' ||
+			$key === 'permission_type' ||
+			$key === 'tz' ||
+			$key === 'tz_zones'))
 		{
-			#$this->validate_array_key($file, $key, $against_language, $validate_language);
+			$this->validate_array_key($file, $key, $against_language, $validate_language);
 		}
-		else if ($key === 'report_reasons')
-		{
-			#$this->validate_array_key($file, $key, $against_language, $validate_language);
-		}
-		else if ($key === 'PM_ACTION')
-		{
-			#$this->validate_array_key($file, $key, $against_language, $validate_language);
-		}
-		else if ($key === 'PM_CHECK')
-		{
-			#$this->validate_array_key($file, $key, $against_language, $validate_language);
-		}
-		else if ($key === 'PM_RULE')
-		{
-			#$this->validate_array_key($file, $key, $against_language, $validate_language);
-		}
-		// Fix for 3.1 - Plurals are normal there...
-		else if ($key === 'NUM_POSTS_IN_QUEUE' || $key === 'USER_LAST_REMINDED')
+		// Some special plurals in 3.0
+		else if ($this->phpbb_version === '3.0' && ($key === 'NUM_POSTS_IN_QUEUE' || $key === 'USER_LAST_REMINDED'))
 		{
 			$this->validate_array_key($file, $key, $against_language, $validate_language);
 		}
@@ -227,11 +225,22 @@ class key
 				{
 					$this->validate_array_key($file, $key, $against_language, $validate_language);
 				}
-				else if (isset($key_types['integer']))
+				else if ($this->phpbb_version !== '3.0' && isset($key_types['integer']))
 				{
-					// Plurals?!
+					// @todo: Plurals have yet to be fixed for 3.1
 					$this->messages->push('debug', $this->user->lang('LANG_ARRAY_UNSUPPORTED', $file, $key));
 					$this->validate_array_key($file, $key, $against_language, $validate_language);
+					return;
+				}
+				else if ($this->phpbb_version === '3.0' && isset($key_types['integer']))
+				{
+					// For 3.0 this should not happen
+					$this->messages->push('debug', $this->user->lang('LANG_ARRAY_UNSUPPORTED', $file, $key));
+					return;
+				}
+				else
+				{
+					$this->messages->push('debug', $this->user->lang('LANG_ARRAY_MIXED', $file, $key, implode(', ', array_keys($key_types))));
 					return;
 				}
 			}

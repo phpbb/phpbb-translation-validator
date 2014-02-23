@@ -210,6 +210,7 @@ class file
 		}
 		else
 		{
+			// @todo: stylesheet.css have yet to be fixed for 3.1
 			$this->messages->push('debug', $this->user->lang('FILE_NOT_VALIDATED', $origin_file));
 		}
 	}
