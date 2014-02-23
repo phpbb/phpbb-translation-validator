@@ -45,4 +45,17 @@ class message_collection
 	{
 		return $this->messages;
 	}
+
+	public function get_sorted_messages()
+	{
+		$messages = $this->messages;
+		foreach ($messages as $message)
+		{
+			$sort_key[]  = $message['message'];
+		}
+
+		array_multisort($sort_key, SORT_ASC, $messages);
+
+		return $messages;
+	}
 }

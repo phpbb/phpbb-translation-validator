@@ -74,7 +74,7 @@ class validator
 			'TITLE'		=> $this->user->lang('TRANSLATION_VALIDATE_AGAINST', $lang, $validate),
 		));
 
-		foreach ($validation_report->get_messages() as $message)
+		foreach ($validation_report->get_sorted_messages() as $message)
 		{
 			$this->template->assign_block_vars($message['type'], array(
 				'MESSAGE'		=> $message['message'],
