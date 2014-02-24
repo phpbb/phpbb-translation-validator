@@ -3,8 +3,8 @@
 	"type": "phpbb-extension",
 	"description": "Validates files of translations to the english default package",
 	"homepage": "https://github.com/nickvergessen/phpbb3-translation-validator",
-	"version": "1.1.0",
-	"time": "2013-08-05 01:01:01",
+	"version": "1.2.0",
+	"time": "2014-02-25 01:01:01",
 	"licence": "GPL-2.0",
 	"authors": [
 		{

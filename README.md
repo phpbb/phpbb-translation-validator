@@ -1,6 +1,6 @@
 # phpBB Translation Validator Extension
 
-Allows to validate **phpBB 3.1** language packages.
+Allows to validate **phpBB** language packages.
 
 ## Requirement
 
@@ -8,21 +8,23 @@ This extension requires phpBB 3.1 to be installed.
 
 ## Installation Translation Validator for validating a language package
 
-[Download](https://github.com/nickvergessen/phpbb3-translation-validator/archive/develop-ascraeus.zip) the package, unzip it and move the content to `phpBB/ext/official/translationvalidator`, so that the file `phpBB/ext/official/translationvalidator/ext.php` exists.
+[Download](https://github.com/nickvergessen/phpbb3-translation-validator/archive/develop.zip) the package, unzip it and move the content to `phpBB/ext/official/translationvalidator`, so that the file `phpBB/ext/official/translationvalidator/ext.php` exists.
 
 Go to "ACP" > "Customise" > "Extensions" and enable the "phpBB Translation Validator" extension.
 
 ## Validating a language package
 
-In order to validate your language package, you need to put your language package into the following folder (unzipped) (replace {your-iso} with e.g. **en** ):
+In order to validate your language package, you need to put your language package into the following folder (unzipped) (replace {your-iso} with e.g. **en** and {version} with **3.0** or **3.1**):
 
-    phpBB/store/language-packages/{your-iso}/
+    phpBB/store/language-packages/{version}/{your-iso}/
 
-The folders `phpBB/store/language-packages/{your-iso}/language/` and `phpBB/store/language-packages/{your-iso}/styles/` should exist. Now open
+The folders `phpBB/store/language-packages/{version}/{your-iso}/language/` and `phpBB/store/language-packages/{version}/{your-iso}/styles/` should exist. Now open
 
-	phpBB/app.php/validate/{your-iso}
+To validate a language package open :
 
-with your browser.
+	phpBB/app.php/validate/{version}/{your-iso}
+
+in your browser.
 
 ## Installation for Validation-Tool Development
 
