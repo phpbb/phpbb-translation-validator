@@ -8,7 +8,7 @@ This extension requires phpBB 3.1 to be installed.
 
 ## Installation Translation Validator for validating a language package
 
-[Download](https://github.com/nickvergessen/phpbb3-translation-validator/archive/develop.zip) the package, unzip it and move the content to `phpBB/ext/official/translationvalidator`, so that the file `phpBB/ext/official/translationvalidator/ext.php` exists.
+[Download](https://github.com/nickvergessen/phpbb3-translation-validator/archive/master.zip) the package, unzip it and move the content to `phpBB/ext/official/translationvalidator`, so that the file `phpBB/ext/official/translationvalidator/ext.php` exists.
 
 Go to "ACP" > "Customise" > "Extensions" and enable the "phpBB Translation Validator" extension.
 
