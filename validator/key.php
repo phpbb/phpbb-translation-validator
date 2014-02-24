@@ -48,6 +48,12 @@ class key
 	protected $phpbb_version;
 
 	/**
+	* Used plural rule
+	* @var int
+	*/
+	protected $plural_rule;
+
+	/**
 	* Construct
 	*
 	* @param	\official\translationvalidator\message_collection 	$message_collection	Collection where we push our messages to
@@ -58,6 +64,7 @@ class key
 		$this->messages = $message_collection;
 		$this->user = $user;
 		$this->phpbb_version = '3.0';
+		$this->plural_rule = 1;
 	}
 
 	/**
@@ -95,6 +102,20 @@ class key
 	public function set_version($version)
 	{
 		$this->phpbb_version = $version;
+
+		return $this;
+	}
+
+	/**
+	* Set the plural rule for the language
+	* See https://wiki.phpbb.com/Plural_Rules for more details
+	*
+	* @param	int	$plural_rule
+	* @return	\official\translationvalidator\validator\key
+	*/
+	public function set_plural_rule($plural_rule)
+	{
+		$this->plural_rule = $plural_rule;
 
 		return $this;
 	}
@@ -227,27 +248,119 @@ class key
 				}
 				else if ($this->phpbb_version !== '3.0' && isset($key_types['integer']))
 				{
-					// @todo: Plurals have yet to be fixed for 3.1
-					$this->messages->push('debug', $this->user->lang('LANG_ARRAY_UNSUPPORTED', $file, $key));
-					$this->validate_array_key($file, $key, $against_language, $validate_language);
-					return;
+					$this->validate_plural_keys($file, $key, $against_language, $validate_language);
 				}
 				else if ($this->phpbb_version === '3.0' && isset($key_types['integer']))
 				{
 					// For 3.0 this should not happen
 					$this->messages->push('debug', $this->user->lang('LANG_ARRAY_UNSUPPORTED', $file, $key));
-					return;
 				}
 				else
 				{
 					$this->messages->push('debug', $this->user->lang('LANG_ARRAY_MIXED', $file, $key, implode(', ', array_keys($key_types))));
-					return;
 				}
 			}
 			else
 			{
 				$this->messages->push('debug', $this->user->lang('LANG_ARRAY_MIXED', $file, $key, implode(', ', array_keys($key_types))));
 			}
+		}
+	}
+
+	/**
+	* Validates the plural keys
+	*
+	* The set of plural cases should not be empty
+	* There might be an additional case for 0 items
+	* There must not be an additional case
+	* There might be less cases then possible
+	*
+	* @param	string	$file		File to validate
+	* @param	string	$key		Key to validate
+	* @param	array	$validate_language		Translated language
+	* @return	null
+	*/
+	public function validate_plural_keys($file, $key, $against_language, $validate_language)
+	{
+		$origin_cases = array_keys($validate_language);
+
+		if (empty($origin_cases))
+		{
+			$this->messages->push('fail', $this->user->lang('LANG_PLURAL_EMPTY', $file, $key));
+			return;
+		}
+
+		$valid_cases = $this->get_plural_keys($this->plural_rule);
+
+		$intersect_cases = array_intersect($origin_cases, $valid_cases);
+		$missing_cases = array_diff($valid_cases, $origin_cases);
+		$additional_cases = array_diff($origin_cases, $valid_cases, array(0));
+
+		if (!empty($additional_cases))
+		{
+			$this->messages->push('fail', $this->user->lang('LANG_PLURAL_ADDITIONAL', $file, $key, implode(', ', $additional_cases)));
+		}
+
+		if (empty($intersect_cases))
+		{
+			// No intersection means there are no entries apart from the 0
+			$this->messages->push('fail', $this->user->lang('LANG_PLURAL_EMPTY', $file, $key));
+			return;
+		}
+
+		if (!empty($missing_cases))
+		{
+			// Do we want to allow this? Lazy translators...
+			$this->messages->push('debug', $this->user->lang('LANG_PLURAL_MISSING', $file, $key, implode(', ', $missing_cases)));
+		}
+
+		if (!empty($intersect_cases))
+		{
+			$compare_against = '';
+			if ($against_language)
+			{
+				$compare_against = end($against_language);
+			}
+
+			foreach ($intersect_cases as $case)
+			{
+				$this->validate_string($file, $key . '.' . $case, $compare_against, $validate_language[$case], true);
+			}
+		}
+	}
+
+	/**
+	* Returns an array with the valid cases for the given plural rule
+	*
+	* @param	int	$plural_rule
+	* @return	array
+	*/
+	protected function get_plural_keys($plural_rule)
+	{
+		switch ($plural_rule)
+		{
+			case 0:
+				return array(1);
+			case 1:
+			case 2:
+			case 15:
+				return array(1, 2);
+			case 3:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+			case 14:
+				return array(1, 2, 3);
+			case 4:
+			case 10:
+			case 13:
+				return array(1, 2, 3, 4);
+			case 11:
+				return array(1, 2, 3, 4, 5);
+			case 12:
+				return array(1, 2, 3, 4, 5, 6);
 		}
 	}
 
@@ -390,9 +503,10 @@ class key
 	* @param	string	$key		Key to validate
 	* @param	string	$against_language		Original language string
 	* @param	string	$validate_language		Translated language string
+	* @param	string	$is_plural	String is part of a plural (we don't complain the, if the first integer is missing)
 	* @return	null
 	*/
-	public function validate_string($file, $key, $against_language, $validate_language)
+	public function validate_string($file, $key, $against_language, $validate_language, $is_plural = false)
 	{
 		if (gettype($against_language) !== gettype($validate_language))
 		{
@@ -400,10 +514,12 @@ class key
 			return;
 		}
 
-		$against_strings = substr_count($against_language, '%s');
-		$against_integers = substr_count($against_language, '%d');
-		$validate_strings = substr_count($validate_language, '%s');
-		$validate_integers = substr_count($validate_language, '%d');
+		$against_strings = $against_strings_nonumber = substr_count($against_language, '%s');
+		$against_integers = $against_integers_nonumber = substr_count($against_language, '%d');
+		$validate_strings = $validate_strings_nonumber = substr_count($validate_language, '%s');
+		$validate_integers = $validate_integers_nonumber = substr_count($validate_language, '%d');
+
+		$against_integers_ary = $validate_integers_ary = array();
 		for ($i = 1; $i < 10; $i++)
 		{
 			if ($looping_count = substr_count($against_language, '%' . $i . '$s'))
@@ -413,6 +529,7 @@ class key
 			if ($looping_count = substr_count($against_language, '%' . $i . '$d'))
 			{
 				$against_integers++;
+				$against_integers_ary[] = $i;
 			}
 			if ($looping_count = substr_count($validate_language, '%' . $i . '$s'))
 			{
@@ -421,6 +538,7 @@ class key
 			if ($looping_count = substr_count($validate_language, '%' . $i . '$d'))
 			{
 				$validate_integers++;
+				$validate_integers_ary[] = $i;
 			}
 		}
 
@@ -431,8 +549,44 @@ class key
 
 		if ($against_integers - $validate_integers !== 0)
 		{
-			$level = ($against_integers == 1 && $validate_integers == 0) ? 'warning' : 'fail';
-			$this->messages->push($level, $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers), $against_language, $validate_language);
+			if (!$is_plural || ($is_plural && $against_integers - $validate_integers !== 1 && $against_integers - $validate_integers !== -1))
+			{
+				$this->messages->push('fail', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers), $against_language, $validate_language);
+			}
+			else if ($is_plural)
+			{
+				// If there are more then 1 integer parameters and they have no numbers
+				// the number of integers must match!
+				if ($against_integers_nonumber > 1)
+				{
+					$this->messages->push('fail', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers), $against_language, $validate_language);
+				}
+				else if (!$against_integers_nonumber)
+				{
+					if (sizeof($against_integers_ary) > sizeof($validate_integers_ary))
+					{
+						// If the integers have numbers, only the first integer is allowed to be missing.
+						array_pop($against_integers_ary);
+						$diff = array_diff($against_integers_ary, $validate_integers_ary);
+						if (!empty($diff))
+						{
+							$this->messages->push('fail', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers), $against_language, $validate_language);
+						}
+					}
+					else
+					{
+						// But this could also happen to the against language. So when the first integer
+						// of the validate language is prior to against, that is okay aswell.
+						array_pop($validate_integers_ary);
+						$diff = array_diff($validate_integers_ary, $against_integers_ary);
+						if (empty($diff))
+						{
+							$this->messages->push('fail', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers), $against_language, $validate_language);
+						}
+					}
+				}
+
+			}
 		}
 
 		$this->validate_html($file, $key, $against_language, $validate_language);

@@ -39,6 +39,9 @@ $lang = array_merge($lang, array(
 	'LANG_INVALID_HTML'			=> 'String “%2$s” in file “%1$s” is using invalid html “%3$s”',
 	'LANG_UNCLOSED_HTML'		=> 'String “%2$s” in file “%1$s” is missing closing tag for html “%3$s”',
 	'LANG_CLOSING_UNOPENED_HTML'=> 'String “%2$s” in file “%1$s” is closing tag for html “%3$s” which was not opened before',
+	'LANG_PLURAL_EMPTY'			=> 'Plural array “%2$s” in file “%1$s” should not be empty',
+	'LANG_PLURAL_MISSING'		=> 'Plural array “%2$s” in file “%1$s” might be missing case: %3$s',
+	'LANG_PLURAL_ADDITIONAL'	=> 'Plural array “%2$s” in file “%1$s” has additional case: %3$s',
 
 	'INVALID_DIRECTION'			=> 'The text direction “%2$s” (see file “%1$s”), which you are trying to use, does not exist. Currently only ltr (left-to-right) and rtl (right-to-left) are allowed.',
 	'INVALID_INDEX_FILE'		=> '“%s” should be empty',

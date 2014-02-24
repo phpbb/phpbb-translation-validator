@@ -97,6 +97,12 @@ class file
 		$this->phpbb_version = '3.0';
 	}
 
+	protected function guess_plural_rule()
+	{
+		@include($this->origin_language_dir . '/language/' . $this->origin_language . '/common.php');
+		return isset($lang['PLURAL_RULE']) ? $lang['PLURAL_RULE'] : 1;
+	}
+
 	/**
 	* Set the iso of the language we validate
 	*
@@ -114,6 +120,7 @@ class file
 		}
 
 		$this->key_validator->set_origin_language($language);
+		$this->key_validator->set_plural_rule($this->guess_plural_rule());
 
 		return $this;
 	}
