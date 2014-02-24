@@ -201,7 +201,7 @@ class key
 			$this->validate_array_key($file, $key, $against_language, $validate_language);
 		}
 		// Some special plurals in 3.0
-		else if ($this->phpbb_version === '3.0' && ($key === 'NUM_POSTS_IN_QUEUE' || $key === 'USER_LAST_REMINDED'))
+		else if ($this->phpbb_version === '3.0' && ($key === 'datetime.AGO' || $key === 'NUM_POSTS_IN_QUEUE' || $key === 'USER_LAST_REMINDED'))
 		{
 			$this->validate_array_key($file, $key, $against_language, $validate_language);
 		}
