@@ -15,9 +15,15 @@ class validate_help_test extends \official\translationvalidator\tests\validator\
 	{
 		return array(
 			array('help/valid.php', array()),
-			array('help/no_help.php', array(array('type' => 'fail', 'message' => 'FILE_INVALID_VARS-help/no_help.php-help', 'source' => null, 'origin' => null))),
-			array('help/invalid_help_var.php', array(array('type' => 'fail', 'message' => 'FILE_INVALID_VARS-help/invalid_help_var.php-help', 'source' => null, 'origin' => null))),
-			array('help/additional_variable.php', array(array('type' => 'fail', 'message' => 'FILE_INVALID_VARS-help/additional_variable.php-help', 'source' => null, 'origin' => null))),
+			array('help/no_help.php', array(
+				array('type' => 'fail', 'message' => 'FILE_INVALID_VARS-help/no_help.php-help', 'source' => null, 'origin' => null),
+			)),
+			array('help/invalid_help_var.php', array(
+				array('type' => 'fail', 'message' => 'FILE_INVALID_VARS-help/invalid_help_var.php-help', 'source' => null, 'origin' => null),
+			)),
+			array('help/additional_variable.php', array(
+				array('type' => 'fail', 'message' => 'FILE_INVALID_VARS-help/additional_variable.php-help', 'source' => null, 'origin' => null),
+			)),
 			array('help/invalid_help.php', array(
 				array('type' => 'fail', 'message' => 'FILE_HELP_INVALID_ENTRY-help/invalid_help.php-a:1:{i:0;s:2:&quot;--&quot;;}', 'source' => null, 'origin' => null),
 				array('type' => 'fail', 'message' => 'FILE_HELP_INVALID_ENTRY-help/invalid_help.php-a:2:{i:0;s:2:&quot;--&quot;;i:2;s:2:&quot;--&quot;;}', 'source' => null, 'origin' => null),

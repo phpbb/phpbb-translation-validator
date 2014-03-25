@@ -407,9 +407,16 @@ class file
 			return;
 		}
 
+		$validate = $help;
+		unset($help);
+
+		include($this->upstream_language_dir . '/' . $upstream_file);
+		$against = $help;
+		unset($help);
+
 		$column_breaks = 0;
-		$entry = 1;
-		foreach ($help as $help)
+		$entry = 0;
+		foreach ($validate as $help)
 		{
 			if (gettype($help) != 'array' || sizeof($help) != 2 || !isset($help[0]) || !isset($help[1]))
 			{
@@ -422,12 +429,14 @@ class file
 
 			if (isset($help[0]))
 			{
-				$this->key_validator->validate($origin_file, $entry . '.0', '', $help[0]);
+				$compare = isset($against[$entry][0]) ? $against[$entry][0] : '';
+				$this->key_validator->validate($origin_file, $entry . '.0', $compare, $help[0]);
 			}
 
 			if (isset($help[1]))
 			{
-				$this->key_validator->validate($origin_file, $entry . '.1', '', $help[1]);
+				$compare = isset($against[$entry][1]) ? $against[$entry][1] : '';
+				$this->key_validator->validate($origin_file, $entry . '.1', $compare, $help[1]);
 			}
 			$entry++;
 		}
