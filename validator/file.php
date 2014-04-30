@@ -237,6 +237,7 @@ class file
 	public function validate_lang_file($upstream_file, $origin_file)
 	{
 		ob_start();
+		/** @var $lang */
 		include($this->origin_language_dir . '/' . $origin_file);
 
 		$defined_variables = get_defined_vars();
@@ -260,6 +261,7 @@ class file
 		$validate = $lang;
 		unset($lang);
 
+		/** @var $lang */
 		include($this->upstream_language_dir . '/' . $upstream_file);
 		$against = $lang;
 		unset($lang);
@@ -374,7 +376,7 @@ class file
 		// Check for new liens at the end of the file
 		if (end($validate_file) !== '')
 		{
-			$this->messages->push('debug', $this->user->lang('EMAIL_MISSING_NEWLINE', $origin_file), implode("\n", $against_file), implode("\n", $validate_file));
+			$this->messages->push((($this->phpbb_version == '3.1') ? 'warning' : 'debug'), $this->user->lang('EMAIL_MISSING_NEWLINE', $origin_file), implode("\n", $against_file), implode("\n", $validate_file));
 		}
 	}
 
@@ -398,6 +400,7 @@ class file
 	*/
 	public function validate_help_file($upstream_file, $origin_file)
 	{
+		/** @var $help */
 		include($this->origin_language_dir . '/' . $origin_file);
 
 		$defined_variables = get_defined_vars();
@@ -410,6 +413,7 @@ class file
 		$validate = $help;
 		unset($help);
 
+		/** @var $help */
 		include($this->upstream_language_dir . '/' . $upstream_file);
 		$against = $help;
 		unset($help);
@@ -461,6 +465,7 @@ class file
 	*/
 	public function validate_search_synonyms_file($upstream_file, $origin_file)
 	{
+		/** @var $synonyms */
 		include($this->origin_language_dir . '/' . $origin_file);
 
 		$defined_variables = get_defined_vars();
@@ -493,6 +498,7 @@ class file
 	*/
 	public function validate_search_ignore_words_file($upstream_file, $origin_file)
 	{
+		/** @var $words */
 		include($this->origin_language_dir . '/' . $origin_file);
 
 		$defined_variables = get_defined_vars();
