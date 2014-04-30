@@ -204,6 +204,16 @@ class filelist
 					$level = 'debug';
 					$this->messages->push('debug', $this->user->lang('ADDITIONAL_FILE', $origin_file));
 				}
+				else if ($this->phpbb_version == '3.1' && in_array($origin_file, array(
+						'language/' . $this->origin_language . '/AUTHORS.md',
+						'language/' . $this->origin_language . '/CHANGELOG.md',
+						'language/' . $this->origin_language . '/README.md',
+						'language/' . $this->origin_language . '/VERSION.md',
+					)))
+				{
+					$level = 'debug';
+					$this->messages->push('debug', $this->user->lang('ADDITIONAL_FILE', $origin_file));
+				}
 				else
 				{
 					$level = (substr($origin_file, -4) == '.php') ? 'fail' : 'warning';
