@@ -13,8 +13,8 @@
          bootstrap="tests/bootstrap.php"
          >
     <testsuites>
-        <testsuite name="phpBB Test Suite">
-            <directory suffix="_test.php">./tests/</directory>
+        <testsuite name="LPV Test Suite">
+            <directory suffix="Test.php">./src/Phpbb/Lpv/Tests/</directory>
         </testsuite>
     </testsuites>
 </phpunit>
