@@ -10,28 +10,11 @@
          stopOnFailure="false"
          syntaxCheck="false"
          verbose="true"
-         bootstrap="tests/bootstrap.php">
+         bootstrap="tests/bootstrap.php"
+         >
     <testsuites>
         <testsuite name="phpBB Test Suite">
             <directory suffix="_test.php">./tests/</directory>
         </testsuite>
     </testsuites>
-
-    <groups>
-        <exclude>
-            <group>functional</group>
-            <group>slow</group>
-        </exclude>
-    </groups>
-
-    <filter>
-        <blacklist>
-            <directory>./language/</directory>
-            <directory>./tests/</directory>
-            <directory>../../../../tests/</directory>
-            <directory>../../../includes/</directory>
-            <directory>../../../phpbb/</directory>
-            <directory>../../../vendor/</directory>
-        </blacklist>
-    </filter>
 </phpunit>
