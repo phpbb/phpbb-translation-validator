@@ -56,6 +56,17 @@ class ValidatorRunner
 	public function runValidators()
 	{
 		$filelistValidator = new FilelistValidator($this->input, $this->output, $this->originIso, $this->sourceIso, $this->packageDir, $this->phpbbVersion, $this->debug);
-		$filelistValidator->validate();
+		$validateFiles = $filelistValidator->validate();
+
+		if (empty($validateFiles))
+		{
+			return;
+		}
+
+		$filelistValidator = new FileValidator($this->input, $this->output, $this->originIso, $this->sourceIso, $this->packageDir, $this->phpbbVersion, $this->debug);
+		foreach ($validateFiles as $sourceFile => $originFile)
+		{
+			$filelistValidator->validate($sourceFile, $originFile);
+		}
 	}
 }
