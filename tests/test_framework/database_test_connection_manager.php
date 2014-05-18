@@ -12,10 +12,10 @@
 */
 class phpbb_ext_database_test_connection_manager extends phpbb_database_test_connection_manager
 {
-	public function load_schema()
+	public function load_schema($db)
 	{
 		// Load the phpBB schema's
-		parent::load_schema();
+		parent::load_schema($db);
 
 		$this->ensure_connected(__METHOD__);
 

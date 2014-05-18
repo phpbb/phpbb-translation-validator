@@ -11,6 +11,7 @@ namespace official\translationvalidator\tests\validator;
 
 class filelist_test extends \official\translationvalidator\tests\validator\file\test_base
 {
+	/** @var \official\translationvalidator\validator\filelist */
 	protected $validator;
 	protected $message_collection;
 
@@ -29,49 +30,91 @@ class filelist_test extends \official\translationvalidator\tests\validator\file\
 		$this->validator->set_origin_language('tovalidate');
 	}
 
-	protected $messages = array(
-		'fail' => array(
-			'MISSING_FILE-missing.php',
-			'MISSING_FILE-missing.txt',
-			'MISSING_FILE-subdir/missing.php',
-			'MISSING_FILE-language/tovalidate/LICENSE',
-			'ADDITIONAL_FILE-additional.php',
-			'ADDITIONAL_FILE-subdir/additional.php',
-		),
-		'warning' => array(
-			'ADDITIONAL_FILE-additional.txt',
-		),
-		'debug' => array(
-			'ADDITIONAL_FILE-language/tovalidate/AUTHORS',
-			'ADDITIONAL_FILE-language/tovalidate/CHANGELOG',
-			'ADDITIONAL_FILE-language/tovalidate/README',
-			'ADDITIONAL_FILE-language/tovalidate/VERSION',
-		),
-	);
-
-	public function test_validate_filelist()
+	public static function validate_filelist_data()
 	{
+		return array(
+			array(
+				'3.0',
+				array(
+					'fail' => array(
+						'MISSING_FILE-missing.php',
+						'MISSING_FILE-missing.txt',
+						'MISSING_FILE-subdir/missing.php',
+						'MISSING_FILE-language/tovalidate/LICENSE',
+						'ADDITIONAL_FILE-additional.php',
+						'ADDITIONAL_FILE-subdir/additional.php',
+					),
+					'warning' => array(
+						'ADDITIONAL_FILE-additional.txt',
+						'ADDITIONAL_FILE-language/tovalidate/AUTHORS.md',
+						'ADDITIONAL_FILE-language/tovalidate/CHANGELOG.md',
+						'ADDITIONAL_FILE-language/tovalidate/README.md',
+						'ADDITIONAL_FILE-language/tovalidate/VERSION.md',
+					),
+					'debug' => array(
+						'ADDITIONAL_FILE-language/tovalidate/AUTHORS',
+						'ADDITIONAL_FILE-language/tovalidate/CHANGELOG',
+						'ADDITIONAL_FILE-language/tovalidate/README',
+						'ADDITIONAL_FILE-language/tovalidate/VERSION',
+					),
+				),
+			),
+			array(
+				'3.1',
+				array(
+					'fail' => array(
+						'MISSING_FILE-missing.php',
+						'MISSING_FILE-missing.txt',
+						'MISSING_FILE-subdir/missing.php',
+						'MISSING_FILE-language/tovalidate/LICENSE',
+						'ADDITIONAL_FILE-additional.php',
+						'ADDITIONAL_FILE-subdir/additional.php',
+					),
+					'warning' => array(
+						'ADDITIONAL_FILE-additional.txt',
+					),
+					'debug' => array(
+						'ADDITIONAL_FILE-language/tovalidate/AUTHORS',
+						'ADDITIONAL_FILE-language/tovalidate/AUTHORS.md',
+						'ADDITIONAL_FILE-language/tovalidate/CHANGELOG',
+						'ADDITIONAL_FILE-language/tovalidate/CHANGELOG.md',
+						'ADDITIONAL_FILE-language/tovalidate/README',
+						'ADDITIONAL_FILE-language/tovalidate/README.md',
+						'ADDITIONAL_FILE-language/tovalidate/VERSION',
+						'ADDITIONAL_FILE-language/tovalidate/VERSION.md',
+					),
+				),
+			),
+		);
+	}
+
+	/**
+	* @dataProvider validate_filelist_data
+	*/
+	public function test_validate_filelist($phpbb_version, $messages)
+	{
+		$this->validator->set_version($phpbb_version);
 		$this->validator->validate();
 		$errors = $this->message_collection->get_messages();
 
-		foreach ($this->messages['fail'] as $error)
+		foreach ($messages['fail'] as $error)
 		{
 			$this->assertContains(array('type' => 'fail', 'message' => $error, 'source' => null, 'origin' => null), $errors, 'Missing expected error: ' . $error);
 		}
 
-		foreach ($this->messages['warning'] as $warning)
+		foreach ($messages['warning'] as $warning)
 		{
 			$this->assertContains(array('type' => 'warning', 'message' => $warning, 'source' => null, 'origin' => null), $errors, 'Missing expected warning: ' . $notice);
 		}
 
-		foreach ($this->messages['debug'] as $debug)
+		foreach ($messages['debug'] as $debug)
 		{
 			$this->assertContains(array('type' => 'debug', 'message' => $debug, 'source' => null, 'origin' => null), $errors, 'Missing expected debug: ' . $notice);
 		}
 
 		foreach ($errors as $error)
 		{
-			$this->assertContains($error['message'], $this->messages[$error['type']], 'Unexpected message: ' . $error);
+			$this->assertContains($error['message'], $messages[$error['type']], 'Unexpected message: ' . $error['message']);
 		}
 	}
 
