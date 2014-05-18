@@ -27,7 +27,7 @@ class ValidateDefinedInPhpbbTest extends TestBase
 	*/
 	public function testValidateDefinedInPhpbb($file, $expected)
 	{
-		$this->validator->validateDefinedInPhpbb($file, $file);
+		$this->validator->validateDefinedInPhpbb($file);
 		$this->assertOutputMessages($expected);
 	}
 }

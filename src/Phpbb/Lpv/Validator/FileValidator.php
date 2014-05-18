@@ -75,11 +75,11 @@ class FileValidator
 	 */
 	public function validate($sourceFile, $originFile)
 	{
-		$this->validateLineEndings($sourceFile, $originFile);
+		$this->validateLineEndings($originFile);
 		if (substr($originFile, -4) === '.php')
 		{
-			$this->validateDefinedInPhpbb($sourceFile, $originFile);
-			$this->validateUtf8withoutbom($sourceFile, $originFile);
+			$this->validateDefinedInPhpbb($originFile);
+			$this->validateUtf8withoutbom($originFile);
 		}
 
 		if (strpos($originFile, 'language/' . $this->originIso . '/email/') === 0 && substr($originFile, -4) === '.txt')
@@ -92,11 +92,11 @@ class FileValidator
 		}
 		else if ($originFile == 'language/' . $this->originIso . '/search_synonyms.php')
 		{
-			$this->validateSearchSynonymsFile($sourceFile, $originFile);
+			$this->validateSearchSynonymsFile($originFile);
 		}
 		else if ($originFile == 'language/' . $this->originIso . '/search_ignore_words.php')
 		{
-			$this->validateSearchIgnoreWordsFile($sourceFile, $originFile);
+			$this->validateSearchIgnoreWordsFile($originFile);
 		}
 		else if (substr($originFile, -4) === '.php')
 		{
@@ -104,15 +104,15 @@ class FileValidator
 		}
 		else if (substr($originFile, -9) === 'index.htm')
 		{
-			$this->validateIndexFile($sourceFile, $originFile);
+			$this->validateIndexFile($originFile);
 		}
 		else if ($originFile === 'language/' . $this->originIso . '/LICENSE')
 		{
-			$this->validateLicenseFile($sourceFile, $originFile);
+			$this->validateLicenseFile($originFile);
 		}
 		else if ($originFile === 'language/' . $this->originIso . '/iso.txt')
 		{
-			$this->validateIsoFile($sourceFile, $originFile);
+			$this->validateIsoFile($originFile);
 		}
 		else
 		{
@@ -359,11 +359,10 @@ class FileValidator
 	 *
 	 * @todo		Check for template vars and html
 	 *
-	 * @param	string	$sourceFile		Source file for comparison
 	 * @param	string	$originFile		File to validate
 	 * @return	null
 	 */
-	public function validateSearchSynonymsFile($sourceFile, $originFile)
+	public function validateSearchSynonymsFile($originFile)
 	{
 		/** @var $synonyms */
 		include($this->originDir . '/' . $originFile);
@@ -392,11 +391,10 @@ class FileValidator
 	 *
 	 * @todo		Check for template vars and html
 	 *
-	 * @param	string	$sourceFile		Source file for comparison
 	 * @param	string	$originFile		File to validate
 	 * @return	null
 	 */
-	public function validateSearchIgnoreWordsFile($sourceFile, $originFile)
+	public function validateSearchIgnoreWordsFile($originFile)
 	{
 		/** @var $words */
 		include($this->originDir . '/' . $originFile);
@@ -423,11 +421,10 @@ class FileValidator
 	 *
 	 * Only "GNU GENERAL PUBLIC LICENSE Version 2" is allowed
 	 *
-	 * @param	string	$sourceFile		Source file for comparison
 	 * @param	string	$originFile		File to validate
 	 * @return	null
 	 */
-	public function validateLicenseFile($sourceFile, $originFile)
+	public function validateLicenseFile($originFile)
 	{
 		$fileContents = (string) file_get_contents($this->originDir . '/' . $originFile);
 
@@ -442,11 +439,10 @@ class FileValidator
 	 *
 	 * Only empty index.htm or the default htm file are allowed
 	 *
-	 * @param	string	$sourceFile		Source file for comparison
 	 * @param	string	$originFile		File to validate
 	 * @return	null
 	 */
-	public function validateIndexFile($sourceFile, $originFile)
+	public function validateIndexFile($originFile)
 	{
 		$fileContents = (string) file_get_contents($this->originDir . '/' . $originFile);
 
@@ -465,11 +461,10 @@ class FileValidator
 	 * 2. Native name of the language
 	 * 3. Line with information about the author
 	 *
-	 * @param	string	$sourceFile		Source file for comparison
 	 * @param	string	$originFile		File to validate
 	 * @return	null
 	 */
-	public function validateIsoFile($sourceFile, $originFile)
+	public function validateIsoFile($originFile)
 	{
 		$fileContents = (string) file_get_contents($this->originDir . '/' . $originFile);
 		$isoFile = explode("\n", $fileContents);
@@ -483,16 +478,15 @@ class FileValidator
 	/**
 	 * Validates whether a file checks for the IN_PHPBB constant
 	 *
-	 * @param	string	$sourceFile		Source file for comparison
 	 * @param	string	$originFile		File to validate
 	 * @return	null
 	 */
-	public function validateDefinedInPhpbb($sourceFile, $originFile)
+	public function validateDefinedInPhpbb($originFile)
 	{
 		$fileContents = (string) file_get_contents($this->originDir . '/' . $originFile);
 
 		// Regex copied from MPV
-		if (!preg_match("#defined([ ]+){0,1}\(([ ]+){0,1}'IN_PHPBB'#", $fileContents))
+		if (!preg_match("#defined([ ]+){0,1}\\(([ ]+){0,1}'IN_PHPBB'#", $fileContents))
 		{
 			$this->output->addMessage(Output::FATAL, 'Must check whether IN_PHPBB is defined', $originFile);
 		}
@@ -501,11 +495,10 @@ class FileValidator
 	/**
 	 * Validates whether a file checks for the IN_PHPBB constant
 	 *
-	 * @param	string	$sourceFile		Source file for comparison
 	 * @param	string	$originFile		File to validate
 	 * @return	null
 	 */
-	public function validateUtf8withoutbom($sourceFile, $originFile)
+	public function validateUtf8withoutbom($originFile)
 	{
 		$fileContents = (string) file_get_contents($this->originDir . '/' . $originFile);
 		$fileContents = explode("\n", $fileContents);
@@ -521,11 +514,10 @@ class FileValidator
 	/**
 	 * Validates whether a file checks whether the file uses Linux line endings
 	 *
-	 * @param	string	$sourceFile		Source file for comparison
 	 * @param	string	$originFile		File to validate
 	 * @return	null
 	 */
-	public function validateLineEndings($sourceFile, $originFile)
+	public function validateLineEndings($originFile)
 	{
 		$fileContents = (string) file_get_contents($this->originDir . '/' . $originFile);
 
