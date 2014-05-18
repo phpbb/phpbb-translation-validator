@@ -109,7 +109,7 @@ class FilelistValidator
 				}
 				else
 				{
-					$level = (substr($origin_file, -4) == '.php') ? Output::FATAL : Output::ERROR;
+					$level = (substr($origin_file, -3) !== '.md') ? Output::FATAL : Output::ERROR;
 					$this->output->addMessage($level, 'Found additional file', $origin_file);
 				}
 			}
