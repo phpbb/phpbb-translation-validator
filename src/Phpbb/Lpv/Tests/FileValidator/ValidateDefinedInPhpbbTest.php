@@ -10,7 +10,7 @@ namespace Phpbb\Lpv\Tests\FileValidator;
 
 use Phpbb\Lpv\Output\Output;
 
-class validate_defined_in_phpbb_test extends TestBase
+class ValidateDefinedInPhpbbTest extends TestBase
 {
 	public function validateDefinedInPhpbbData()
 	{
