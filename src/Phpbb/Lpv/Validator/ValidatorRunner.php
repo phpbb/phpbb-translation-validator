@@ -9,15 +9,10 @@
 namespace Phpbb\Lpv\Validator;
 
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Phpbb\Lpv\Output\OutputInterface;
 
 class ValidatorRunner
 {
-	/** @var array */
-	protected $validators;
-
 	/** @var string */
 	protected $originIso;
 	/** @var string */
@@ -60,7 +55,7 @@ class ValidatorRunner
 	 */
 	public function runValidators()
 	{
-		#$filelistValidator = new FilelistValidator($this->input, $this->output, $this->originIso, $this->sourceIso, $this->packageDir, $this->phpbbVersion, $this->debug);
-		#$filelistValidator->validate();
-    }
-} 
+		$filelistValidator = new FilelistValidator($this->input, $this->output, $this->originIso, $this->sourceIso, $this->packageDir, $this->phpbbVersion, $this->debug);
+		$filelistValidator->validate();
+	}
+}

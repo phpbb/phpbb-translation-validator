@@ -42,7 +42,7 @@ class ValidateCommand extends Command
 		$output = new Output($output, $debug);
 
 		$output->writeln("Running Language Pack Validator on language <info>$originIso</info>.");
-		$runner = new ValidatorRunner($input, $output, $originIso, $sourceIso, $phpbbVersion, $packageDir, $debug);
+		$runner = new ValidatorRunner($input, $output, $originIso, $sourceIso, $packageDir, $phpbbVersion, $debug);
 
 		$runner->runValidators();
 		$output->writeln("<info>Test results for language pack</info>");
