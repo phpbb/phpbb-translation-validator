@@ -135,6 +135,11 @@ class FileValidator
 	 */
 	public function validateLangFile($sourceFile, $originFile)
 	{
+		if (!defined('IN_PHPBB'))
+		{
+			define('IN_PHPBB', true);
+		}
+
 		ob_start();
 		/** @var $lang */
 		include($this->originDir . '/' . $originFile);
@@ -173,7 +178,7 @@ class FileValidator
 				continue;
 			}
 
-			//$this->key_validator->validate($originFile, $againstLangKey, $againstLanguage, $validate[$againstLangKey]);
+			//@todo $this->key_validator->validate($originFile, $againstLangKey, $againstLanguage, $validate[$againstLangKey]);
 		}
 
 		foreach ($validate as $validateLangKey => $validateLanguage)
@@ -324,7 +329,7 @@ class FileValidator
 		{
 			if (gettype($help) != 'array' || sizeof($help) != 2 || !isset($help[0]) || !isset($help[1]))
 			{
-				$this->output->addMessage(Output::FATAL, 'Found invalid entry: ' . serialize($help), $originFile);
+				$this->output->addMessage(Output::FATAL, 'Found invalid entry: ' . serialize($help), $originFile, $entry);
 			}
 			else if ($help[0] == '--' && $help[1] == '--')
 			{
@@ -334,13 +339,13 @@ class FileValidator
 			if (isset($help[0]))
 			{
 				$compare = isset($against[$entry][0]) ? $against[$entry][0] : '';
-				#$this->key_validator->validate($origin_file, $entry . '.0', $compare, $help[0]);
+				//@todo $this->key_validator->validate($origin_file, $entry . '.0', $compare, $help[0]);
 			}
 
 			if (isset($help[1]))
 			{
 				$compare = isset($against[$entry][1]) ? $against[$entry][1] : '';
-				#$this->key_validator->validate($origin_file, $entry . '.1', $compare, $help[1]);
+				//@todo $this->key_validator->validate($origin_file, $entry . '.1', $compare, $help[1]);
 			}
 			$entry++;
 		}
@@ -368,7 +373,7 @@ class FileValidator
 		include($this->originDir . '/' . $originFile);
 
 		$defined_variables = get_defined_vars();
-		if (sizeof($defined_variables) != 3 || !isset($defined_variables['synonyms']) || gettype($defined_variables['synonyms']) != 'array')
+		if (sizeof($defined_variables) != 2 || !isset($defined_variables['synonyms']) || gettype($defined_variables['synonyms']) != 'array')
 		{
 			$this->output->addMessage(Output::FATAL, 'Must only contain the synonyms-array', $originFile);
 			return;
@@ -400,7 +405,7 @@ class FileValidator
 		include($this->originDir . '/' . $originFile);
 
 		$defined_variables = get_defined_vars();
-		if (sizeof($defined_variables) != 3 || !isset($defined_variables['words']) || gettype($defined_variables['words']) != 'array')
+		if (sizeof($defined_variables) != 2 || !isset($defined_variables['words']) || gettype($defined_variables['words']) != 'array')
 		{
 			$this->output->addMessage(Output::FATAL, 'Must only contain the words-array', $originFile);
 			return;
