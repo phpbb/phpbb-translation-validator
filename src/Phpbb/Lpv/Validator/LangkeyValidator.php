@@ -58,19 +58,19 @@ class LangkeyValidator
 	}
 
 	/**
-	* Validates type of the language and decides on further validation
-	*
-	* @param	string	$file		File to validate
-	* @param	string	$key		Key to validate
-	* @param	mixed	$against_language		Original language
-	* @param	mixed	$validate_language		Translated language
-	* @return	null
-	*/
+	 * Validates type of the language and decides on further validation
+	 *
+	 * @param	string	$file		File to validate
+	 * @param	string	$key		Key to validate
+	 * @param	mixed	$against_language		Original language
+	 * @param	mixed	$validate_language		Translated language
+	 * @return	null
+	 */
 	public function validate($file, $key, $against_language, $validate_language)
 	{
 		if (gettype($against_language) !== gettype($validate_language))
 		{
-			$this->messages->push('fail', $this->user->lang('INVALID_TYPE', $file, $key, gettype($against_language), gettype($validate_language)));
+			$this->output->addMessage(Output::FATAL, sprintf('Key should be type %s but is type %s', gettype($against_language), gettype($validate_language)), $file, $key);
 			return;
 		}
 
@@ -78,7 +78,7 @@ class LangkeyValidator
 		{
 			if ($validate_language < 0 || $validate_language > 15)
 			{
-				$this->messages->push('fail', $this->user->lang('INVALID_PLURAL_RULE', $file, $validate_language));
+				$this->output->addMessage(Output::FATAL, sprintf('The plural rule %d, which you are trying to use, does not exist. For more information see https://wiki.phpbb.com/Plural_Rules.', $validate_language), $file, $key);
 				return;
 			}
 		}
@@ -86,7 +86,7 @@ class LangkeyValidator
 		{
 			if (!in_array($validate_language, array('ltr', 'rtl')))
 			{
-				$this->messages->push('fail', $this->user->lang('INVALID_DIRECTION', $file, $validate_language));
+				$this->output->addMessage(Output::FATAL, sprintf('The text direction %s, which you are trying to use, does not exist. Currently only ltr (left-to-right) and rtl (right-to-left) are allowed.', $validate_language), $file, $key);
 				return;
 			}
 		}
@@ -94,43 +94,43 @@ class LangkeyValidator
 		{
 			if (str_replace('_', '-', $this->originIso) !== $validate_language && strpos($validate_language, $this->originIso . '-') !== 0)
 			{
-				$this->messages->push('fail', $this->user->lang('INVALID_USER_LANG', $file, $validate_language));
+				$this->output->addMessage(Output::FATAL, sprintf('The user language %s, which you are trying to use, does not match the language.', $validate_language), $file, $key);
 				return;
 			}
 		}
 		else if (gettype($against_language) === 'string')
 		{
-			$this->validate_string($file, $key, $against_language, $validate_language);
+			$this->validateString($file, $key, $against_language, $validate_language);
 		}
 		else
 		{
-			$this->validate_array($file, $key, $against_language, $validate_language);
+			$this->validateArray($file, $key, $against_language, $validate_language);
 		}
 	}
 
 	/**
-	* Decides which array validation function should be used, based on the key
-	*
-	* Supports:
-	*	- Dateformats
-	*	- Datetime
-	*	- Timezones
-	*	- BBCode Tokens
-	*	- Report Reasons
-	*	- Plurals
-	*
-	* @param	string	$file		File to validate
-	* @param	string	$key		Key to validate
-	* @param	array	$against_language		Original language
-	* @param	array	$validate_language		Translated language
-	* @return	null
-	*/
-	public function validate_array($file, $key, $against_language, $validate_language)
+	 * Decides which array validation function should be used, based on the key
+	 *
+	 * Supports:
+	 *	- Dateformats
+	 *	- Datetime
+	 *	- Timezones
+	 *	- BBCode Tokens
+	 *	- Report Reasons
+	 *	- Plurals
+	 *
+	 * @param	string	$file		File to validate
+	 * @param	string	$key		Key to validate
+	 * @param	array	$against_language		Original language
+	 * @param	array	$validate_language		Translated language
+	 * @return	null
+	 */
+	public function validateArray($file, $key, $against_language, $validate_language)
 	{
 		//var_dump($key, $against_language); echo '<br /><br />';
 		if ($key === 'dateformats')
 		{
-			$this->validate_dateformats($file, $key, $against_language, $validate_language);
+			$this->validateDateformats($file, $key, $validate_language);
 		}
 		else if (
 			$key === 'datetime' ||
@@ -142,12 +142,12 @@ class LangkeyValidator
 			$key === 'PM_RULE'
 		)
 		{
-			$this->validate_array_key($file, $key, $against_language, $validate_language);
+			$this->validateArrayKey($file, $key, $against_language, $validate_language);
 		}
 		// ACL array in 3.0, removed in 3.1
 		else if ($this->phpbbVersion === '3.0' && strpos($key, 'acl_') === 0)
 		{
-			$this->validate_acl($file, $key, $against_language, $validate_language);
+			$this->validateAcl($file, $key, $against_language, $validate_language);
 		}
 		// Some special arrays in 3.0, removed in 3.1
 		else if ($this->phpbbVersion === '3.0' && (
@@ -156,12 +156,12 @@ class LangkeyValidator
 			$key === 'tz' ||
 			$key === 'tz_zones'))
 		{
-			$this->validate_array_key($file, $key, $against_language, $validate_language);
+			$this->validateArrayKey($file, $key, $against_language, $validate_language);
 		}
 		// Some special plurals in 3.0
 		else if ($this->phpbbVersion === '3.0' && ($key === 'datetime.AGO' || $key === 'NUM_POSTS_IN_QUEUE' || $key === 'USER_LAST_REMINDED'))
 		{
-			$this->validate_array_key($file, $key, $against_language, $validate_language);
+			$this->validateArrayKey($file, $key, $against_language, $validate_language);
 		}
 		else
 		{
@@ -181,49 +181,50 @@ class LangkeyValidator
 			{
 				if (isset($key_types['string']))
 				{
-					$this->validate_array_key($file, $key, $against_language, $validate_language);
+					$this->validateArrayKey($file, $key, $against_language, $validate_language);
 				}
 				else if ($this->phpbbVersion !== '3.0' && isset($key_types['integer']))
 				{
-					$this->validate_plural_keys($file, $key, $against_language, $validate_language);
+					$this->validatePluralKeys($file, $key, $against_language, $validate_language);
 				}
 				else if ($this->phpbbVersion === '3.0' && isset($key_types['integer']))
 				{
 					// For 3.0 this should not happen
-					$this->messages->push('debug', $this->user->lang('LANG_ARRAY_UNSUPPORTED', $file, $key));
+					$this->output->addMessage(Output::NOTICE, 'Array has unsupported type integer', $file, $key);
 				}
 				else
 				{
-					$this->messages->push('debug', $this->user->lang('LANG_ARRAY_MIXED', $file, $key, implode(', ', array_keys($key_types))));
+					$this->output->addMessage(Output::NOTICE, 'Array has mixed types: ' . implode(', ', array_keys($key_types)), $file, $key);
 				}
 			}
 			else
 			{
-				$this->messages->push('debug', $this->user->lang('LANG_ARRAY_MIXED', $file, $key, implode(', ', array_keys($key_types))));
+				$this->output->addMessage(Output::NOTICE, 'Array has mixed types: ' . implode(', ', array_keys($key_types)), $file, $key);
 			}
 		}
 	}
 
 	/**
-	* Validates the plural keys
-	*
-	* The set of plural cases should not be empty
-	* There might be an additional case for 0 items
-	* There must not be an additional case
-	* There might be less cases then possible
-	*
-	* @param	string	$file		File to validate
-	* @param	string	$key		Key to validate
-	* @param	array	$validate_language		Translated language
-	* @return	null
-	*/
-	public function validate_plural_keys($file, $key, $against_language, $validate_language)
+	 * Validates the plural keys
+	 *
+	 * The set of plural cases should not be empty
+	 * There might be an additional case for 0 items
+	 * There must not be an additional case
+	 * There might be less cases then possible
+	 *
+	 * @param	string	$file		File to validate
+	 * @param	string	$key		Key to validate
+	 * @param	array	$against_language		Original language
+	 * @param	array	$validate_language		Translated language
+	 * @return	null
+	 */
+	public function validatePluralKeys($file, $key, $against_language, $validate_language)
 	{
 		$origin_cases = array_keys($validate_language);
 
 		if (empty($origin_cases))
 		{
-			$this->messages->push('fail', $this->user->lang('LANG_PLURAL_EMPTY', $file, $key));
+			$this->output->addMessage(Output::FATAL, 'Plural array must not be empty', $file, $key);
 			return;
 		}
 
@@ -235,20 +236,20 @@ class LangkeyValidator
 
 		if (!empty($additional_cases))
 		{
-			$this->messages->push('fail', $this->user->lang('LANG_PLURAL_ADDITIONAL', $file, $key, implode(', ', $additional_cases)));
+			$this->output->addMessage(Output::FATAL, 'Plural array has additional case: ' . implode(', ', $additional_cases), $file, $key);
 		}
 
 		if (empty($intersect_cases))
 		{
 			// No intersection means there are no entries apart from the 0
-			$this->messages->push('fail', $this->user->lang('LANG_PLURAL_EMPTY', $file, $key));
+			$this->output->addMessage(Output::FATAL, 'Plural array must not be empty', $file, $key);
 			return;
 		}
 
 		if (!empty($missing_cases))
 		{
 			// Do we want to allow this? Lazy translators...
-			$this->messages->push('debug', $this->user->lang('LANG_PLURAL_MISSING', $file, $key, implode(', ', $missing_cases)));
+			$this->output->addMessage(Output::NOTICE, 'Plural array is missing case: ' . implode(', ', $missing_cases), $file, $key);
 		}
 
 		if (!empty($intersect_cases))
@@ -261,17 +262,18 @@ class LangkeyValidator
 
 			foreach ($intersect_cases as $case)
 			{
-				$this->validate_string($file, $key . '.' . $case, $compare_against, $validate_language[$case], true);
+				$this->validateString($file, $key . '.' . $case, $compare_against, $validate_language[$case], true);
 			}
 		}
 	}
 
 	/**
-	* Returns an array with the valid cases for the given plural rule
-	*
-	* @param	int	$pluralRule
-	* @return	array
-	*/
+	 * Returns an array with the valid cases for the given plural rule
+	 *
+	 * @param	int	$pluralRule
+	 * @return	array
+	 * @throws \Exception
+	 */
 	protected function getPluralKeys($pluralRule)
 	{
 		switch ($pluralRule)
@@ -304,18 +306,17 @@ class LangkeyValidator
 	}
 
 	/**
-	* Validates the dateformats
-	*
-	* Should not be empty
-	* Keys and Descriptions should not contain HTML
-	*
-	* @param	string	$file		File to validate
-	* @param	string	$key		Key to validate
-	* @param	array	$against_language		Original language
-	* @param	array	$validate_language		Translated language
-	* @return	null
-	*/
-	public function validate_dateformats($file, $key, $against_language, $validate_language)
+	 * Validates the dateformats
+	 *
+	 * Should not be empty
+	 * Keys and Descriptions should not contain HTML
+	 *
+	 * @param	string	$file		File to validate
+	 * @param	string	$key		Key to validate
+	 * @param	array	$validate_language		Translated language
+	 * @return	null
+	 */
+	public function validateDateformats($file, $key, $validate_language)
 	{
 		if (empty($validate_language))
 		{
@@ -325,71 +326,70 @@ class LangkeyValidator
 
 		foreach ($validate_language as $dateformat => $example_time)
 		{
-			$this->validate_string($file, $key . '.' . $dateformat, '', $dateformat);
-			$this->validate_string($file, $key . '.' . $dateformat, '', $example_time);
+			$this->validateString($file, $key . '.' . $dateformat, '', $dateformat);
+			$this->validateString($file, $key . '.' . $dateformat, '', $example_time);
 		}
 	}
 
 	/**
-	* Validates a permission entry
-	*
-	* Should have a cat and lang key
-	* cat should be the same as in origin language
-	* lang should compare like a string to origin lang
-	*
-	* @param	string	$file		File to validate
-	* @param	string	$key		Key to validate
-	* @param	array	$against_language		Original language
-	* @param	array	$validate_language		Translated language
-	* @return	null
-	*/
-	public function validate_acl($file, $key, $against_language, $validate_language)
+	 * Validates a permission entry
+	 *
+	 * Should have a cat and lang key
+	 * cat should be the same as in origin language
+	 * lang should compare like a string to origin lang
+	 *
+	 * @param	string	$file		File to validate
+	 * @param	string	$key		Key to validate
+	 * @param	array	$against_language		Original language
+	 * @param	array	$validate_language		Translated language
+	 * @return	null
+	 */
+	public function validateAcl($file, $key, $against_language, $validate_language)
 	{
 		if (!isset($validate_language['cat']))
 		{
-			$this->messages->push('fail', $this->user->lang('ACL_MISSING_CAT', $file, $key));
+			$this->output->addMessage(Output::FATAL, 'Permission is missing the cat-key', $file, $key);
 		}
 		else if ($validate_language['cat'] !== $against_language['cat'])
 		{
-			$this->messages->push('fail', $this->user->lang('ACL_INVALID_CAT', $file, $key, $against_language['cat'], $validate_language['cat']));
+			$this->output->addMessage(Output::FATAL, sprintf('Permission should have cat %1$s but has %2$s', $against_language['cat'], $validate_language['cat']), $file, $key);
 		}
 
 		if (!isset($validate_language['lang']))
 		{
-			$this->messages->push('fail', $this->user->lang('ACL_MISSING_LANG', $file, $key));
+			$this->output->addMessage(Output::FATAL, 'Permission is missing the lang-key', $file, $key);
 		}
 		else
 		{
-			$this->validate_string($file, $key, $against_language['lang'], $validate_language['lang']);
+			$this->validateString($file, $key, $against_language['lang'], $validate_language['lang']);
 		}
 	}
 
 	/**
-	* Validates an array entry
-	*
-	* Arrays that have strings as key, must have the same keys in the foreign language
-	* Arrays that have integers as keys, might have different ones (plurals)
-	* Additional keys can not be further validated
-	*
-	* Function works recursive
-	*
-	* @param	string	$file		File to validate
-	* @param	string	$key		Key to validate
-	* @param	array	$against_language		Original language
-	* @param	array	$validate_language		Translated language
-	* @return	null
-	*/
-	public function validate_array_key($file, $key, $against_language, $validate_language)
+	 * Validates an array entry
+	 *
+	 * Arrays that have strings as key, must have the same keys in the foreign language
+	 * Arrays that have integers as keys, might have different ones (plurals)
+	 * Additional keys can not be further validated
+	 *
+	 * Function works recursive
+	 *
+	 * @param	string	$file		File to validate
+	 * @param	string	$key		Key to validate
+	 * @param	array	$against_language		Original language
+	 * @param	array	$validate_language		Translated language
+	 * @return	null
+	 */
+	public function validateArrayKey($file, $key, $against_language, $validate_language)
 	{
 		if (gettype($against_language) !== gettype($validate_language))
 		{
-			$this->messages->push('fail', $this->user->lang('INVALID_TYPE', $file, $key, gettype($against_language), gettype($validate_language)));
+			$this->output->addMessage(Output::FATAL, sprintf('Should be type %1$s but is type %2$s', gettype($against_language), gettype($validate_language)), $file, $key);
 			return;
 		}
 
 		$cat_validate_keys = array_keys($validate_language);
 		$cat_against_keys = array_keys($against_language);
-		$missing_keys = array_diff($cat_against_keys, $cat_validate_keys);
 		$invalid_keys = array_diff($cat_validate_keys, $cat_against_keys);
 
 		foreach ($against_language as $array_key => $lang)
@@ -399,18 +399,18 @@ class LangkeyValidator
 			{
 				if (gettype($array_key) == 'string')
 				{
-					$this->messages->push('fail', $this->user->lang('LANG_ARRAY_MISSING', $file, $key, $array_key));
+					$this->output->addMessage(Output::FATAL, 'Array is missing key: ' . $array_key, $file, $key);
 				}
 				continue;
 			}
 
 			if (is_string($lang))
 			{
-				$this->validate_string($file, $key . '.' . $array_key, $lang, $validate_language[$array_key]);
+				$this->validateString($file, $key . '.' . $array_key, $lang, $validate_language[$array_key]);
 			}
 			else
 			{
-				$this->validate_array($file, $key . '.' . $array_key, $lang, $validate_language[$array_key]);
+				$this->validateArray($file, $key . '.' . $array_key, $lang, $validate_language[$array_key]);
 			}
 		}
 
@@ -420,36 +420,36 @@ class LangkeyValidator
 			{
 				if (gettype($array_key) == 'string')
 				{
-					$this->messages->push('fail', $this->user->lang('LANG_ARRAY_INVALID', $file, $key, $array_key));
+					$this->output->addMessage(Output::FATAL, 'Array has invalid key: ' . $array_key, $file, $key);
 				}
 				else
 				{
 					// Strangly used plural?
-					$this->messages->push('warning', $this->user->lang('LANG_ARRAY_INVALID', $file, $key, $array_key));
+					$this->output->addMessage(Output::FATAL, 'Array has invalid key: ' . $array_key, $file, $key);
 				}
-				$this->messages->push('warning', $this->user->lang('KEY_NOT_VALIDATED', $file, $key . '.' . $array_key));
+				$this->output->addMessage(Output::ERROR, 'Key was not validated: ' . $array_key, $file, $key . '.' . $array_key);
 			}
 		}
 	}
 
 	/**
-	* Validates a string
-	*
-	* Checks whether replacements %d and %s are used correctly
-	* Checks for HTML
-	*
-	* @param	string	$file		File to validate
-	* @param	string	$key		Key to validate
-	* @param	string	$against_language		Original language string
-	* @param	string	$validate_language		Translated language string
-	* @param	string	$is_plural	String is part of a plural (we don't complain the, if the first integer is missing)
-	* @return	null
-	*/
-	public function validate_string($file, $key, $against_language, $validate_language, $is_plural = false)
+	 * Validates a string
+	 *
+	 * Checks whether replacements %d and %s are used correctly
+	 * Checks for HTML
+	 *
+	 * @param	string	$file		File to validate
+	 * @param	string	$key		Key to validate
+	 * @param	string	$against_language		Original language string
+	 * @param	string	$validate_language		Translated language string
+	 * @param	bool	$is_plural	String is part of a plural (we don't complain, if the first integer is missing)
+	 * @return	null
+	 */
+	public function validateString($file, $key, $against_language, $validate_language, $is_plural = false)
 	{
 		if (gettype($against_language) !== gettype($validate_language))
 		{
-			$this->messages->push('fail', $this->user->lang('INVALID_TYPE', $file, $key, gettype($against_language), gettype($validate_language)));
+			$this->output->addMessage(Output::FATAL, sprintf('Should be type %1$s but is type %2$s', gettype($against_language), gettype($validate_language)), $file, $key);
 			return;
 		}
 
@@ -483,14 +483,14 @@ class LangkeyValidator
 
 		if ($against_strings - $validate_strings !== 0)
 		{
-			$this->messages->push('fail', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'string', $against_strings, $validate_strings), $against_language, $validate_language);
+			$this->output->addMessage(Output::FATAL, sprintf('Should have %1$s string arguments, but has %2$s', $against_strings, $validate_strings), $file, $key);
 		}
 
 		if ($against_integers - $validate_integers !== 0)
 		{
 			if (!$is_plural || ($is_plural && $against_integers - $validate_integers !== 1 && $against_integers - $validate_integers !== -1))
 			{
-				$this->messages->push('fail', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers), $against_language, $validate_language);
+				$this->output->addMessage(Output::FATAL, sprintf('Should have %1$s integer arguments, but has %2$s', $against_integers, $validate_integers), $file, $key);
 			}
 			else if ($is_plural)
 			{
@@ -498,7 +498,7 @@ class LangkeyValidator
 				// the number of integers must match!
 				if ($against_integers_nonumber > 1)
 				{
-					$this->messages->push('fail', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers), $against_language, $validate_language);
+					$this->output->addMessage(Output::FATAL, sprintf('Should have %1$s integer arguments, but has %2$s', $against_integers, $validate_integers), $file, $key);
 				}
 				else if (!$against_integers_nonumber)
 				{
@@ -509,7 +509,7 @@ class LangkeyValidator
 						$diff = array_diff($against_integers_ary, $validate_integers_ary);
 						if (!empty($diff))
 						{
-							$this->messages->push('fail', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers), $against_language, $validate_language);
+							$this->output->addMessage(Output::FATAL, sprintf('Should have %1$s integer arguments, but has %2$s', $against_integers, $validate_integers), $file, $key);
 						}
 					}
 					else
@@ -520,7 +520,7 @@ class LangkeyValidator
 						$diff = array_diff($validate_integers_ary, $against_integers_ary);
 						if (empty($diff))
 						{
-							$this->messages->push('fail', $this->user->lang('INVALID_NUM_ARGUMENTS', $file, $key, 'integer', $against_integers, $validate_integers), $against_language, $validate_language);
+							$this->output->addMessage(Output::FATAL, sprintf('Should have %1$s integer arguments, but has %2$s', $against_integers, $validate_integers), $file, $key);
 						}
 					}
 				}
@@ -528,31 +528,31 @@ class LangkeyValidator
 			}
 		}
 
-		$this->validate_html($file, $key, $against_language, $validate_language);
+		$this->validateHtml($file, $key, $against_language, $validate_language);
 	}
 
 	/**
-	* List of additional html we found
-	*
-	* This will allow to not display the same error multiple times for the same string
-	* Structure: file -> key -> html-tag
-	*
-	* @var array
-	*/
+	 * List of additional html we found
+	 *
+	 * This will allow to not display the same error multiple times for the same string
+	 * Structure: file -> key -> html-tag
+	 *
+	 * @var array
+	 */
 	protected $additional_html_found = array();
 
 	/**
-	* Validates the html usage in a string
-	*
-	* Checks whether the used HTML tags are also used in the original language.
-	* Omitting tags is okay, as long as both (start and end) are omitted.
-	*
-	* @param	string	$file		File to validate
-	* @param	string	$key		Key to validate
-	* @param	string	$against_language		Original language string
-	* @param	string	$validate_language		Translated language string
-	* @return	null
-	*/
+	 * Validates the html usage in a string
+	 *
+	 * Checks whether the used HTML tags are also used in the original language.
+	 * Omitting tags is okay, as long as both (start and end) are omitted.
+	 *
+	 * @param	string	$file		File to validate
+	 * @param	string	$key		Key to validate
+	 * @param	string	$against_language		Original language string
+	 * @param	string	$validate_language		Translated language string
+	 * @return	null
+	 */
 	public function validateHtml($file, $key, $against_language, $validate_language)
 	{
 		if (substr($file, -12) == '/install.php' && in_array($key, array(
