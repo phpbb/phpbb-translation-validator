@@ -23,7 +23,7 @@
 		"phpunit/phpunit": "4.1.*"
 	},
 	"bin": [
-		"Phpbb/LanguagePackValidator/LPV"
+		"src/Phpbb/LanguagePackValidator/LPV.php"
 	],
 	"config": {
 		"bin-dir": "bin"
