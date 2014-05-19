@@ -1,123 +1,60 @@
 <?php
 /**
-*
-* @package phpBB Translation Validator
-* @copyright (c) 2013 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
-*
-*/
+ *
+ * @package LPV
+ * @copyright (c) 2014 phpBB Ltd.
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+ *
+ */
+namespace Phpbb\Lpv\Validator;
 
-namespace official\translationvalidator\validator;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Finder\Finder;
+use Phpbb\Lpv\Output\Output;
+use Phpbb\Lpv\Output\OutputInterface;
 
-/**
-* @ignore
-*/
-if (!defined('IN_PHPBB'))
+class LangkeyValidator
 {
-	exit;
-}
+	/** @var string */
+	protected $originIso;
+	/** @var string */
+	protected $sourceIso;
+	/** @var string */
+	protected $packageDir;
+	/** @var string */
+	protected $phpbbVersion;
 
-class key
-{
-	/**
-	* @var \official\translationvalidator\message_collection
-	*/
-	protected $messages;
+	/** @var int */
+	protected $pluralRule;
 
-	/**
-	* @var \phpbb\user
-	*/
-	protected $user;
+	/** @var bool */
+	protected $debug;
 
-	/**
-	* Language to validate
-	* @var string
-	*/
-	protected $origin_language;
-
-	/**
-	* Language to compare against
-	* @var string
-	*/
-	protected $upstream_language;
+	/** @var \Symfony\Component\Console\Input\InputInterface */
+	protected $input;
+	/** @var \Phpbb\Lpv\Output\OutputInterface */
+	protected $output;
 
 	/**
-	* phpBB Version we are validating (Should be '3.0' or '3.1' for now)
-	* @var string
-	*/
-	protected $phpbb_version;
-
-	/**
-	* Used plural rule
-	* @var int
-	*/
-	protected $plural_rule;
-
-	/**
-	* Construct
-	*
-	* @param	\official\translationvalidator\message_collection 	$message_collection	Collection where we push our messages to
-	* @param	\phpbb\user	$user		Current user object, only required for lang()
-	*/
-	public function __construct(\official\translationvalidator\message_collection $message_collection, \phpbb\user $user)
+	 * @param InputInterface $input
+	 * @param OutputInterface $output
+	 * @param string $originIso		The ISO of the language to validate
+	 * @param string $sourceIso		The ISO of the language to validate against
+	 * @param string $packageDir	The path to the directory with the language packages
+	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1)
+	 * @param int $pluralRule		The plural rule we want to use
+	 * @param bool $debug Debug mode.
+	 */
+	public function __construct(InputInterface $input, OutputInterface $output, $originIso, $sourceIso, $packageDir, $phpbbVersion, $pluralRule, $debug)
 	{
-		$this->messages = $message_collection;
-		$this->user = $user;
-		$this->phpbb_version = '3.0';
-		$this->plural_rule = 1;
-	}
-
-	/**
-	* Set the iso of the language we validate
-	*
-	* @param	string	$language
-	* @return	\official\translationvalidator\validator\key
-	*/
-	public function set_origin_language($language)
-	{
-		$this->origin_language = $language;
-
-		return $this;
-	}
-
-	/**
-	* Set the iso of the language we compare against
-	*
-	* @param	string	$language
-	* @return	\official\translationvalidator\validator\key
-	*/
-	public function set_upstream_language($language)
-	{
-		$this->upstream_language = $language;
-
-		return $this;
-	}
-
-	/**
-	* Set the phpbb version we validate
-	*
-	* @param	string	$version	Should be 3.0 or 3.1 for now
-	* @return	\official\translationvalidator\validator\key
-	*/
-	public function set_version($version)
-	{
-		$this->phpbb_version = $version;
-
-		return $this;
-	}
-
-	/**
-	* Set the plural rule for the language
-	* See https://wiki.phpbb.com/Plural_Rules for more details
-	*
-	* @param	int	$plural_rule
-	* @return	\official\translationvalidator\validator\key
-	*/
-	public function set_plural_rule($plural_rule)
-	{
-		$this->plural_rule = $plural_rule;
-
-		return $this;
+		$this->input = $input;
+		$this->output = $output;
+		$this->originIso = $originIso;
+		$this->sourceIso = $sourceIso;
+		$this->packageDir = $packageDir;
+		$this->phpbbVersion = $phpbbVersion;
+		$this->pluralRule = $pluralRule;
+		$this->debug = $debug;
 	}
 
 	/**
@@ -137,7 +74,7 @@ class key
 			return;
 		}
 
-		if ($this->phpbb_version !== '3.0' && $key === 'PLURAL_RULE')
+		if ($this->phpbbVersion !== '3.0' && $key === 'PLURAL_RULE')
 		{
 			if ($validate_language < 0 || $validate_language > 15)
 			{
@@ -155,7 +92,7 @@ class key
 		}
 		else if ($key === 'USER_LANG')
 		{
-			if (str_replace('_', '-', $this->origin_language) !== $validate_language && strpos($validate_language, $this->origin_language . '-') !== 0)
+			if (str_replace('_', '-', $this->originIso) !== $validate_language && strpos($validate_language, $this->originIso . '-') !== 0)
 			{
 				$this->messages->push('fail', $this->user->lang('INVALID_USER_LANG', $file, $validate_language));
 				return;
@@ -208,12 +145,12 @@ class key
 			$this->validate_array_key($file, $key, $against_language, $validate_language);
 		}
 		// ACL array in 3.0, removed in 3.1
-		else if ($this->phpbb_version === '3.0' && strpos($key, 'acl_') === 0)
+		else if ($this->phpbbVersion === '3.0' && strpos($key, 'acl_') === 0)
 		{
 			$this->validate_acl($file, $key, $against_language, $validate_language);
 		}
 		// Some special arrays in 3.0, removed in 3.1
-		else if ($this->phpbb_version === '3.0' && (
+		else if ($this->phpbbVersion === '3.0' && (
 			$key === 'permission_cat' ||
 			$key === 'permission_type' ||
 			$key === 'tz' ||
@@ -222,7 +159,7 @@ class key
 			$this->validate_array_key($file, $key, $against_language, $validate_language);
 		}
 		// Some special plurals in 3.0
-		else if ($this->phpbb_version === '3.0' && ($key === 'datetime.AGO' || $key === 'NUM_POSTS_IN_QUEUE' || $key === 'USER_LAST_REMINDED'))
+		else if ($this->phpbbVersion === '3.0' && ($key === 'datetime.AGO' || $key === 'NUM_POSTS_IN_QUEUE' || $key === 'USER_LAST_REMINDED'))
 		{
 			$this->validate_array_key($file, $key, $against_language, $validate_language);
 		}
@@ -246,11 +183,11 @@ class key
 				{
 					$this->validate_array_key($file, $key, $against_language, $validate_language);
 				}
-				else if ($this->phpbb_version !== '3.0' && isset($key_types['integer']))
+				else if ($this->phpbbVersion !== '3.0' && isset($key_types['integer']))
 				{
 					$this->validate_plural_keys($file, $key, $against_language, $validate_language);
 				}
-				else if ($this->phpbb_version === '3.0' && isset($key_types['integer']))
+				else if ($this->phpbbVersion === '3.0' && isset($key_types['integer']))
 				{
 					// For 3.0 this should not happen
 					$this->messages->push('debug', $this->user->lang('LANG_ARRAY_UNSUPPORTED', $file, $key));
@@ -290,7 +227,7 @@ class key
 			return;
 		}
 
-		$valid_cases = $this->get_plural_keys($this->plural_rule);
+		$valid_cases = $this->getPluralKeys($this->pluralRule);
 
 		$intersect_cases = array_intersect($origin_cases, $valid_cases);
 		$missing_cases = array_diff($valid_cases, $origin_cases);
@@ -332,12 +269,12 @@ class key
 	/**
 	* Returns an array with the valid cases for the given plural rule
 	*
-	* @param	int	$plural_rule
+	* @param	int	$pluralRule
 	* @return	array
 	*/
-	protected function get_plural_keys($plural_rule)
+	protected function getPluralKeys($pluralRule)
 	{
-		switch ($plural_rule)
+		switch ($pluralRule)
 		{
 			case 0:
 				return array(1);
@@ -362,6 +299,8 @@ class key
 			case 12:
 				return array(1, 2, 3, 4, 5, 6);
 		}
+
+		throw new \Exception('Unsupported plural rule');
 	}
 
 	/**
@@ -380,7 +319,7 @@ class key
 	{
 		if (empty($validate_language))
 		{
-			$this->messages->push('fail', $this->user->lang('LANG_ARRAY_EMPTY', $file, $key));
+			$this->output->addMessage(Output::FATAL, 'Array must not be empty', $file, $key);
 			return;
 		}
 
@@ -614,7 +553,7 @@ class key
 	* @param	string	$validate_language		Translated language string
 	* @return	null
 	*/
-	public function validate_html($file, $key, $against_language, $validate_language)
+	public function validateHtml($file, $key, $against_language, $validate_language)
 	{
 		if (substr($file, -12) == '/install.php' && in_array($key, array(
 			'INSTALL_CONGRATS_EXPLAIN',
@@ -646,7 +585,7 @@ class key
 				// The closing tag contains a space
 				if (!$opening_tag && strpos($possible_html, ' ') !== false)
 				{
-					$this->messages->push('fail', $this->user->lang('LANG_INVALID_HTML', $file, $key, htmlspecialchars($possible_html)), $against_language, $validate_language);
+					$this->output->addMessage(Output::FATAL, 'String is using invalid html: ' . htmlspecialchars($possible_html), $file, $key);
 					$ignore_additional = true;
 				}
 
@@ -659,7 +598,7 @@ class key
 					{
 						if (!$failed_unclosed)
 						{
-							$this->messages->push('fail', $this->user->lang('LANG_UNCLOSED_HTML', $file, $key, $tag), $against_language, $validate_language);
+							$this->output->addMessage(Output::FATAL, 'String is missing closing tag for html: ' . $tag, $file, $key);
 						}
 						$failed_unclosed = true;
 					}
@@ -672,7 +611,7 @@ class key
 				{
 					if (!$failed_unclosed)
 					{
-						$this->messages->push('fail', $this->user->lang('LANG_CLOSING_UNOPENED_HTML', $file, $key, $tag), $against_language, $validate_language);
+						$this->output->addMessage(Output::FATAL, sprintf('String is closing tag for html “%s” which was not opened before', $tag), $file, $key);
 					}
 					$failed_unclosed = true;
 				}
@@ -680,7 +619,7 @@ class key
 				{
 					if (!$failed_unclosed)
 					{
-						$this->messages->push('fail', $this->user->lang('LANG_UNCLOSED_HTML', $file, $key, end($open_tags)), $against_language, $validate_language);
+						$this->output->addMessage(Output::FATAL, 'String is missing closing tag for html: ' . end($open_tags), $file, $key);
 					}
 					$failed_unclosed = true;
 				}
@@ -699,7 +638,7 @@ class key
 						'&lt;/i&gt;',
 						'&lt;b&gt;',
 						'&lt;/b&gt;',
-					))) ? 'warning' : ((in_array($possible_html_specialchars, array(
+					))) ? Output::ERROR : ((in_array($possible_html_specialchars, array(
 						'&lt;em&gt;',
 						'&lt;/em&gt;',
 						'&lt;strong&gt;',
@@ -708,8 +647,8 @@ class key
 						'&lt;/u&gt;',
 						'&lt;/a&gt;',
 						'&lt;br /&gt;',
-					))) ? 'notice' : 'fail');
-					$this->messages->push($level, $this->user->lang('LANG_ADDITIONAL_HTML', $file, $key, $possible_html_specialchars), $against_language, $validate_language);
+					))) ? Output::NOTICE : Output::FATAL);
+					$this->output->addMessage($level, 'String is using additional html: ' . $possible_html_specialchars, $file, $key);
 				}
 
 			}
@@ -718,7 +657,7 @@ class key
 			{
 				if (!$failed_unclosed)
 				{
-					$this->messages->push('fail', $this->user->lang('LANG_UNCLOSED_HTML', $file, $key, $open_tags[0]), $against_language, $validate_language);
+					$this->output->addMessage(Output::FATAL, 'String is missing closing tag for html: ' . $open_tags[0], $file, $key);
 				}
 			}
 		}
