@@ -10,7 +10,7 @@ namespace Phpbb\Lpv\Tests\LangkeyValidator;
 
 class TestBase extends \Phpbb\Lpv\Tests\TestBase
 {
-	/** @var \Phpbb\Lpv\Validator\FileValidator */
+	/** @var \Phpbb\Lpv\Validator\LangkeyValidator */
 	protected $validator;
 
 	public function setUp()
