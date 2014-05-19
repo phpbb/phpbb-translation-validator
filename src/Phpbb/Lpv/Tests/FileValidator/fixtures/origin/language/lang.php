@@ -22,7 +22,3 @@ $lang = array_merge($lang, array(
 	// Missing language key '7_DAYS'		=> '7 days',
 	'8_DAYS'		=> 'Additional language key',
 ));
-
-?>
-
-
