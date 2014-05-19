@@ -1,5 +1,5 @@
 {
-	"name": "phpbb/lpv",
+	"name": "phpbb/languagepackvalidator",
 	"description": "A language package validator for phpBB language packs. Language packs are required to pass the validator when submitted to the language pack database.",
 	"homepage": "https://github.com/nickvergessen/phpbb-translation-validator",
 	"version": "1.2.0",
@@ -23,7 +23,7 @@
 		"phpunit/phpunit": "4.1.*"
 	},
 	"bin": [
-		"epv/EPV"
+		"Phpbb/LanguagePackValidator/LPV"
 	],
 	"config": {
 		"bin-dir": "bin"
