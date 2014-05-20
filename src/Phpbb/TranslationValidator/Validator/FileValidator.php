@@ -229,7 +229,7 @@ class FileValidator
 				continue;
 			}
 
-			//@todo $this->key_validator->validate($originFile, $againstLangKey, $againstLanguage, $validate[$againstLangKey]);
+			$this->langkeyValidator->validate($originFile, $againstLangKey, $againstLanguage, $validate[$againstLangKey]);
 		}
 
 		foreach ($validate as $validateLangKey => $validateLanguage)
