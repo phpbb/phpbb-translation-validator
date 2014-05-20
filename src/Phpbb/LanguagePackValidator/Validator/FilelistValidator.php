@@ -20,9 +20,13 @@ class FilelistValidator
 	/** @var string */
 	protected $originPath;
 	/** @var string */
+	protected $originLanguagePath;
+	/** @var string */
 	protected $sourceIso;
 	/** @var string */
 	protected $sourcePath;
+	/** @var string */
+	protected $sourceLanguagePath;
 	/** @var string */
 	protected $phpbbVersion;
 
@@ -49,12 +53,14 @@ class FilelistValidator
 	 *
 	 * @param string $originIso		The ISO of the language to validate
 	 * @param string $originPath	Path to the origin directory
+	 * @param string $originLanguagePath	Relative path to the origin language/ directory
 	 * @return $this
 	 */
-	public function setOrigin($originIso, $originPath)
+	public function setOrigin($originIso, $originPath, $originLanguagePath)
 	{
 		$this->originIso = $originIso;
 		$this->originPath = $originPath;
+		$this->originLanguagePath = $originLanguagePath;
 		return $this;
 	}
 
@@ -63,12 +69,14 @@ class FilelistValidator
 	 *
 	 * @param string $sourceIso		The ISO of the language to validate against
 	 * @param string $sourcePath	Path to the source directory
+	 * @param string $sourceLanguagePath	Relative path to the source language/ directory
 	 * @return $this
 	 */
-	public function setSource($sourceIso, $sourcePath)
+	public function setSource($sourceIso, $sourcePath, $sourceLanguagePath)
 	{
 		$this->sourceIso = $sourceIso;
 		$this->sourcePath = $sourcePath;
+		$this->sourceLanguagePath = $sourceLanguagePath;
 		return $this;
 	}
 
@@ -109,7 +117,7 @@ class FilelistValidator
 	{
 		$sourceFiles = $this->getFileList($this->sourcePath);
 		// License file is required but missing from en/, so we add it here
-		$sourceFiles[] = 'language/' . $this->sourceIso . '/LICENSE';
+		$sourceFiles[] = $this->sourceLanguagePath . 'LICENSE';
 		$sourceFiles = array_unique($sourceFiles);
 
 		$originFiles = $this->getFileList($this->originPath);
@@ -134,20 +142,20 @@ class FilelistValidator
 			if (!in_array($testSourceFile, $sourceFiles))
 			{
 				if (in_array($origin_file, array(
-						'language/' . $this->originIso . '/AUTHORS',
-						'language/' . $this->originIso . '/CHANGELOG',
-						'language/' . $this->originIso . '/README',
-						'language/' . $this->originIso . '/VERSION',
-					)))
+					$this->originLanguagePath . 'AUTHORS',
+					$this->originLanguagePath . 'CHANGELOG',
+					$this->originLanguagePath . 'README',
+					$this->originLanguagePath . 'VERSION',
+				)))
 				{
 					$this->output->addMessage(Output::NOTICE, 'Found additional file', $origin_file);
 				}
 				else if ($this->phpbbVersion == '3.1' && in_array($origin_file, array(
-						'language/' . $this->originIso . '/AUTHORS.md',
-						'language/' . $this->originIso . '/CHANGELOG.md',
-						'language/' . $this->originIso . '/README.md',
-						'language/' . $this->originIso . '/VERSION.md',
-					)))
+					$this->originLanguagePath . 'AUTHORS.md',
+					$this->originLanguagePath . 'CHANGELOG.md',
+					$this->originLanguagePath . 'README.md',
+					$this->originLanguagePath . 'VERSION.md',
+				)))
 				{
 					$this->output->addMessage(Output::NOTICE, 'Found additional file', $origin_file);
 				}

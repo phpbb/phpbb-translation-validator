@@ -18,9 +18,15 @@ class LangkeyValidator
 	/** @var string */
 	protected $originIso;
 	/** @var string */
+	protected $originPath;
+	/** @var string */
+	protected $originLanguagePath;
+	/** @var string */
 	protected $sourceIso;
 	/** @var string */
-	protected $packageDir;
+	protected $sourcePath;
+	/** @var string */
+	protected $sourceLanguagePath;
 	/** @var string */
 	protected $phpbbVersion;
 
@@ -50,12 +56,14 @@ class LangkeyValidator
 	 *
 	 * @param string $originIso		The ISO of the language to validate
 	 * @param string $originPath	Path to the origin directory
+	 * @param string $originLanguagePath	Relative path to the origin language/ directory
 	 * @return $this
 	 */
-	public function setOrigin($originIso, $originPath)
+	public function setOrigin($originIso, $originPath, $originLanguagePath)
 	{
 		$this->originIso = $originIso;
 		$this->originPath = $originPath;
+		$this->originLanguagePath = $originLanguagePath;
 		return $this;
 	}
 
@@ -64,12 +72,14 @@ class LangkeyValidator
 	 *
 	 * @param string $sourceIso		The ISO of the language to validate against
 	 * @param string $sourcePath	Path to the source directory
+	 * @param string $sourceLanguagePath	Relative path to the source language/ directory
 	 * @return $this
 	 */
-	public function setSource($sourceIso, $sourcePath)
+	public function setSource($sourceIso, $sourcePath, $sourceLanguagePath)
 	{
 		$this->sourceIso = $sourceIso;
 		$this->sourcePath = $sourcePath;
+		$this->sourceLanguagePath = $sourceLanguagePath;
 		return $this;
 	}
 
@@ -607,13 +617,13 @@ class LangkeyValidator
 	 */
 	public function validateHtml($file, $key, $against_language, $validate_language)
 	{
-		if (substr($file, -12) == '/install.php' && in_array($key, array(
+		if ($this->originLanguagePath . 'install.php' === $file && in_array($key, array(
 			'INSTALL_CONGRATS_EXPLAIN',
 			'INSTALL_INTRO_BODY',
 			'SUPPORT_BODY',
 			'UPDATE_INSTALLATION_EXPLAIN',
 			'OVERVIEW_BODY',
-		)) || substr($file, -8) == '/ucp.php' && in_array($key, array(
+		)) || $this->originLanguagePath . 'ucp.php' === $file && in_array($key, array(
 			'TERMS_OF_USE_CONTENT',
 			'PRIVACY_POLICY',
 		)))

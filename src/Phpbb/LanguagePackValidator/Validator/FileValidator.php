@@ -20,9 +20,13 @@ class FileValidator
 	/** @var string */
 	protected $originPath;
 	/** @var string */
+	protected $originLanguagePath;
+	/** @var string */
 	protected $sourceIso;
 	/** @var string */
 	protected $sourcePath;
+	/** @var string */
+	protected $sourceLanguagePath;
 	/** @var string */
 	protected $phpbbVersion;
 
@@ -50,13 +54,15 @@ class FileValidator
 	 *
 	 * @param string $originIso		The ISO of the language to validate
 	 * @param string $originPath	Path to the origin directory
+	 * @param string $originLanguagePath	Relative path to the origin language/ directory
 	 * @return $this
 	 */
-	public function setOrigin($originIso, $originPath)
+	public function setOrigin($originIso, $originPath, $originLanguagePath)
 	{
 		$this->originIso = $originIso;
 		$this->originPath = $originPath;
-		$this->langkeyValidator->setOrigin($originIso, $originPath);
+		$this->originLanguagePath = $originLanguagePath;
+		$this->langkeyValidator->setOrigin($originIso, $originPath, $originLanguagePath);
 		return $this;
 	}
 
@@ -65,13 +71,15 @@ class FileValidator
 	 *
 	 * @param string $sourceIso		The ISO of the language to validate against
 	 * @param string $sourcePath	Path to the source directory
+	 * @param string $sourceLanguagePath	Relative path to the source language/ directory
 	 * @return $this
 	 */
-	public function setSource($sourceIso, $sourcePath)
+	public function setSource($sourceIso, $sourcePath, $sourceLanguagePath)
 	{
 		$this->sourceIso = $sourceIso;
 		$this->sourcePath = $sourcePath;
-		$this->langkeyValidator->setSource($sourceIso, $sourcePath);
+		$this->sourceLanguagePath = $sourceLanguagePath;
+		$this->langkeyValidator->setSource($sourceIso, $sourcePath, $sourceLanguagePath);
 		return $this;
 	}
 
@@ -130,19 +138,19 @@ class FileValidator
 			$this->validateUtf8withoutbom($originFile);
 		}
 
-		if (strpos($originFile, 'language/' . $this->originIso . '/email/') === 0 && substr($originFile, -4) === '.txt')
+		if (strpos($originFile, $this->originLanguagePath . 'email/') === 0 && substr($originFile, -4) === '.txt')
 		{
 			$this->validateEmail($sourceFile, $originFile);
 		}
-		else if (strpos($originFile, 'language/' . $this->originIso . '/help_') === 0 && substr($originFile, -4) === '.php')
+		else if (strpos($originFile, $this->originLanguagePath . 'help_') === 0 && substr($originFile, -4) === '.php')
 		{
 			$this->validateHelpFile($sourceFile, $originFile);
 		}
-		else if ($originFile == 'language/' . $this->originIso . '/search_synonyms.php')
+		else if ($originFile == $this->originLanguagePath . 'search_synonyms.php')
 		{
 			$this->validateSearchSynonymsFile($originFile);
 		}
-		else if ($originFile == 'language/' . $this->originIso . '/search_ignore_words.php')
+		else if ($originFile == $this->originLanguagePath . 'search_ignore_words.php')
 		{
 			$this->validateSearchIgnoreWordsFile($originFile);
 		}
@@ -154,11 +162,11 @@ class FileValidator
 		{
 			$this->validateIndexFile($originFile);
 		}
-		else if ($originFile === 'language/' . $this->originIso . '/LICENSE')
+		else if ($originFile === $this->originLanguagePath . 'LICENSE')
 		{
 			$this->validateLicenseFile($originFile);
 		}
-		else if ($originFile === 'language/' . $this->originIso . '/iso.txt')
+		else if ($originFile === $this->originLanguagePath . 'iso.txt')
 		{
 			$this->validateIsoFile($originFile);
 		}
