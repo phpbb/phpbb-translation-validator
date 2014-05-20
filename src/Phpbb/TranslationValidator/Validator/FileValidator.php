@@ -390,13 +390,13 @@ class FileValidator
 			if (isset($help[0]))
 			{
 				$compare = isset($against[$entry][0]) ? $against[$entry][0] : '';
-				//@todo $this->key_validator->validate($origin_file, $entry . '.0', $compare, $help[0]);
+				$this->langkeyValidator->validate($originFile, $entry . '.0', $compare, $help[0]);
 			}
 
 			if (isset($help[1]))
 			{
 				$compare = isset($against[$entry][1]) ? $against[$entry][1] : '';
-				//@todo $this->key_validator->validate($origin_file, $entry . '.1', $compare, $help[1]);
+				$this->langkeyValidator->validate($originFile, $entry . '.1', $compare, $help[1]);
 			}
 			$entry++;
 		}
