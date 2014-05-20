@@ -17,6 +17,15 @@ class TestBase extends \Phpbb\LanguagePackValidator\Tests\TestBase
 	{
 		parent::setUp();
 
-		$this->validator = new \Phpbb\LanguagePackValidator\Validator\FileValidator($this->getMock('Symfony\Component\Console\Input\InputInterface'), $this->output, 'origin', 'source', dirname(__FILE__) . '/fixtures/', '3.0', false);
+		if (!defined('IN_PHPBB'))
+		{
+			// Need to set this, otherwise we can not load the language files
+			define('IN_PHPBB', true);
+		}
+
+		$this->validator = new \Phpbb\LanguagePackValidator\Validator\FileValidator($this->getMock('Symfony\Component\Console\Input\InputInterface'), $this->output);
+		$this->validator->setOrigin('origin', dirname(__FILE__) . '/fixtures/origin', 'language/origin/')
+			->setSource('source', dirname(__FILE__) . '/fixtures/source', 'language/source/')
+			->setPhpbbVersion('3.0');
 	}
 }

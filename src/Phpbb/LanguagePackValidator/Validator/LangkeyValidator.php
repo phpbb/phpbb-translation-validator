@@ -13,7 +13,7 @@ use Symfony\Component\Finder\Finder;
 use Phpbb\LanguagePackValidator\Output\Output;
 use Phpbb\LanguagePackValidator\Output\OutputInterface;
 
-class LangkeyValidator
+class LangKeyValidator
 {
 	/** @var string */
 	protected $originIso;

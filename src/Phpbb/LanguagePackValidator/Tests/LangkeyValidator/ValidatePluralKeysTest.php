@@ -6,7 +6,7 @@
  * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  *
  */
-namespace Phpbb\LanguagePackValidator\Tests\LangkeyValidator;
+namespace Phpbb\LanguagePackValidator\Tests\LangKeyValidator;
 
 use Phpbb\LanguagePackValidator\Output\Output;
 
@@ -62,16 +62,7 @@ class ValidatePluralKeysTest extends TestBase
 	 */
 	public function testValidatePluralKeys($key, $plural_rule, $validate_language, $expected)
 	{
-		$this->validator = new \Phpbb\LanguagePackValidator\Validator\LangkeyValidator(
-			$this->getMock('Symfony\Component\Console\Input\InputInterface'),
-			$this->output,
-			'origin',
-			'source',
-			dirname(__FILE__) . '/fixtures/',
-			'3.0',
-			$plural_rule,
-			false
-		);
+		$this->validator->setPluralRule($plural_rule);
 
 		$this->validator->validatePluralKeys('', $key, array(), $validate_language);
 		$this->assertOutputMessages($expected);

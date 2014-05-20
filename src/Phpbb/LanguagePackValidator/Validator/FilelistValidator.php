@@ -13,7 +13,7 @@ use Symfony\Component\Finder\Finder;
 use Phpbb\LanguagePackValidator\Output\Output;
 use Phpbb\LanguagePackValidator\Output\OutputInterface;
 
-class FilelistValidator
+class FileListValidator
 {
 	/** @var string */
 	protected $originIso;

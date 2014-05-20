@@ -61,7 +61,7 @@ class ValidateEmailTest extends TestBase
 	*/
 	public function testValidateEmailAscraeus($file, $expected)
 	{
-		$this->validator = new \Phpbb\LanguagePackValidator\Validator\FileValidator($this->getMock('Symfony\Component\Console\Input\InputInterface'), $this->output, 'origin', 'source', dirname(__FILE__) . '/fixtures/', '3.1', false);
+		$this->validator->setPhpbbVersion('3.1');
 		$this->validator->validateEmail($file, $file);
 		$this->assertOutputMessages($expected);
 	}

@@ -6,13 +6,25 @@
  * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  *
  */
-namespace Phpbb\LanguagePackValidator\Tests\Validator;
+namespace Phpbb\LanguagePackValidator\Tests\FileListValidator;
 
 use Phpbb\LanguagePackValidator\Output\Output;
 
-class FilelistTest extends \Phpbb\LanguagePackValidator\Tests\TestBase
+class FileListTest extends \Phpbb\LanguagePackValidator\Tests\TestBase
 {
-	public function validateFilelistData()
+	/** @var \Phpbb\LanguagePackValidator\Validator\FileListValidator */
+	protected $validator;
+
+	public function setUp()
+	{
+		parent::setUp();
+
+		$this->validator = new \Phpbb\LanguagePackValidator\Validator\FileListValidator($this->getMock('Symfony\Component\Console\Input\InputInterface'), $this->output);
+		$this->validator->setOrigin('origin', dirname(__FILE__) . '/fixtures/origin', 'language/origin/')
+			->setSource('source', dirname(__FILE__) . '/fixtures/source', 'language/source/');
+	}
+
+	public function validateFileListData()
 	{
 		return array(
 			array(
@@ -62,12 +74,13 @@ class FilelistTest extends \Phpbb\LanguagePackValidator\Tests\TestBase
 	}
 
 	/**
-	* @dataProvider validateFilelistData
+	* @dataProvider validateFileListData
 	*/
-	public function testValidateFilelist($phpbbVersion, $expected)
+	public function testValidateFileList($phpbbVersion, $expected)
 	{
-		$validator = new \Phpbb\LanguagePackValidator\Validator\FilelistValidator($this->getMock('Symfony\Component\Console\Input\InputInterface'), $this->output, 'origin', 'source', dirname(__FILE__) . '/fixtures/', $phpbbVersion, false);
-		$validator->validate();
+		$this->validator
+			->setPhpbbVersion($phpbbVersion)
+			->validate();
 		$this->assertOutputMessages($expected);
 	}
 }

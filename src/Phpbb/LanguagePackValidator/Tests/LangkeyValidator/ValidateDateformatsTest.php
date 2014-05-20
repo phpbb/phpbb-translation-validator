@@ -6,7 +6,7 @@
  * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  *
  */
-namespace Phpbb\LanguagePackValidator\Tests\LangkeyValidator;
+namespace Phpbb\LanguagePackValidator\Tests\LangKeyValidator;
 
 use Phpbb\LanguagePackValidator\Output\Output;
 

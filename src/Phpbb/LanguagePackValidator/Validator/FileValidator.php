@@ -46,7 +46,7 @@ class FileValidator
 	{
 		$this->input = $input;
 		$this->output = $output;
-		$this->langkeyValidator = new LangkeyValidator($input, $output);
+		$this->langkeyValidator = new LangKeyValidator($input, $output);
 	}
 
 	/**

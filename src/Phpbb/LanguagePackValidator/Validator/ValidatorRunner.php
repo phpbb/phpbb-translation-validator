@@ -107,7 +107,7 @@ class ValidatorRunner
 	 */
 	public function runValidators()
 	{
-		$filelistValidator = new FilelistValidator($this->input, $this->output);
+		$filelistValidator = new FileListValidator($this->input, $this->output);
 
 		$this->output->writelnIfDebug("<info>Validating FileList...</info>");
 
