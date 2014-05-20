@@ -18,19 +18,16 @@ class FileValidator
 	/** @var string */
 	protected $originIso;
 	/** @var string */
+	protected $originPath;
+	/** @var string */
 	protected $sourceIso;
 	/** @var string */
-	protected $packageDir;
+	protected $sourcePath;
 	/** @var string */
 	protected $phpbbVersion;
 
 	/** @var bool */
 	protected $debug;
-
-	/** @var string */
-	protected $originDir;
-	/** @var string */
-	protected $sourceDir;
 
 	/** @var \Symfony\Component\Console\Input\InputInterface */
 	protected $input;
@@ -40,30 +37,81 @@ class FileValidator
 	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
-	 * @param string $originIso		The ISO of the language to validate
-	 * @param string $sourceIso		The ISO of the language to validate against
-	 * @param string $packageDir	The path to the directory with the language packages
-	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1)
-	 * @param bool $debug Debug mode.
 	 */
-	public function __construct(InputInterface $input, OutputInterface $output, $originIso, $sourceIso, $packageDir, $phpbbVersion, $debug)
+	public function __construct(InputInterface $input, OutputInterface $output)
 	{
 		$this->input = $input;
 		$this->output = $output;
-		$this->originIso = $originIso;
-		$this->sourceIso = $sourceIso;
-		$this->packageDir = $packageDir;
-		$this->phpbbVersion = $phpbbVersion;
-		$this->debug = $debug;
-
-		$this->originDir = $this->packageDir . '/' . $this->originIso;
-		$this->sourceDir = $this->packageDir . '/' . $this->sourceIso;
+		$this->langkeyValidator = new LangkeyValidator($input, $output);
 	}
 
-	protected function guessPluralRule()
+	/**
+	 * Set phpBB Version
+	 *
+	 * @param string $originIso		The ISO of the language to validate
+	 * @param string $originPath	Path to the origin directory
+	 * @return $this
+	 */
+	public function setOrigin($originIso, $originPath)
 	{
-		@include($this->originDir . '/language/' . $this->originIso . '/common.php');
-		return isset($lang['PLURAL_RULE']) ? $lang['PLURAL_RULE'] : 1;
+		$this->originIso = $originIso;
+		$this->originPath = $originPath;
+		$this->langkeyValidator->setOrigin($originIso, $originPath);
+		return $this;
+	}
+
+	/**
+	 * Set phpBB Version
+	 *
+	 * @param string $sourceIso		The ISO of the language to validate against
+	 * @param string $sourcePath	Path to the source directory
+	 * @return $this
+	 */
+	public function setSource($sourceIso, $sourcePath)
+	{
+		$this->sourceIso = $sourceIso;
+		$this->sourcePath = $sourcePath;
+		$this->langkeyValidator->setSource($sourceIso, $sourcePath);
+		return $this;
+	}
+
+	/**
+	 * Set phpBB Version
+	 *
+	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1)
+	 * @return $this
+	 */
+	public function setPhpbbVersion($phpbbVersion)
+	{
+		$this->phpbbVersion = $phpbbVersion;
+		$this->langkeyValidator->setPhpbbVersion($phpbbVersion);
+		return $this;
+	}
+
+	/**
+	 * Set plural rule
+	 *
+	 * @param int $pluralRule
+	 * @return $this
+	 */
+	public function setPluralRule($pluralRule)
+	{
+		$this->pluralRule = $pluralRule;
+		$this->langkeyValidator->setPluralRule($pluralRule);
+		return $this;
+	}
+
+	/**
+	 * Set debug mode
+	 *
+	 * @param bool $debug Debug mode
+	 * @return $this
+	 */
+	public function setDebug($debug)
+	{
+		$this->debug = $debug;
+		$this->langkeyValidator->setDebug($debug);
+		return $this;
 	}
 
 	/**
@@ -135,14 +183,9 @@ class FileValidator
 	 */
 	public function validateLangFile($sourceFile, $originFile)
 	{
-		if (!defined('IN_PHPBB'))
-		{
-			define('IN_PHPBB', true);
-		}
-
 		ob_start();
 		/** @var $lang */
-		include($this->originDir . '/' . $originFile);
+		include($this->originPath . '/' . $originFile);
 
 		$defined_variables = get_defined_vars();
 		if (sizeof($defined_variables) != 3 || !isset($defined_variables['lang']) || gettype($defined_variables['lang']) != 'array')
@@ -166,7 +209,7 @@ class FileValidator
 		unset($lang);
 
 		/** @var $lang */
-		include($this->sourceDir . '/' . $sourceFile);
+		include($this->sourcePath . '/' . $sourceFile);
 		$against = $lang;
 		unset($lang);
 
@@ -206,8 +249,8 @@ class FileValidator
 	 */
 	public function validateEmail($sourceFile, $originFile)
 	{
-		$sourceContent = (string) file_get_contents($this->sourceDir . '/' . $sourceFile);
-		$originContent = (string) file_get_contents($this->originDir . '/' . $originFile);
+		$sourceContent = (string) file_get_contents($this->sourcePath . '/' . $sourceFile);
+		$originContent = (string) file_get_contents($this->originPath . '/' . $originFile);
 
 		$sourceContent = explode("\n", $sourceContent);
 		$originContent = explode("\n", $originContent);
@@ -306,7 +349,7 @@ class FileValidator
 	public function validateHelpFile($sourceFile, $originFile)
 	{
 		/** @var $help */
-		include($this->originDir . '/' . $originFile);
+		include($this->originPath . '/' . $originFile);
 
 		$defined_variables = get_defined_vars();
 		if (sizeof($defined_variables) != 3 || !isset($defined_variables['help']) || gettype($defined_variables['help']) != 'array')
@@ -319,7 +362,7 @@ class FileValidator
 		unset($help);
 
 		/** @var $help */
-		include($this->sourceDir . '/' . $sourceFile);
+		include($this->sourcePath . '/' . $sourceFile);
 		$against = $help;
 		unset($help);
 
@@ -370,7 +413,7 @@ class FileValidator
 	public function validateSearchSynonymsFile($originFile)
 	{
 		/** @var $synonyms */
-		include($this->originDir . '/' . $originFile);
+		include($this->originPath . '/' . $originFile);
 
 		$defined_variables = get_defined_vars();
 		if (sizeof($defined_variables) != 2 || !isset($defined_variables['synonyms']) || gettype($defined_variables['synonyms']) != 'array')
@@ -402,7 +445,7 @@ class FileValidator
 	public function validateSearchIgnoreWordsFile($originFile)
 	{
 		/** @var $words */
-		include($this->originDir . '/' . $originFile);
+		include($this->originPath . '/' . $originFile);
 
 		$defined_variables = get_defined_vars();
 		if (sizeof($defined_variables) != 2 || !isset($defined_variables['words']) || gettype($defined_variables['words']) != 'array')
@@ -431,7 +474,7 @@ class FileValidator
 	 */
 	public function validateLicenseFile($originFile)
 	{
-		$fileContents = (string) file_get_contents($this->originDir . '/' . $originFile);
+		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
 
 		if (md5($fileContents) != 'e060338598cd2cd6b8503733fdd40a11')
 		{
@@ -449,7 +492,7 @@ class FileValidator
 	 */
 	public function validateIndexFile($originFile)
 	{
-		$fileContents = (string) file_get_contents($this->originDir . '/' . $originFile);
+		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
 
 		// Empty index.htm file or one that displayes an empty white page
 		if ($fileContents !== '' && md5($fileContents) != '16703867d439efbd7c373dc2269e25a7')
@@ -471,7 +514,7 @@ class FileValidator
 	 */
 	public function validateIsoFile($originFile)
 	{
-		$fileContents = (string) file_get_contents($this->originDir . '/' . $originFile);
+		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
 		$isoFile = explode("\n", $fileContents);
 
 		if (sizeof($isoFile) != 3)
@@ -488,7 +531,7 @@ class FileValidator
 	 */
 	public function validateDefinedInPhpbb($originFile)
 	{
-		$fileContents = (string) file_get_contents($this->originDir . '/' . $originFile);
+		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
 
 		// Regex copied from MPV
 		if (!preg_match("#defined([ ]+){0,1}\\(([ ]+){0,1}'IN_PHPBB'#", $fileContents))
@@ -505,7 +548,7 @@ class FileValidator
 	 */
 	public function validateUtf8withoutbom($originFile)
 	{
-		$fileContents = (string) file_get_contents($this->originDir . '/' . $originFile);
+		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
 		$fileContents = explode("\n", $fileContents);
 		$fileContents = $fileContents[0];
 
@@ -524,7 +567,7 @@ class FileValidator
 	 */
 	public function validateLineEndings($originFile)
 	{
-		$fileContents = (string) file_get_contents($this->originDir . '/' . $originFile);
+		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
 
 		if (strpos($fileContents, "\r") !== false)
 		{

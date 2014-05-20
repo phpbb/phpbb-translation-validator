@@ -16,9 +16,11 @@ class ValidatorRunner
 	/** @var string */
 	protected $originIso;
 	/** @var string */
+	protected $originPath;
+	/** @var string */
 	protected $sourceIso;
 	/** @var string */
-	protected $packageDir;
+	protected $sourcePath;
 	/** @var string */
 	protected $phpbbVersion;
 
@@ -33,21 +35,63 @@ class ValidatorRunner
 	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
-	 * @param string $originIso		The ISO of the language to validate
-	 * @param string $sourceIso		The ISO of the language to validate against
-	 * @param string $packageDir	The path to the directory with the language packages
-	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1)
-	 * @param bool $debug Debug mode.
 	 */
-	public function __construct(InputInterface $input, OutputInterface $output, $originIso, $sourceIso, $packageDir, $phpbbVersion, $debug)
+	public function __construct(InputInterface $input, OutputInterface $output)
 	{
 		$this->input = $input;
 		$this->output = $output;
+	}
+
+	/**
+	 * Set phpBB Version
+	 *
+	 * @param string $originIso		The ISO of the language to validate
+	 * @param string $originPath	Path to the origin directory
+	 * @return $this
+	 */
+	public function setOrigin($originIso, $originPath)
+	{
 		$this->originIso = $originIso;
+		$this->originPath = $originPath;
+		return $this;
+	}
+
+	/**
+	 * Set phpBB Version
+	 *
+	 * @param string $sourceIso		The ISO of the language to validate against
+	 * @param string $sourcePath	Path to the source directory
+	 * @return $this
+	 */
+	public function setSource($sourceIso, $sourcePath)
+	{
 		$this->sourceIso = $sourceIso;
-		$this->packageDir = $packageDir;
+		$this->sourcePath = $sourcePath;
+		return $this;
+	}
+
+	/**
+	 * Set phpBB Version
+	 *
+	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1)
+	 * @return $this
+	 */
+	public function setPhpbbVersion($phpbbVersion)
+	{
 		$this->phpbbVersion = $phpbbVersion;
+		return $this;
+	}
+
+	/**
+	 * Set debug mode
+	 *
+	 * @param bool $debug Debug mode
+	 * @return $this
+	 */
+	public function setDebug($debug)
+	{
 		$this->debug = $debug;
+		return $this;
 	}
 
 	/**
@@ -55,18 +99,61 @@ class ValidatorRunner
 	 */
 	public function runValidators()
 	{
-		$filelistValidator = new FilelistValidator($this->input, $this->output, $this->originIso, $this->sourceIso, $this->packageDir, $this->phpbbVersion, $this->debug);
-		$validateFiles = $filelistValidator->validate();
+		$filelistValidator = new FilelistValidator($this->input, $this->output);
+
+		$this->output->writelnIfDebug("<info>Validating FileList...</info>");
+
+		$validateFiles = $filelistValidator->setSource($this->sourceIso, $this->sourcePath)
+			->setOrigin($this->originIso, $this->originPath)
+			->setPhpbbVersion($this->phpbbVersion)
+			->setDebug($this->debug)
+			->validate();
 
 		if (empty($validateFiles))
 		{
+			$this->output->writelnIfDebug("<info>No files found for validation.</info>");
 			return;
 		}
 
-		$filelistValidator = new FileValidator($this->input, $this->output, $this->originIso, $this->sourceIso, $this->packageDir, $this->phpbbVersion, $this->debug);
+		$pluralRule = $this->guessPluralRule();
+		$this->output->writelnIfDebug("<info>Using plural rule #$pluralRule for validation.</info>");
+
+		$this->output->writelnIfDebug("<info>Validating Files...</info>");
+
+		$filelistValidator = new FileValidator($this->input, $this->output);
+		$filelistValidator->setSource($this->sourceIso, $this->sourcePath)
+			->setOrigin($this->originIso, $this->originPath)
+			->setPhpbbVersion($this->phpbbVersion)
+			->setPluralRule($pluralRule)
+			->setDebug($this->debug);
+
 		foreach ($validateFiles as $sourceFile => $originFile)
 		{
+			$this->output->writelnIfDebug("<info>Validating File: $originFile</info>");
 			$filelistValidator->validate($sourceFile, $originFile);
 		}
+	}
+
+	/**
+	 * Try to find the plural rule for the language
+	 * @return int
+	 */
+	protected function guessPluralRule()
+	{
+		if (file_exists($this->originPath . '/language/' . $this->originIso . '/common.php'))
+		{
+			include($this->originPath . '/language/' . $this->originIso . '/common.php');
+
+			if (!isset($lang['PLURAL_RULE']))
+			{
+				$this->output->writelnIfDebug("<info>No plural rule set, falling back to plural rule #1</info>");
+			}
+		}
+		else
+		{
+			$this->output->writelnIfDebug("<info>Could not find common.php, falling back to plural rule #1</info>");
+		}
+
+		return isset($lang['PLURAL_RULE']) ? $lang['PLURAL_RULE'] : 1;
 	}
 }

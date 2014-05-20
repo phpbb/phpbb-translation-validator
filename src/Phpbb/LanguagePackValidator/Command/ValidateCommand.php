@@ -33,6 +33,12 @@ class ValidateCommand extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		if (!defined('IN_PHPBB'))
+		{
+			// Need to set this, otherwise we can not load the language files
+			define('IN_PHPBB', true);
+		}
+
 		$originIso = $input->getArgument('origin-iso');
 		$sourceIso = $input->getOption('source-iso');
 		$phpbbVersion = $input->getOption('phpbb-version');
@@ -42,10 +48,15 @@ class ValidateCommand extends Command
 		$output = new Output($output, $debug);
 
 		$output->writeln("Running Language Pack Validator on language <info>$originIso</info>.");
-		$runner = new ValidatorRunner($input, $output, $originIso, $sourceIso, $packageDir, $phpbbVersion, $debug);
+		$runner = new ValidatorRunner($input, $output);
+		$runner->setSource($sourceIso, $packageDir . '/' . $sourceIso)
+			->setOrigin($originIso, $packageDir . '/' . $originIso)
+			->setPhpbbVersion($phpbbVersion)
+			->setDebug($debug);
+		$output->writelnIfDebug("<info>Setup ValidatorRunner</info>");
 
 		$runner->runValidators();
-		$output->writeln("<info>Test results for language pack</info>");
+		$output->writeln("<info>Test results for language pack:</info>");
 
 		foreach ($output->getMessages() as $msg)
 		{

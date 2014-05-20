@@ -18,9 +18,11 @@ class FilelistValidator
 	/** @var string */
 	protected $originIso;
 	/** @var string */
+	protected $originPath;
+	/** @var string */
 	protected $sourceIso;
 	/** @var string */
-	protected $packageDir;
+	protected $sourcePath;
 	/** @var string */
 	protected $phpbbVersion;
 
@@ -35,21 +37,63 @@ class FilelistValidator
 	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
-	 * @param string $originIso		The ISO of the language to validate
-	 * @param string $sourceIso		The ISO of the language to validate against
-	 * @param string $packageDir	The path to the directory with the language packages
-	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1)
-	 * @param bool $debug Debug mode.
 	 */
-	public function __construct(InputInterface $input, OutputInterface $output, $originIso, $sourceIso, $packageDir, $phpbbVersion, $debug)
+	public function __construct(InputInterface $input, OutputInterface $output)
 	{
 		$this->input = $input;
 		$this->output = $output;
+	}
+
+	/**
+	 * Set phpBB Version
+	 *
+	 * @param string $originIso		The ISO of the language to validate
+	 * @param string $originPath	Path to the origin directory
+	 * @return $this
+	 */
+	public function setOrigin($originIso, $originPath)
+	{
 		$this->originIso = $originIso;
+		$this->originPath = $originPath;
+		return $this;
+	}
+
+	/**
+	 * Set phpBB Version
+	 *
+	 * @param string $sourceIso		The ISO of the language to validate against
+	 * @param string $sourcePath	Path to the source directory
+	 * @return $this
+	 */
+	public function setSource($sourceIso, $sourcePath)
+	{
 		$this->sourceIso = $sourceIso;
-		$this->packageDir = $packageDir;
+		$this->sourcePath = $sourcePath;
+		return $this;
+	}
+
+	/**
+	 * Set phpBB Version
+	 *
+	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1)
+	 * @return $this
+	 */
+	public function setPhpbbVersion($phpbbVersion)
+	{
 		$this->phpbbVersion = $phpbbVersion;
+		return $this;
+	}
+
+	/**
+	 * Set debug mode
+	 *
+	 * @param bool $debug Debug mode
+	 * @return $this
+	 */
+	public function setDebug($debug)
+	{
 		$this->debug = $debug;
+		return $this;
 	}
 
 	/**
@@ -63,12 +107,12 @@ class FilelistValidator
 	 */
 	public function validate()
 	{
-		$sourceFiles = $this->getFileList($this->packageDir . '/' . $this->sourceIso);
+		$sourceFiles = $this->getFileList($this->sourcePath);
 		// License file is required but missing from en/, so we add it here
 		$sourceFiles[] = 'language/' . $this->sourceIso . '/LICENSE';
 		$sourceFiles = array_unique($sourceFiles);
 
-		$originFiles = $this->getFileList($this->packageDir . '/' . $this->originIso);
+		$originFiles = $this->getFileList($this->originPath);
 
 		$validFiles = array();
 		foreach ($sourceFiles as $sourceFile)
