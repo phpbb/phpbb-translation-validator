@@ -700,8 +700,13 @@ class LangKeyValidator
 			if (!$ignoreAdditional && !in_array($possibleHtml, $sourceHtml) && !isset($this->additionalHtmlFound[$file][$key][$possibleHtmlSpecialchars]))
 			{
 				$this->additionalHtmlFound[$file][$key][$possibleHtmlSpecialchars] = true;
-				$level = $this->getErrorLevelForAdditionalHtml($possibleHtmlSpecialchars);
+				if (strpos($possibleHtmlSpecialchars, '&lt;/') === 0)
+				{
+					// Do not add an additional entry for closing tags
+					continue;
+				}
 
+				$level = $this->getErrorLevelForAdditionalHtml($possibleHtmlSpecialchars);
 				if (in_array(str_replace('http://', 'https://', $possibleHtml), $sourceHtml))
 				{
 					$level = Output::NOTICE;
@@ -739,9 +744,7 @@ class LangKeyValidator
 	{
 		if (in_array($html, array(
 			'&lt;i&gt;',
-			'&lt;/i&gt;',
 			'&lt;b&gt;',
-			'&lt;/b&gt;',
 		)))
 		{
 			return Output::ERROR;
@@ -749,18 +752,18 @@ class LangKeyValidator
 
 		if (in_array($html, array(
 			'&lt;em&gt;',
-			'&lt;/em&gt;',
 			'&lt;strong&gt;',
-			'&lt;/strong&gt;',
 			'&lt;samp&gt;',
-			'&lt;/samp&gt;',
 			'&lt;u&gt;',
-			'&lt;/u&gt;',
-			'&lt;/a&gt;',
 			'&lt;br /&gt;',
 		)))
 		{
 			return Output::NOTICE;
+		}
+
+		if (preg_match('#^&lt;a href=&quot;([a-zA-Z0-9_\:\&\/\?\.\-\#]+)&quot;&gt;$#', $html, $match))
+		{
+			return Output::ERROR;
 		}
 
 		return Output::FATAL;
