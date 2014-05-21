@@ -199,10 +199,22 @@ class Output implements \Phpbb\TranslationValidator\Output\OutputInterface
 
 	/**
 	 * Get the amount of messages that were fatal.
+	 * @param int $type
 	 * @return int
 	 */
-	public function getFatalCount()
+	public function getMessageCount($type)
 	{
-		return $this->fatal;
+		switch ($type)
+		{
+			case Output::FATAL:
+				return $this->fatal;
+			case Output::ERROR:
+				return $this->error;
+			case Output::WARNING:
+				return $this->warning;
+			case Output::NOTICE:
+				return $this->notice;
+		}
+		return 0;
 	}
 }

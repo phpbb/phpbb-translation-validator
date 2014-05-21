@@ -41,8 +41,9 @@ interface OutputInterface extends \Symfony\Component\Console\Output\OutputInterf
 	public function getMessages();
 
 	/**
-	 * Get the amount of messages that were fatal.
+	 * Get the amount of messages that have a specific level.
+	 * @param int $type
 	 * @return int
 	 */
-	public function getFatalCount();
+	public function getMessageCount($type);
 }

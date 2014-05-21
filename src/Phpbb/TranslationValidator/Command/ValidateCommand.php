@@ -9,6 +9,7 @@
 namespace Phpbb\TranslationValidator\Command;
 
 use Phpbb\TranslationValidator\Output\Output;
+use Phpbb\TranslationValidator\Output\OutputFormatter;
 use Phpbb\TranslationValidator\Validator\ValidatorRunner;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -48,8 +49,10 @@ class ValidateCommand extends Command
 		$debug = $input->getOption('debug');
 
 		$output = new Output($output, $debug);
+		$output->setFormatter(new OutputFormatter(true));
 
-		$output->writeln("Running Language Pack Validator on language <info>$originIso</info>.");
+		$output->writeln("<noticebg>Running Language Pack Validator on language $originIso.</noticebg>");
+		$output->writeln('');
 		$runner = new ValidatorRunner($input, $output);
 		$runner->setPhpbbVersion($phpbbVersion)
 			->setDebug($debug);
@@ -65,16 +68,37 @@ class ValidateCommand extends Command
 				->setOrigin($originIso, $languageDir . '/' . $originIso, '');
 		}
 
-		$output->writelnIfDebug("<info>Setup ValidatorRunner</info>");
+		$output->writelnIfDebug("Setup ValidatorRunner");
 
 		$runner->runValidators();
-		$output->writeln("<info>Test results for language pack:</info>");
+		$output->writeln("Test results for language pack:");
+		$output->writeln('');
 
 		foreach ($output->getMessages() as $msg)
 		{
 			$output->writeln((string) $msg);
+			$output->writeln('');
+		}
+		$output->writeln('');
+
+		$found_msg = '';
+		$found_msg .= 'Fatal: ' . $output->getMessageCount(Output::FATAL);
+		$found_msg .= ', Error: ' . $output->getMessageCount(Output::ERROR);
+		$found_msg .= ', Warning: ' . $output->getMessageCount(Output::WARNING);
+		$found_msg .= ', Notice: ' . $output->getMessageCount(Output::NOTICE);
+
+		if ($output->getMessageCount(Output::FATAL))
+		{
+			$output->writeln('<fatal>' . str_repeat(' ', strlen($found_msg)) . '</fatal>');
+			$output->writeln('<fatal>Validation: FAILED' . str_repeat(' ', strlen($found_msg) - 18) . '</fatal>');
+			$output->writeln('<fatal>' . $found_msg .  '</fatal>');
+		}
+		else
+		{
+			$output->writeln('<success>PASSED: ' . $found_msg . '</success>');
 		}
 
-		return ($output->getFatalCount() > 0) ? 1 : 0;
+
+		return ($output->getMessageCount(Output::FATAL) > 0) ? 1 : 0;
 	}
 }
