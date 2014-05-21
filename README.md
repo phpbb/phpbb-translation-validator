@@ -36,7 +36,7 @@ Go to "ACP" > "Customise" > "Extensions" and enable the "phpBB Translation Valid
 
 ##Tests and Continuous Intergration
 
-[![Build Status](https://travis-ci.org/nickvergessen/phpbb-translation-validator.png?branch=master)](https://travis-ci.org/nickvergessen/phpbb-translation-validator)
+[![Build Status](https://travis-ci.org/phpbb/phpbb-translation-validator.png?branch=master)](https://travis-ci.org/phpbb/phpbb-translation-validator)
 
 We use Travis-CI as a continous intergtation server and phpunit for our unit testing. See more information on the [phpBB development wiki](https://wiki.phpbb.com/Unit_Tests).
 
