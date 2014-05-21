@@ -19,13 +19,11 @@ class ValidateHtmlTest extends TestBase
 			array('Same', '<em>foobar</em>', '<em>foobar</em>', array()),
 			array('Different html', '<em>foobar</em>', '<strong>foobar</strong>', array(
 				Output::NOTICE . '-String is using additional html: &lt;strong&gt;--Different html',
-				Output::NOTICE . '-String is using additional html: &lt;/strong&gt;--Different html',
 			)),
-			array('Additional html', '<em>foobar</em>', '<em>foobar</em> <strong>foobar</strong> <invalid>foobar</invalid>', array(
+			array('Additional html', '<em>foobar</em>', '<em>foobar</em> <a href="#">foobar</a> <strong>foobar</strong> <invalid>foobar</invalid>', array(
 				Output::NOTICE . '-String is using additional html: &lt;strong&gt;--Additional html',
-				Output::NOTICE . '-String is using additional html: &lt;/strong&gt;--Additional html',
+				Output::ERROR . '-String is using additional html: &lt;a href=&quot;#&quot;&gt;--Additional html',
 				Output::FATAL . '-String is using additional html: &lt;invalid&gt;--Additional html',
-				Output::FATAL . '-String is using additional html: &lt;/invalid&gt;--Additional html',
 			)),
 			array('Additional unclosed html', '<em>foobar</em>', '<em>foobar</em> <strong>foobar', array(
 				Output::NOTICE . '-String is using additional html: &lt;strong&gt;--Additional unclosed html',
