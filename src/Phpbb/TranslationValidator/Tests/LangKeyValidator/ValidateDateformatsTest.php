@@ -26,10 +26,10 @@ class ValidateDateformatsTest extends TestBase
 			)),
 			array('ValidString', array('String' => 'foobar'), array()),
 			array('UsingHTML', array('String' => 'foo<em>bar</em>'), array(
-				Output::NOTICE . '-String is using additional html: &lt;em&gt;--UsingHTML.String',
+				Output::NOTICE . '-String is using additional html: <em>--UsingHTML.String',
 			)),
 			array('UsingHTMLKey', array('Str<em>i</em>ng' => 'foo'), array(
-				Output::NOTICE . '-String is using additional html: &lt;em&gt;--UsingHTMLKey.Str<em>i</em>ng',
+				Output::NOTICE . '-String is using additional html: <em>--UsingHTMLKey.Str<em>i</em>ng',
 			)),
 		);
 	}

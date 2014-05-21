@@ -652,7 +652,7 @@ class LangKeyValidator
 			// The closing tag contains a space
 			if (!$openingTag && strpos($possibleHtml, ' ') !== false)
 			{
-				$this->output->addMessage(Output::FATAL, 'String is using invalid html: ' . htmlspecialchars($possibleHtml), $file, $key);
+				$this->output->addMessage(Output::FATAL, 'String is using invalid html: ' . $possibleHtml, $file, $key);
 				$ignoreAdditional = true;
 			}
 
@@ -695,24 +695,23 @@ class LangKeyValidator
 				array_pop($openTags);
 			}
 
-			$possibleHtmlSpecialchars = htmlspecialchars($possibleHtml);
 			// HTML tag is not used in original language
-			if (!$ignoreAdditional && !in_array($possibleHtml, $sourceHtml) && !isset($this->additionalHtmlFound[$file][$key][$possibleHtmlSpecialchars]))
+			if (!$ignoreAdditional && !in_array($possibleHtml, $sourceHtml) && !isset($this->additionalHtmlFound[$file][$key][$possibleHtml]))
 			{
-				$this->additionalHtmlFound[$file][$key][$possibleHtmlSpecialchars] = true;
-				if (strpos($possibleHtmlSpecialchars, '&lt;/') === 0)
+				$this->additionalHtmlFound[$file][$key][$possibleHtml] = true;
+				if (strpos($possibleHtml, '</') === 0)
 				{
 					// Do not add an additional entry for closing tags
 					continue;
 				}
 
-				$level = $this->getErrorLevelForAdditionalHtml($possibleHtmlSpecialchars);
+				$level = $this->getErrorLevelForAdditionalHtml($possibleHtml);
 				if (in_array(str_replace('http://', 'https://', $possibleHtml), $sourceHtml))
 				{
 					$level = Output::NOTICE;
 				}
 
-				$this->output->addMessage($level, 'String is using additional html: ' . $possibleHtmlSpecialchars, $file, $key);
+				$this->output->addMessage($level, 'String is using additional html: ' . $possibleHtml, $file, $key);
 			}
 		}
 
@@ -743,25 +742,26 @@ class LangKeyValidator
 	protected function getErrorLevelForAdditionalHtml($html)
 	{
 		if (in_array($html, array(
-			'&lt;i&gt;',
-			'&lt;b&gt;',
+			'<i>',
+			'<b>',
 		)))
 		{
 			return Output::ERROR;
 		}
 
 		if (in_array($html, array(
-			'&lt;em&gt;',
-			'&lt;strong&gt;',
-			'&lt;samp&gt;',
-			'&lt;u&gt;',
-			'&lt;br /&gt;',
+			'<em>',
+			'<strong>',
+			'<samp>',
+			'<u>',
+			'<br />',
 		)))
 		{
 			return Output::NOTICE;
 		}
 
-		if (preg_match('#^&lt;a href=&quot;([a-zA-Z0-9_\:\&\/\?\.\-\#]+)&quot;&gt;$#', $html, $match))
+		if (preg_match('#^<a href="([a-zA-Z0-9_\:\&\/\?\.\-\#]+)">$#', $html, $match) ||
+			preg_match('#^<a href="([a-zA-Z0-9_\:\&\/\?\.\-\#]+)" rel="external">$#', $html, $match))
 		{
 			return Output::ERROR;
 		}
