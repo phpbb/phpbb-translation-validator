@@ -601,7 +601,7 @@ class LangKeyValidator
 	 *
 	 * @var array
 	 */
-	protected $additional_html_found = array();
+	protected $additionalHtmlFound = array();
 
 	/**
 	 * Validates the html usage in a string
@@ -609,13 +609,13 @@ class LangKeyValidator
 	 * Checks whether the used HTML tags are also used in the original language.
 	 * Omitting tags is okay, as long as both (start and end) are omitted.
 	 *
-	 * @param	string	$file		File to validate
-	 * @param	string	$key		Key to validate
-	 * @param	string	$against_language		Original language string
-	 * @param	string	$validate_language		Translated language string
+	 * @param	string	$file			File to validate
+	 * @param	string	$key			Key to validate
+	 * @param	string	$sourceString	Language string to validate against
+	 * @param	string	$originString	Language string to validate
 	 * @return	null
 	 */
-	public function validateHtml($file, $key, $against_language, $validate_language)
+	public function validateHtml($file, $key, $sourceString, $originString)
 	{
 		if ($this->originLanguagePath . 'install.php' === $file && in_array($key, array(
 			'INSTALL_CONGRATS_EXPLAIN',
@@ -628,100 +628,137 @@ class LangKeyValidator
 			'PRIVACY_POLICY',
 		)))
 		{
-			$against_language = '<p>' . $against_language . '</p>';
-			$validate_language = '<p>' . $validate_language . '</p>';
+			$sourceString = '<p>' . $sourceString . '</p>';
+			$originString = '<p>' . $originString . '</p>';
 		}
 
-		$against_html = $validate_html = $open_tags = array();
-		preg_match_all('/\<.+?\>/', $against_language, $against_html);
-		preg_match_all('/\<.+?\>/', $validate_language, $validate_html);
+		$sourceHtml = $originHtml = $openTags = array();
+		preg_match_all('/\<.+?\>/', $sourceString, $sourceHtml);
+		preg_match_all('/\<.+?\>/', $originString, $originHtml);
 
-		if (!empty($validate_html) && !empty($validate_html[0]))
+		if (empty($originHtml) || empty($originHtml[0]))
 		{
-			$failed_unclosed = false;
-			foreach ($validate_html[0] as $possible_html)
-			{
-				$opening_tag = $possible_html[1] !== '/';
-				$ignore_additional = false;
-
-				// The closing tag contains a space
-				if (!$opening_tag && strpos($possible_html, ' ') !== false)
-				{
-					$this->output->addMessage(Output::FATAL, 'String is using invalid html: ' . htmlspecialchars($possible_html), $file, $key);
-					$ignore_additional = true;
-				}
-
-				$tag = (strpos($possible_html, ' ') !== false) ? substr($possible_html, 1, strpos($possible_html, ' ') - 1) : substr($possible_html, 1, strpos($possible_html, '>') - 1);
-				$tag = ($opening_tag) ? $tag : substr($tag, 1);
-
-				if ($opening_tag)
-				{
-					if (in_array($tag, $open_tags))
-					{
-						if (!$failed_unclosed)
-						{
-							$this->output->addMessage(Output::FATAL, 'String is missing closing tag for html: ' . $tag, $file, $key);
-						}
-						$failed_unclosed = true;
-					}
-					else if (substr($possible_html, -3) !== ' />')
-					{
-						$open_tags[] = $tag;
-					}
-				}
-				else if (empty($open_tags))
-				{
-					if (!$failed_unclosed)
-					{
-						$this->output->addMessage(Output::FATAL, sprintf('String is closing tag for html “%s” which was not opened before', $tag), $file, $key);
-					}
-					$failed_unclosed = true;
-				}
-				else if (end($open_tags) != $tag)
-				{
-					if (!$failed_unclosed)
-					{
-						$this->output->addMessage(Output::FATAL, 'String is missing closing tag for html: ' . end($open_tags), $file, $key);
-					}
-					$failed_unclosed = true;
-				}
-				else
-				{
-					array_pop($open_tags);
-				}
-
-				$possible_html_specialchars = htmlspecialchars($possible_html);
-				// HTML tag is not used in original language
-				if (!$ignore_additional && !in_array($possible_html, $against_html[0]) && !isset($this->additional_html_found[$file][$key][$possible_html_specialchars]))
-				{
-					$this->additional_html_found[$file][$key][$possible_html_specialchars] = true;
-					$level = (in_array($possible_html_specialchars, array(
-						'&lt;i&gt;',
-						'&lt;/i&gt;',
-						'&lt;b&gt;',
-						'&lt;/b&gt;',
-					))) ? Output::ERROR : ((in_array($possible_html_specialchars, array(
-						'&lt;em&gt;',
-						'&lt;/em&gt;',
-						'&lt;strong&gt;',
-						'&lt;/strong&gt;',
-						'&lt;u&gt;',
-						'&lt;/u&gt;',
-						'&lt;/a&gt;',
-						'&lt;br /&gt;',
-					))) ? Output::NOTICE : Output::FATAL);
-					$this->output->addMessage($level, 'String is using additional html: ' . $possible_html_specialchars, $file, $key);
-				}
-
-			}
-
-			if (!empty($open_tags))
-			{
-				if (!$failed_unclosed)
-				{
-					$this->output->addMessage(Output::FATAL, 'String is missing closing tag for html: ' . $open_tags[0], $file, $key);
-				}
-			}
+			// Return when we have no HTML
+			return;
 		}
+		$sourceHtml = isset($sourceHtml[0]) ? $sourceHtml[0] : array();
+
+		$failedUnclosed = false;
+		foreach ($originHtml[0] as $possibleHtml)
+		{
+			$openingTag = $possibleHtml[1] !== '/';
+			$ignoreAdditional = false;
+
+			// The closing tag contains a space
+			if (!$openingTag && strpos($possibleHtml, ' ') !== false)
+			{
+				$this->output->addMessage(Output::FATAL, 'String is using invalid html: ' . htmlspecialchars($possibleHtml), $file, $key);
+				$ignoreAdditional = true;
+			}
+
+			$tag = (strpos($possibleHtml, ' ') !== false) ? substr($possibleHtml, 1, strpos($possibleHtml, ' ') - 1) : substr($possibleHtml, 1, strpos($possibleHtml, '>') - 1);
+			$tag = ($openingTag) ? $tag : substr($tag, 1);
+
+			if ($openingTag)
+			{
+				if (in_array($tag, $openTags))
+				{
+					if (!$failedUnclosed)
+					{
+						$this->output->addMessage(Output::FATAL, 'String is missing closing tag for html: ' . $tag, $file, $key);
+					}
+					$failedUnclosed = true;
+				}
+				else if (substr($possibleHtml, -3) !== ' />')
+				{
+					$openTags[] = $tag;
+				}
+			}
+			else if (empty($openTags))
+			{
+				if (!$failedUnclosed)
+				{
+					$this->output->addMessage(Output::FATAL, sprintf('String is closing tag for html “%s” which was not opened before', $tag), $file, $key);
+				}
+				$failedUnclosed = true;
+			}
+			else if (end($openTags) != $tag)
+			{
+				if (!$failedUnclosed)
+				{
+					$this->output->addMessage(Output::FATAL, 'String is missing closing tag for html: ' . end($openTags), $file, $key);
+				}
+				$failedUnclosed = true;
+			}
+			else
+			{
+				array_pop($openTags);
+			}
+
+			$possibleHtmlSpecialchars = htmlspecialchars($possibleHtml);
+			// HTML tag is not used in original language
+			if (!$ignoreAdditional && !in_array($possibleHtml, $sourceHtml) && !isset($this->additionalHtmlFound[$file][$key][$possibleHtmlSpecialchars]))
+			{
+				$this->additionalHtmlFound[$file][$key][$possibleHtmlSpecialchars] = true;
+				$level = $this->getErrorLevelForAdditionalHtml($possibleHtmlSpecialchars);
+
+				$this->output->addMessage($level, 'String is using additional html: ' . $possibleHtmlSpecialchars, $file, $key);
+			}
+
+		}
+
+		if (!empty($openTags) && !$failedUnclosed)
+		{
+			$this->output->addMessage(Output::FATAL, 'String is missing closing tag for html: ' . $openTags[0], $file, $key);
+		}
+	}
+
+	/**
+	 * Returns the error level for a given HTML
+	 *
+	 * Error:
+	 *  - <i> should be <em>
+	 *  - <b> should be <strong>
+	 * Notice:
+	 *  - <em>
+	 *  - <strong>
+	 *  - <samp>
+	 *  - <u>
+	 *  - <br />
+	 * Fatal:
+	 *  - others
+	 *
+	 * @param string $html
+	 * @return int Error level
+	 */
+	protected function getErrorLevelForAdditionalHtml($html)
+	{
+		if (in_array($html, array(
+			'&lt;i&gt;',
+			'&lt;/i&gt;',
+			'&lt;b&gt;',
+			'&lt;/b&gt;',
+		)))
+		{
+			return Output::ERROR;
+		}
+
+		if (in_array($html, array(
+			'&lt;em&gt;',
+			'&lt;/em&gt;',
+			'&lt;strong&gt;',
+			'&lt;/strong&gt;',
+			'&lt;samp&gt;',
+			'&lt;/samp&gt;',
+			'&lt;u&gt;',
+			'&lt;/u&gt;',
+			'&lt;/a&gt;',
+			'&lt;br /&gt;',
+		)))
+		{
+			return Output::NOTICE;
+		}
+
+		return Output::FATAL;
 	}
 }
