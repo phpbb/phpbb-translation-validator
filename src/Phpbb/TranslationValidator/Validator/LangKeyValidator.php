@@ -702,9 +702,13 @@ class LangKeyValidator
 				$this->additionalHtmlFound[$file][$key][$possibleHtmlSpecialchars] = true;
 				$level = $this->getErrorLevelForAdditionalHtml($possibleHtmlSpecialchars);
 
+				if (in_array(str_replace('http://', 'https://', $possibleHtml), $sourceHtml))
+				{
+					$level = Output::NOTICE;
+				}
+
 				$this->output->addMessage($level, 'String is using additional html: ' . $possibleHtmlSpecialchars, $file, $key);
 			}
-
 		}
 
 		if (!empty($openTags) && !$failedUnclosed)

@@ -38,6 +38,14 @@ class ValidateHtmlTest extends TestBase
 			array('Unclosed html', '<em>foobar</em>', '<em>foo<em>foobar</em>bar', array(
 				Output::FATAL . '-String is missing closing tag for html: em--Unclosed html',
 			)),
+
+			array(
+				'http:// vs https://',
+				'<a href="https://www.phpbb.com/">foobar</a>', '<a href="http://www.phpbb.com/">bar foo</a>',
+				array(
+					Output::NOTICE . '-String is using additional html: &lt;a href=&quot;http://www.phpbb.com/&quot;&gt;--http:// vs https://',
+				),
+			),
 		);
 	}
 
