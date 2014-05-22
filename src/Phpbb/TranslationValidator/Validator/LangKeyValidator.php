@@ -566,9 +566,17 @@ class LangKeyValidator
 
 		if ($against_integers - $validate_integers !== 0)
 		{
-			if (!$is_plural || ($is_plural && $against_integers - $validate_integers !== 1 && $against_integers - $validate_integers !== -1))
+			if (!$is_plural || ($is_plural && abs($against_integers - $validate_integers) !== 1))
 			{
-				$this->output->addMessage(Output::FATAL, sprintf('Should have %1$s integer arguments, but has %2$s', $against_integers, $validate_integers), $file, $key);
+				$level = Output::FATAL;
+				// phpBB 3.0 Plural workarounds
+				if ($this->phpbbVersion == '3.0' && abs($against_integers - $validate_integers) === 1 &&
+					($this->originLanguagePath . 'common.php' === $file && $key === 'VIEW_ONLINE_TIME')
+				)
+				{
+					$level = Output::WARNING;
+				}
+				$this->output->addMessage($level, sprintf('Should have %1$s integer arguments, but has %2$s', $against_integers, $validate_integers), $file, $key);
 			}
 			else if ($is_plural)
 			{
