@@ -71,14 +71,8 @@ class ValidateCommand extends Command
 		$output->writelnIfDebug("Setup ValidatorRunner");
 
 		$runner->runValidators();
-		$output->writeln("Test results for language pack:");
 		$output->writeln('');
-
-		foreach ($output->getMessages() as $msg)
-		{
-			$output->writeln((string) $msg);
-			$output->writeln('');
-		}
+		$output->writeln("Test results for language pack:");
 		$output->writeln('');
 
 		$found_msg = '';
@@ -86,6 +80,26 @@ class ValidateCommand extends Command
 		$found_msg .= ', Error: ' . $output->getMessageCount(Output::ERROR);
 		$found_msg .= ', Warning: ' . $output->getMessageCount(Output::WARNING);
 		$found_msg .= ', Notice: ' . $output->getMessageCount(Output::NOTICE);
+
+		if ($output->getMessageCount(Output::FATAL))
+		{
+			$output->writeln('<fatal>' . str_repeat(' ', strlen($found_msg)) . '</fatal>');
+			$output->writeln('<fatal>Validation: FAILED' . str_repeat(' ', strlen($found_msg) - 18) . '</fatal>');
+			$output->writeln('<fatal>' . $found_msg .  '</fatal>');
+			$output->writeln('');
+			$output->writeln('');
+		}
+		else
+		{
+			$output->writeln('<success>PASSED: ' . $found_msg . '</success>');
+		}
+
+		foreach ($output->getMessages() as $msg)
+		{
+			$output->writeln((string) $msg);
+			$output->writeln('');
+		}
+		$output->writeln('');
 
 		if ($output->getMessageCount(Output::FATAL))
 		{

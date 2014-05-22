@@ -9,6 +9,7 @@
 namespace Phpbb\TranslationValidator\Validator;
 
 use Symfony\Component\Console\Input\InputInterface;
+use Phpbb\TranslationValidator\Output\Output;
 use Phpbb\TranslationValidator\Output\OutputInterface;
 
 class ValidatorRunner
@@ -30,6 +31,21 @@ class ValidatorRunner
 
 	/** @var bool */
 	protected $debug;
+
+	/** @var int */
+	protected $numFatal = 0;
+	/** @var int */
+	protected $numError = 0;
+	/** @var int */
+	protected $numWarning = 0;
+	/** @var int */
+	protected $numNotice = 0;
+	/** @var int */
+	protected $progress = 0;
+	/** @var int */
+	protected $maxProgress = 0;
+	/** @var int */
+	protected $progressLength = 0;
 
 	/** @var \Symfony\Component\Console\Input\InputInterface */
 	protected $input;
@@ -117,16 +133,20 @@ class ValidatorRunner
 			->setDebug($this->debug)
 			->validate();
 
+		$this->printErrorLevel($this->output);
+
 		if (empty($validateFiles))
 		{
-			$this->output->writelnIfDebug("<info>No files found for validation.</info>");
+			$this->output->writelnIfDebug('');
+			$this->output->writelnIfDebug("<fatal>No files found for validation.</fatal>");
 			return;
 		}
 
-		$pluralRule = $this->guessPluralRule();
-		$this->output->writelnIfDebug("<info>Using plural rule #$pluralRule for validation.</info>");
+		$this->maxProgress = sizeof($validateFiles) + 1;
+		$this->progressLength = 11 + strlen($this->maxProgress) * 2;
 
-		$this->output->writelnIfDebug("<info>Validating Files...</info>");
+		$pluralRule = $this->guessPluralRule();
+		$this->output->writelnIfDebug("<notice>Using plural rule #$pluralRule for validation.</notice>");
 
 		$filelistValidator = new FileValidator($this->input, $this->output);
 		$filelistValidator->setSource($this->sourceIso, $this->sourcePath, $this->sourceLanguagePath)
@@ -137,9 +157,56 @@ class ValidatorRunner
 
 		foreach ($validateFiles as $sourceFile => $originFile)
 		{
-			$this->output->writelnIfDebug("<info>Validating File: $originFile</info>");
+			$this->output->writelnIfDebug('');
+			$this->output->writelnIfDebug("Validating File: $originFile");
 			$filelistValidator->validate($sourceFile, $originFile);
+			$this->printErrorLevel($this->output);
+
+			usleep(31250);//125000);
 		}
+
+		$this->output->writeln('.');
+	}
+
+	protected function printErrorLevel(Output $output)
+	{
+		$fatals = $output->getMessageCount(Output::FATAL);
+		$errors = $output->getMessageCount(Output::ERROR);
+		$warnings = $output->getMessageCount(Output::WARNING);
+		$notices = $output->getMessageCount(Output::NOTICE);
+		if ($fatals > $this->numFatal)
+		{
+			$this->output->write("<fatal>F</fatal>");
+		}
+		else if ($errors > $this->numError)
+		{
+			$this->output->write("<error>E</error>");
+		}
+		else if ($warnings > $this->numWarning)
+		{
+			$this->output->write("<warning>W</warning>");
+		}
+		else if ($notices > $this->numNotice)
+		{
+			$this->output->write("<notice>N</notice>");
+		}
+		else
+		{
+			$this->output->write(".");
+		}
+		$this->progress++;
+
+		if ($this->progress % (79 - $this->progressLength) == 0)
+		{
+			$this->output->write(' ' . sprintf('%' . strlen($this->maxProgress) . 's', $this->progress));
+			$this->output->write(' / ' . $this->maxProgress);
+			$this->output->writeln(' (' . sprintf('%3s', floor(100 * ($this->progress / $this->maxProgress))) . '%)');
+		}
+
+		$this->numFatal = $fatals;
+		$this->numError = $errors;
+		$this->numWarning = $warnings;
+		$this->numNotice = $notices;
 	}
 
 	/**
