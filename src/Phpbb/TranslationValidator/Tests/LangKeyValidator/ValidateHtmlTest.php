@@ -44,6 +44,20 @@ class ValidateHtmlTest extends TestBase
 					Output::NOTICE . '-String is using additional html: <a href="http://www.phpbb.com/">--http:// vs https://',
 				),
 			),
+			array(
+				'Different link',
+				'<a href="https://www.phpbb.com/">foobar</a>', '<a href="https://www.phpbb.de/">bar foo</a>',
+				array(
+					Output::WARNING . '-String is using additional html: <a href="https://www.phpbb.de/">--Different link',
+				),
+			),
+			array(
+				'Additional link',
+				'foobar', '<a href="https://www.phpbb.de/">bar foo</a>',
+				array(
+					Output::ERROR . '-String is using additional html: <a href="https://www.phpbb.de/">--Additional link',
+				),
+			),
 		);
 	}
 

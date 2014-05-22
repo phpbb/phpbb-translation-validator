@@ -42,6 +42,16 @@ class LangKeyValidator
 	protected $output;
 
 	/**
+	 * List of additional html we found
+	 *
+	 * This will allow to not display the same error multiple times for the same string
+	 * Structure: file -> key -> html-tag
+	 *
+	 * @var array
+	 */
+	protected $additionalHtmlFound = array();
+
+	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 */
@@ -594,16 +604,6 @@ class LangKeyValidator
 	}
 
 	/**
-	 * List of additional html we found
-	 *
-	 * This will allow to not display the same error multiple times for the same string
-	 * Structure: file -> key -> html-tag
-	 *
-	 * @var array
-	 */
-	protected $additionalHtmlFound = array();
-
-	/**
 	 * Validates the html usage in a string
 	 *
 	 * Checks whether the used HTML tags are also used in the original language.
@@ -706,9 +706,18 @@ class LangKeyValidator
 				}
 
 				$level = $this->getErrorLevelForAdditionalHtml($possibleHtml);
-				if (in_array(str_replace('http://', 'https://', $possibleHtml), $sourceHtml))
+				if (strpos($possibleHtml, '<a ') === 0)
 				{
-					$level = Output::NOTICE;
+					if (in_array(str_replace('http://', 'https://', $possibleHtml), $sourceHtml))
+					{
+						$level = Output::NOTICE;
+					}
+					else if (in_array('</a>', $sourceHtml))
+					{
+						// Source contains a link aswell, mostly IST changed the link
+						// to better match the language
+						$level = Output::WARNING;
+					}
 				}
 
 				$this->output->addMessage($level, 'String is using additional html: ' . $possibleHtml, $file, $key);
@@ -760,7 +769,7 @@ class LangKeyValidator
 			return Output::NOTICE;
 		}
 
-		if (preg_match('#^<a href="([a-zA-Z0-9_\:\&\/\?\.\-\#]+)">$#', $html, $match) ||
+		if (preg_match('#^<a href="([a-zA-Z0-9_\:\&\/\?\.\-\#\@]+)">$#', $html, $match) ||
 			preg_match('#^<a href="([a-zA-Z0-9_\:\&\/\?\.\-\#]+)" rel="external">$#', $html, $match))
 		{
 			return Output::ERROR;
