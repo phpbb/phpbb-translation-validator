@@ -311,7 +311,7 @@ class LangKeyValidator
 		if (!empty($missing_cases))
 		{
 			// Do we want to allow this? Lazy translators...
-			$this->output->addMessage(Output::NOTICE, 'Plural array is missing case: ' . implode(', ', $missing_cases), $file, $key);
+			$this->output->addMessage(Output::WARNING, 'Plural array is missing case: ' . implode(', ', $missing_cases), $file, $key);
 		}
 
 		if (!empty($intersect_cases))

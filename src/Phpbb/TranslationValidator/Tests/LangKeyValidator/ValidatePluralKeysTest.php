@@ -32,14 +32,14 @@ class ValidatePluralKeysTest extends TestBase
 					1 => 'Default',
 					//2 => 'Default2 Missing',
 				), array(
-				Output::NOTICE . '-Plural array is missing case: 2--MissingArray',
+				Output::WARNING . '-Plural array is missing case: 2--MissingArray',
 			)),
 			array('MissingZeroArray', 1, array(
 					0 => 'Zero',
 					1 => 'Default1',
 					//2 => 'Default2 Missing',
 				), array(
-				Output::NOTICE . '-Plural array is missing case: 2--MissingZeroArray',
+				Output::WARNING . '-Plural array is missing case: 2--MissingZeroArray',
 			)),
 			array('AdditionalArray', 0, array(
 					1 => 'Default',
