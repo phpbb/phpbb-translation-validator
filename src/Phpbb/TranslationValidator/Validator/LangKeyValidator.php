@@ -494,6 +494,11 @@ class LangKeyValidator
 				{
 					$this->output->addMessage(Output::FATAL, 'Array has invalid key: ' . $array_key, $file, $key);
 				}
+				else if ($this->phpbbVersion === '3.0' && ($key === 'datetime.AGO' || $key === 'NUM_POSTS_IN_QUEUE' || $key === 'USER_LAST_REMINDED'))
+				{
+					// 3.0 plurals
+					$this->output->addMessage(Output::WARNING, 'Array has additional key: ' . $array_key, $file, $key);
+				}
 				else
 				{
 					// Strangly used plural?
