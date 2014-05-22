@@ -555,7 +555,13 @@ class LangKeyValidator
 
 		if ($against_strings - $validate_strings !== 0)
 		{
-			$this->output->addMessage(Output::FATAL, sprintf('Should have %1$s string arguments, but has %2$s', $against_strings, $validate_strings), $file, $key);
+			$level = Output::FATAL;
+			if ($this->originLanguagePath . 'ucp.php' === $file && in_array($key, array('TERMS_OF_USE_CONTENT', 'PRIVACY_POLICY')))
+			{
+				$level = Output::ERROR;
+			}
+
+			$this->output->addMessage($level, sprintf('Should have %1$s string arguments, but has %2$s', $against_strings, $validate_strings), $file, $key);
 		}
 
 		if ($against_integers - $validate_integers !== 0)
@@ -712,7 +718,7 @@ class LangKeyValidator
 					{
 						$level = Output::NOTICE;
 					}
-					else if (in_array('</a>', $sourceHtml))
+					else if (in_array('</a>', $sourceHtml) || $this->originLanguagePath . 'common.php' === $file && $key === 'TRANSLATION_INFO')
 					{
 						// Source contains a link aswell, mostly IST changed the link
 						// to better match the language
@@ -750,10 +756,7 @@ class LangKeyValidator
 	 */
 	protected function getErrorLevelForAdditionalHtml($html)
 	{
-		if (in_array($html, array(
-			'<i>',
-			'<b>',
-		)))
+		if (preg_match('#^<(i|b|ul|ol|li|h3)( style="[a-zA-Z0-9_\:\ \;\-]+")?>$#', $html))
 		{
 			return Output::ERROR;
 		}
@@ -769,8 +772,8 @@ class LangKeyValidator
 			return Output::NOTICE;
 		}
 
-		if (preg_match('#^<a href="([a-zA-Z0-9_\:\&\/\?\.\-\#\@]+)">$#', $html, $match) ||
-			preg_match('#^<a href="([a-zA-Z0-9_\:\&\/\?\.\-\#]+)" rel="external">$#', $html, $match))
+		if (preg_match('#^<a href="([a-zA-Z0-9_\:\&\/\?\.\-\#\@]+)">$#', $html) ||
+			preg_match('#^<a href="([a-zA-Z0-9_\:\&\/\?\.\-\#]+)" rel="external">$#', $html))
 		{
 			return Output::ERROR;
 		}
