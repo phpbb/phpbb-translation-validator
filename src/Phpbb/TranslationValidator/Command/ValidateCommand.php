@@ -96,6 +96,12 @@ class ValidateCommand extends Command
 
 		foreach ($output->getMessages() as $msg)
 		{
+			/** @var \Phpbb\TranslationValidator\Output\Message $msg */
+			if ($msg->getType() === Output::NOTICE && !$debug)
+			{
+				continue;
+			}
+
 			$output->writeln((string) $msg);
 			$output->writeln('');
 		}

@@ -29,6 +29,11 @@ class Message
 		$this->file_details = $file_details;
 	}
 
+	public function getType()
+	{
+		return $this->type;
+	}
+
 	public function __toString()
 	{
 		$file = '';
