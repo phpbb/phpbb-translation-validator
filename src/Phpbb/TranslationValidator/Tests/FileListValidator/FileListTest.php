@@ -47,6 +47,7 @@ class FileListTest extends \Phpbb\TranslationValidator\Tests\TestBase
 					Output::NOTICE . '-Found additional file-language/origin/CHANGELOG-',
 					Output::NOTICE . '-Found additional file-language/origin/README-',
 					Output::NOTICE . '-Found additional file-language/origin/VERSION-',
+					Output::NOTICE . '-Found additional file-language/origin/index.htm-',
 				),
 			),
 			array(
@@ -68,6 +69,7 @@ class FileListTest extends \Phpbb\TranslationValidator\Tests\TestBase
 					Output::NOTICE . '-Found additional file-language/origin/CHANGELOG-',
 					Output::NOTICE . '-Found additional file-language/origin/README-',
 					Output::NOTICE . '-Found additional file-language/origin/VERSION-',
+					Output::NOTICE . '-Found additional file-language/origin/index.htm-',
 				),
 			),
 		);
