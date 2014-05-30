@@ -161,7 +161,14 @@ class FileListValidator
 				}
 				else
 				{
-					$level = (substr($origin_file, -3) !== '.md') ? Output::FATAL : Output::ERROR;
+					if (substr($origin_file, -10) === '/index.htm' || $origin_file === 'index.htm')
+					{
+						$level = Output::NOTICE;
+					}
+					else
+					{
+						$level = (substr($origin_file, -3) !== '.md') ? Output::FATAL : Output::ERROR;
+					}
 					$this->output->addMessage($level, 'Found additional file', $origin_file);
 				}
 			}
