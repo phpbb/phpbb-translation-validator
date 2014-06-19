@@ -94,16 +94,38 @@ class ValidateCommand extends Command
 			$output->writeln('<success>PASSED: ' . $found_msg . '</success>');
 		}
 
-		foreach ($output->getMessages() as $msg)
+		$types = array(
+			Output::FATAL	=> 'Fatal',
+			Output::ERROR	=> 'Error',
+			Output::WARNING	=> 'Warning',
+			Output::NOTICE	=> 'Notice',
+		);
+
+		foreach($types as $key => $type)
 		{
 			/** @var \Phpbb\TranslationValidator\Output\Message $msg */
-			if ($msg->getType() === Output::NOTICE && !$debug)
+			if ($key === Output::NOTICE && !$debug)
 			{
 				continue;
 			}
 
-			$output->writeln((string) $msg);
-			$output->writeln('');
+			if ($output->getMessageCount($key) > 0)
+			{
+				$output->writeln('<noticebg>' . $type . ' messages:</noticebg>');
+				$output->writeln('');
+
+				foreach ($output->getMessages() as $msg)
+				{
+					if ($msg->getType() == $key)
+					{
+						$output->writeln((string) $msg);
+						$output->writeln('');
+					}
+				}
+
+				$output->writeln('<noticebg>=== END ===</noticebg>');
+				$output->writeln('');
+			}
 		}
 		$output->writeln('');
 
