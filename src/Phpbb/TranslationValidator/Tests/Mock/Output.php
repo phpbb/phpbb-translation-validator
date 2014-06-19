@@ -33,21 +33,20 @@ class Output extends \Phpbb\TranslationValidator\Output\Output
 		switch ($type)
 		{
 			case Output::FATAL:
-				$this->fatal++;
+				$this->fatals[] = $type . '-' . $message . '-'. $file . '-'. $file_details;
 				break;
 			case Output::ERROR:
-				$this->error++;
+				$this->errors[] = $type . '-' . $message . '-'. $file . '-'. $file_details;
 				break;
 			case Output::WARNING:
-				$this->warning++;
+				$this->warnings[] = $type . '-' . $message . '-'. $file . '-'. $file_details;
 				break;
 			case Output::NOTICE:
-				$this->notice++;
+				$this->notices[] = $type . '-' . $message . '-'. $file . '-'. $file_details;
 				break;
 			default:
 				// TODO: Decide on this?
 		}
-		$this->messages[] = $type . '-' . $message . '-'. $file . '-'. $file_details;
 	}
 
 	/**
@@ -56,16 +55,8 @@ class Output extends \Phpbb\TranslationValidator\Output\Output
 	 */
 	public function getMessages()
 	{
-		sort($this->messages);
-		return $this->messages;
-	}
-
-	/**
-	 * Get the amount of messages that were fatal.
-	 * @return int
-	 */
-	public function getFatalCount()
-	{
-		return $this->fatal;
+		$messages = parent::getMessages();
+		sort($messages);
+		return $messages;
 	}
 }

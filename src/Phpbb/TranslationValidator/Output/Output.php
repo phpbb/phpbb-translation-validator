@@ -14,19 +14,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Output implements \Phpbb\TranslationValidator\Output\OutputInterface
 {
 	/** @var array */
-	protected $messages = array();
+	protected $fatals = array();
 
-	/** @var int */
-	protected $fatal = 0;
+	/** @var array */
+	protected $errors = array();
 
-	/** @var int */
-	protected $error = 0;
+	/** @var array */
+	protected $warnings = array();
 
-	/** @var int */
-	protected $warning = 0;
-
-	/** @var int */
-	protected $notice = 0;
+	/** @var array */
+	protected $notices = array();
 
 	/** @var \Symfony\Component\Console\Output\OutputInterface */
 	protected $output;
@@ -171,21 +168,20 @@ class Output implements \Phpbb\TranslationValidator\Output\OutputInterface
 		switch ($type)
 		{
 			case Output::FATAL:
-				$this->fatal++;
+				$this->fatals[] = new Message($type, $message, $file, $file_details);
 				break;
 			case Output::ERROR:
-				$this->error++;
+				$this->errors[] = new Message($type, $message, $file, $file_details);
 				break;
 			case Output::WARNING:
-				$this->warning++;
+				$this->warnings[] = new Message($type, $message, $file, $file_details);
 				break;
 			case Output::NOTICE:
-				$this->notice++;
+				$this->notices[] = new Message($type, $message, $file, $file_details);
 				break;
 			default:
 				// TODO: Decide on this?
 		}
-		$this->messages[] = new Message($type, $message, $file, $file_details);
 	}
 
 	/**
@@ -194,7 +190,7 @@ class Output implements \Phpbb\TranslationValidator\Output\OutputInterface
 	 */
 	public function getMessages()
 	{
-		return $this->messages;
+		return array_merge($this->fatals, $this->errors, $this->warnings, $this->notices);
 	}
 
 	/**
@@ -207,13 +203,13 @@ class Output implements \Phpbb\TranslationValidator\Output\OutputInterface
 		switch ($type)
 		{
 			case Output::FATAL:
-				return $this->fatal;
+				return sizeof($this->fatals);
 			case Output::ERROR:
-				return $this->error;
+				return sizeof($this->errors);
 			case Output::WARNING:
-				return $this->warning;
+				return sizeof($this->warnings);
 			case Output::NOTICE:
-				return $this->notice;
+				return sizeof($this->notices);
 		}
 		return 0;
 	}
