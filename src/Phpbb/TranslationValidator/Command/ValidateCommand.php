@@ -49,7 +49,7 @@ class ValidateCommand extends Command
 		$debug = $input->getOption('debug');
 
 		$output = new Output($output, $debug);
-		$output->setFormatter(new OutputFormatter(true));
+		$output->setFormatter(new OutputFormatter($output->isDecorated()));
 
 		$output->writeln("<noticebg>Running Language Pack Validator on language $originIso.</noticebg>");
 		$output->writeln('');
