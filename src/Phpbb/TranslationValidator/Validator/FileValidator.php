@@ -136,6 +136,7 @@ class FileValidator
 		{
 			$this->validateDefinedInPhpbb($originFile);
 			$this->validateUtf8withoutbom($originFile);
+			$this->validatePhpClosingTag($originFile);
 		}
 
 		if (strpos($originFile, $this->originLanguagePath . 'email/') === 0 && substr($originFile, -4) === '.txt')
@@ -580,6 +581,22 @@ class FileValidator
 		if (strpos($fileContents, "\r") !== false)
 		{
 			$this->output->addMessage(Output::FATAL, 'Not using Linux line endings (LF)', $originFile);
+		}
+	}
+
+	/**
+	 * Validates whether a file checks whether the file contains PHP closing tag
+	 *
+	 * @param	string	$originFile		File to validate
+	 * @return	null
+	 */
+	public function validatePhpClosingTag($originFile)
+	{
+		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
+
+		if (strpos($fileContents, '?>') !== false)
+		{
+			$this->output->addMessage(Output::FATAL, 'Must not contain PHP closing tag', $originFile);
 		}
 	}
 }
