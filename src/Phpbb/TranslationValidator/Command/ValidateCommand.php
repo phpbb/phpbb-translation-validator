@@ -30,6 +30,7 @@ class ValidateCommand extends Command
 			->addOption('package-dir', null, InputOption::VALUE_OPTIONAL, 'The path to the directory with the language packages', null)
 			->addOption('language-dir', null, InputOption::VALUE_OPTIONAL, 'The path to the directory with the language folders')
 			->addOption('debug', null, InputOption::VALUE_NONE, 'Run in debug')
+			->addOption('display-notices', 'dn', InputOption::VALUE_NONE, 'Display notices in report')
 		;
 	}
 
@@ -47,6 +48,7 @@ class ValidateCommand extends Command
 		$packageDir = $input->getOption('package-dir');
 		$languageDir = $input->getOption('language-dir');
 		$debug = $input->getOption('debug');
+		$displayNotices = $input->getOption('display-notices');
 
 		$output = new Output($output, $debug);
 		$output->setFormatter(new OutputFormatter($output->isDecorated()));
@@ -97,7 +99,7 @@ class ValidateCommand extends Command
 		foreach ($output->getMessages() as $msg)
 		{
 			/** @var \Phpbb\TranslationValidator\Output\Message $msg */
-			if ($msg->getType() === Output::NOTICE && !$debug)
+			if ($msg->getType() === Output::NOTICE && !$debug && !$displayNotices)
 			{
 				continue;
 			}
