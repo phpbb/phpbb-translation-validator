@@ -62,15 +62,15 @@ class ValidateCommand extends Command
 			$runner->setSource($sourceIso, $packageDir . '/' . $sourceIso, 'language/' . $sourceIso . '/')
 				->setOrigin($originIso, $packageDir . '/' . $originIso, 'language/' . $originIso . '/');
 		}
-		else
+		else if ($languageDir !== null)
 		{
-			if ($languageDir === null)
-			{
-				$languageDir = $phpbbVersion;
-			}
-
 			$runner->setSource($sourceIso, $languageDir . '/' . $sourceIso, '')
 				->setOrigin($originIso, $languageDir . '/' . $originIso, '');
+		}
+		else
+		{
+			$runner->setSource($sourceIso, $phpbbVersion . '/' . $sourceIso, 'language/' . $sourceIso . '/')
+				->setOrigin($originIso, $phpbbVersion . '/' . $originIso, 'language/' . $originIso . '/');
 		}
 
 		$output->writelnIfDebug("Setup ValidatorRunner");
