@@ -593,8 +593,9 @@ class FileValidator
 	public function validatePhpClosingTag($originFile)
 	{
 		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
+		$pos = strpos($fileContents, '?>');
 
-		if (strpos($fileContents, '?>') !== false)
+		if ($pos !== false && substr($fileContents, $pos + 2) == "\n")
 		{
 			$this->output->addMessage(Output::FATAL, 'Must not contain PHP closing tag', $originFile);
 		}
