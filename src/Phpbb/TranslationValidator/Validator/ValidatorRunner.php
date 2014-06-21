@@ -125,15 +125,11 @@ class ValidatorRunner
 	{
 		$filelistValidator = new FileListValidator($this->input, $this->output);
 
-		$this->output->writelnIfDebug("<info>Validating FileList...</info>");
-
 		$validateFiles = $filelistValidator->setSource($this->sourceIso, $this->sourcePath, $this->sourceLanguagePath)
 			->setOrigin($this->originIso, $this->originPath, $this->originLanguagePath)
 			->setPhpbbVersion($this->phpbbVersion)
 			->setDebug($this->debug)
 			->validate();
-
-		$this->printErrorLevel($this->output);
 
 		if (empty($validateFiles))
 		{
@@ -142,11 +138,15 @@ class ValidatorRunner
 			return;
 		}
 
-		$this->maxProgress = sizeof($validateFiles) + 1;
-		$this->progressLength = 11 + strlen($this->maxProgress) * 2;
-
 		$pluralRule = $this->guessPluralRule();
 		$this->output->writelnIfDebug("<notice>Using plural rule #$pluralRule for validation.</notice>");
+		$this->output->writelnIfDebug('');
+
+		$this->output->writelnIfDebug("Validating file list:");
+		$this->printErrorLevel($this->output);
+
+		$this->maxProgress = sizeof($validateFiles) + 1;
+		$this->progressLength = 11 + strlen($this->maxProgress) * 2;
 
 		$filelistValidator = new FileValidator($this->input, $this->output);
 		$filelistValidator->setSource($this->sourceIso, $this->sourcePath, $this->sourceLanguagePath)
@@ -158,7 +158,7 @@ class ValidatorRunner
 		foreach ($validateFiles as $sourceFile => $originFile)
 		{
 			$this->output->writelnIfDebug('');
-			$this->output->writelnIfDebug("Validating File: $originFile");
+			$this->output->writelnIfDebug("Validating file: $originFile");
 			$filelistValidator->validate($sourceFile, $originFile);
 			$this->printErrorLevel($this->output);
 
