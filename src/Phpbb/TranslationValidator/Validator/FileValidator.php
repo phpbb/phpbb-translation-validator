@@ -593,7 +593,7 @@ class FileValidator
 	public function validatePhpClosingTag($originFile)
 	{
 		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
-		$pos = strpos($fileContents, '?>');
+		$pos = strrpos($fileContents, '?>');
 
 		if ($pos !== false && substr($fileContents, $pos + 2) == "\n")
 		{
