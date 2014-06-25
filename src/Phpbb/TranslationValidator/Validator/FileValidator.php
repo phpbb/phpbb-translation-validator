@@ -136,6 +136,7 @@ class FileValidator
 		{
 			$this->validateDefinedInPhpbb($originFile);
 			$this->validateUtf8withoutbom($originFile);
+			$this->validateNoPhpClosingTag($originFile);
 		}
 
 		if (strpos($originFile, $this->originLanguagePath . 'email/') === 0 && substr($originFile, -4) === '.txt')
@@ -564,6 +565,28 @@ class FileValidator
 		if (substr($fileContents, 0, 3) === "\xEF\xBB\xBF")
 		{
 			$this->output->addMessage(Output::FATAL, 'File must be encoded using UTF8 without BOM', $originFile);
+		}
+	}
+
+	/**
+	 * Validates whether a file does not contain a closing php tag
+	 *
+	 * @param	string	$originFile		File to validate
+	 * @return	null
+	 */
+	public function validateNoPhpClosingTag($originFile)
+	{
+		if ($this->phpbbVersion == '3.0')
+		{
+			return;
+		}
+
+		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
+
+		// Does the file contain anything after the last ");"
+		if (substr($fileContents, -3) !== ");\n")
+		{
+			$this->output->addMessage(Output::FATAL, 'File must not contain a PHP closing tag, but end with one new line', $originFile);
 		}
 	}
 
