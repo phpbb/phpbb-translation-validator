@@ -132,10 +132,12 @@ class FileValidator
 	public function validate($sourceFile, $originFile)
 	{
 		$this->validateLineEndings($originFile);
+		$this->validateNewEndLine($originFile);
 		if (substr($originFile, -4) === '.php')
 		{
 			$this->validateDefinedInPhpbb($originFile);
 			$this->validateUtf8withoutbom($originFile);
+			$this->validatePhpClosingTag($originFile);
 		}
 
 		if (strpos($originFile, $this->originLanguagePath . 'email/') === 0 && substr($originFile, -4) === '.txt')
@@ -580,6 +582,40 @@ class FileValidator
 		if (strpos($fileContents, "\r") !== false)
 		{
 			$this->output->addMessage(Output::FATAL, 'Not using Linux line endings (LF)', $originFile);
+		}
+	}
+
+	/**
+	 * Validates whether a file checks whether the file terminate with a new line
+	 *
+	 * @param	string	$originFile		File to validate
+	 * @return	null
+	 */
+	public function validateNewEndLine($originFile)
+	{
+		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
+		$pos = strrpos($fileContents, "\n");
+
+		if ($pos !== false && substr($fileContents, $pos + 1) != '')
+		{
+			$this->output->addMessage(Output::FATAL, 'Must terminate with a new empty line', $originFile);
+		}
+	}
+
+	/**
+	 * Validates whether a file checks whether the file contains PHP closing tag
+	 *
+	 * @param	string	$originFile		File to validate
+	 * @return	null
+	 */
+	public function validatePhpClosingTag($originFile)
+	{
+		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
+		$pos = strrpos($fileContents, '?>');
+
+		if ($pos !== false && substr($fileContents, $pos + 2) == "\n")
+		{
+			$this->output->addMessage(Output::FATAL, 'Must not contain PHP closing tag', $originFile);
 		}
 	}
 }
