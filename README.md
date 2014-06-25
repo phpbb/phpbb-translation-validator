@@ -8,14 +8,13 @@ This extension requires php 5.3.3 or later to be set up.
 
 ## Installation for validating a language package locally
 
+*Note:* the validator only works when you have the source language pack in your directory (default source language is `en`).
+
 1. [Download](https://github.com/nickvergessen/phpbb-translation-validator/archive/master.zip) the package.
 2. Run `php composer.phar install` to download the dependencies
 3. Run `php src/Phpbb/TranslationValidator/PhpbbTranslationValidator.php` to get information how to run the validator
 
 ## Installation for validating a language package on TravisCI
-
-*Note:* this only works when you have the english language pack in your repository.
-Otherwise you need to additionaly checkout phpBB and copy the en/ files in place.
 
 1. Add the TranslationValidator as a dependecy:
 
