@@ -28,7 +28,7 @@ class ValidateCommand extends Command
 			->addOption('phpbb-version', null, InputOption::VALUE_OPTIONAL, 'The phpBB Version to validate against (3.0|3.1)', '3.0')
 			->addOption('source-iso', null, InputOption::VALUE_OPTIONAL, 'The ISO of the language to validate against', 'en')
 			->addOption('package-dir', null, InputOption::VALUE_OPTIONAL, 'The path to the directory with the language packages', null)
-			->addOption('language-dir', null, InputOption::VALUE_OPTIONAL, 'The path to the directory with the language folders')
+			->addOption('language-dir', null, InputOption::VALUE_OPTIONAL, 'The path to the directory with the language folders', null)
 			->addOption('debug', null, InputOption::VALUE_NONE, 'Run in debug')
 			->addOption('display-notices', 'dn', InputOption::VALUE_NONE, 'Display notices in report')
 		;
@@ -64,10 +64,15 @@ class ValidateCommand extends Command
 			$runner->setSource($sourceIso, $packageDir . '/' . $sourceIso, 'language/' . $sourceIso . '/')
 				->setOrigin($originIso, $packageDir . '/' . $originIso, 'language/' . $originIso . '/');
 		}
-		else
+		else if ($languageDir !== null)
 		{
 			$runner->setSource($sourceIso, $languageDir . '/' . $sourceIso, '')
 				->setOrigin($originIso, $languageDir . '/' . $originIso, '');
+		}
+		else
+		{
+			$runner->setSource($sourceIso, $phpbbVersion . '/' . $sourceIso, 'language/' . $sourceIso . '/')
+				->setOrigin($originIso, $phpbbVersion . '/' . $originIso, 'language/' . $originIso . '/');
 		}
 
 		$output->writelnIfDebug("Setup ValidatorRunner");
