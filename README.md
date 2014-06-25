@@ -4,37 +4,30 @@ Allows to validate **phpBB** language packages.
 
 ## Requirement
 
-This extension requires phpBB 3.1 to be installed.
+This extension requires php 5.3.3 or later to be set up.
 
-## Installation Translation Validator for validating a language package
+## Installation for validating a language package locally
 
-[Download](https://github.com/nickvergessen/phpbb-translation-validator/archive/master.zip) the package, unzip it and move the content to `phpBB/ext/official/translationvalidator`, so that the file `phpBB/ext/official/translationvalidator/ext.php` exists.
+1. [Download](https://github.com/nickvergessen/phpbb-translation-validator/archive/master.zip) the package.
+2. Run `php composer.phar install` to download the dependencies
+3. Run `php src/Phpbb/TranslationValidator/PhpbbTranslationValidator.php` to get information how to run the validator
 
-Go to "ACP" > "Customise" > "Extensions" and enable the "phpBB Translation Validator" extension.
+## Installation for validating a language package on TravisCI
 
-## Validating a language package
+*Note:* this only works when you have the english language pack in your repository.
+Otherwise you need to additionaly checkout phpBB and copy the en/ files in place.
 
-In order to validate your language package, you need to put your language package into the following folder (unzipped) (replace {your-iso} with e.g. **en** and {version} with **3.0** or **3.1**):
+1. Add the TranslationValidator as a dependecy:
 
-    phpBB/store/language-packages/{version}/{your-iso}/
+		{
+			"require-dev": {
+				"phpbb/translation-validator": "1.3.*"
+			}
+		}
 
-The folders `phpBB/store/language-packages/{version}/{your-iso}/language/` and `phpBB/store/language-packages/{version}/{your-iso}/styles/` should exist. Now open
+2. Add the `php vendor/bin/PhpbbTranslationValidator.php` call you run locally to your `.travis.yml`
 
-To validate a language package open :
-
-	phpBB/app.php/validate/{version}/{your-iso}
-
-in your browser.
-
-## Installation for Validation-Tool Development
-
-Clone into `phpBB/ext/official/translationvalidator`:
-
-    git clone https://github.com/nickvergessen/phpbb3-translation-validator.git phpBB/ext/official/translationvalidator
-
-Go to "ACP" > "Customise" > "Extensions" and enable the "phpBB Translation Validator" extension.
-
-##Tests and Continuous Intergration
+## Tests and Continuous Intergration
 
 [![Build Status](https://travis-ci.org/phpbb/phpbb-translation-validator.png?branch=master)](https://travis-ci.org/phpbb/phpbb-translation-validator)
 
