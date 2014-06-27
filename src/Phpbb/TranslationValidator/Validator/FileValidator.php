@@ -171,9 +171,13 @@ class FileValidator
 		{
 			$this->validateIsoFile($originFile);
 		}
+		else if ($this->phpbbVersion == '3.1' && substr($originFile, -4) === '.css')
+		{
+			$this->validateUtf8withoutbom($originFile);
+			$this->validateCSSFile($sourceFile, $originFile);
+		}
 		else
 		{
-			// @todo: stylesheet.css have yet to be fixed for 3.1
 			$this->output->addMessage(Output::NOTICE, 'File is not validated', $originFile);
 		}
 	}
@@ -604,5 +608,75 @@ class FileValidator
 		{
 			$this->output->addMessage(Output::FATAL, 'Not using Linux line endings (LF)', $originFile);
 		}
+	}
+
+	/**
+	 * Validates whether a file checks whether the file uses Linux line endings
+	 *
+	 * @param	string	$sourceFile		Source file for comparison
+	 * @param	string	$originFile		File to validate
+	 * @return	null
+	 */
+	public function validateCSSFile($sourceFile, $originFile)
+	{
+		$sourceFileContents = (string) file_get_contents($this->sourcePath . '/' . $sourceFile);
+		$originFileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
+
+		$sourceRules = $this->getCSSRules($sourceFile, $sourceFileContents);
+		$originRules = $this->getCSSRules($originFile, $originFileContents);
+
+		$missingRules = array_diff(array_keys($sourceRules), array_keys($originRules));
+		$additionalRules = array_diff(array_keys($originRules), array_keys($sourceRules));
+		if (!empty($missingRules))
+		{
+			$this->output->addMessage(Output::FATAL, 'Stylesheet file is missing CSS rules: ' . implode(', ', $missingRules), $originFile);
+		}
+		if (!empty($additionalRules))
+		{
+			$this->output->addMessage(Output::FATAL, 'Stylesheet file has additional CSS rules: ' . implode(', ', $additionalRules), $originFile);
+		}
+	}
+
+	protected function getCSSRules($fileName, $fileContent)
+	{
+		// Remove comments
+		$fileContent = preg_replace('#/\*(?:.(?!/)|[^\*](?=/)|(?<!\*)/)*\*/#s', '', $fileContent);
+		#$fileContent = str_replace(array("\t", "\n"), ' ', $fileContent);
+		$fileContent = preg_replace('!\s+!', ' ', $fileContent) . ' ';
+
+		$content = explode('} ', $fileContent);
+		if (trim(array_pop($content)) !== '')
+		{
+			$this->output->addMessage(Output::FATAL, 'Stylesheet file structure is invalid (Output after last rule)', $fileName);
+		}
+
+		$cssRules = array();
+		foreach ($content as $section)
+		{
+			if (strpos($section, '{') === false)
+			{
+				$this->output->addMessage(Output::FATAL, 'Stylesheet file structure is invalid: ' . trim($section), $fileName);
+				continue;
+			}
+
+			list($rule, $ruleContent) = explode(' {', $section, 2);
+			$rule = trim($rule);
+			$ruleContent = trim($ruleContent);
+
+			if (strpos($ruleContent, '{') !== false)
+			{
+				$this->output->addMessage(Output::FATAL, 'CSS rule is invalid: ' . $rule, $fileName);
+				continue;
+			}
+
+			if (!isset($cssRules[$rule]))
+			{
+				$cssRules[$rule] = '';
+			}
+
+			$cssRules[$rule] .= $ruleContent;
+		}
+
+		return $cssRules;
 	}
 }
