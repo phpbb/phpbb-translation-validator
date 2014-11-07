@@ -29,6 +29,7 @@ class ValidateEmailTest extends TestBase
 				Output::FATAL . '-Must not have the signature appended-email/invalid_sig.txt-',
 				Output::FATAL . '-Is using additional variables: {YEHAA}-email/invalid_sig.txt-',
 			)),
+			array('email/crlf_sig.txt', array()),
 		);
 	}
 
