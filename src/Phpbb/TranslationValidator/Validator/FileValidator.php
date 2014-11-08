@@ -264,6 +264,8 @@ class FileValidator
 	{
 		$sourceContent = (string) file_get_contents($this->sourcePath . '/' . $sourceFile);
 		$originContent = (string) file_get_contents($this->originPath . '/' . $originFile);
+		$originContent = str_replace("\r\n", "\n", $originContent);
+		$originContent = str_replace("\r", "\n", $originContent);
 
 		$sourceContent = explode("\n", $sourceContent);
 		$originContent = explode("\n", $originContent);
@@ -586,6 +588,8 @@ class FileValidator
 		}
 
 		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
+		$fileContents = str_replace("\r\n", "\n", $fileContents);
+		$fileContents = str_replace("\r", "\n", $fileContents);
 
 		// Does the file contain anything after the last ");"
 		if (substr($fileContents, -3) !== ");\n")
