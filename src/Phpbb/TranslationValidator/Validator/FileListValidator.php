@@ -122,18 +122,44 @@ class FileListValidator
 
 		$originFiles = $this->getFileList($this->originPath);
 
+		$missingSubsilver2Files = $availableSubsilver2Files = array();
 		$validFiles = array();
 		foreach ($sourceFiles as $sourceFile)
 		{
 			$testOriginFile = str_replace('/' . $this->sourceIso . '/', '/' . $this->originIso . '/', $sourceFile);
 			if (!in_array($testOriginFile, $originFiles))
 			{
-				$this->output->addMessage(Output::FATAL, 'Missing required file', $testOriginFile);
+				if ($this->phpbbVersion === '3.1' && strpos($testOriginFile, 'styles/subsilver2/') === 0)
+				{
+					$missingSubsilver2Files[] = $testOriginFile;
+				}
+				else
+				{
+					$this->output->addMessage(Output::FATAL, 'Missing required file', $testOriginFile);
+				}
 			}
 			else if (substr($sourceFile, -4) != '.gif' && substr($sourceFile, -12) != 'imageset.cfg')
 			{
+				if ($this->phpbbVersion === '3.1' && strpos($testOriginFile, 'styles/subsilver2/') === 0)
+				{
+					$availableSubsilver2Files[] = $testOriginFile;
+				}
 				$validFiles[$sourceFile] = $testOriginFile;
 			}
+		}
+
+		if ($this->phpbbVersion === '3.1' && !empty($availableSubsilver2Files) && !empty($missingSubsilver2Files))
+		{
+			// Either subsilver2 has to be completly there, or not at all
+			foreach ($missingSubsilver2Files as $testOriginFile)
+			{
+				$this->output->addMessage(Output::FATAL, 'Missing required file', $testOriginFile);
+			}
+		}
+		else if ($this->phpbbVersion === '3.1' && empty($availableSubsilver2Files) && !empty($missingSubsilver2Files))
+		{
+			// If subsilver2 is not there at all, we throw a little warning
+			$this->output->addMessage(Output::WARNING, 'Missing subsilver2 files');
 		}
 
 		foreach ($originFiles as $origin_file)

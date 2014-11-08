@@ -34,6 +34,7 @@ class FileListTest extends \Phpbb\TranslationValidator\Tests\TestBase
 					Output::FATAL . '-Missing required file-missing.txt-',
 					Output::FATAL . '-Missing required file-subdir/missing.php-',
 					Output::FATAL . '-Missing required file-language/origin/LICENSE-',
+					Output::FATAL . '-Missing required file-styles/subsilver2/nosubsilver.txt-',
 					Output::FATAL . '-Found additional file-additional.php-',
 					Output::FATAL . '-Found additional file-subdir/additional.php-',
 					Output::FATAL . '-Found additional file-additional.txt-',
@@ -60,6 +61,8 @@ class FileListTest extends \Phpbb\TranslationValidator\Tests\TestBase
 					Output::FATAL . '-Found additional file-additional.php-',
 					Output::FATAL . '-Found additional file-subdir/additional.php-',
 					Output::FATAL . '-Found additional file-additional.txt-',
+
+					Output::WARNING . '-Missing subsilver2 files--',
 
 					Output::NOTICE . '-Found additional file-language/origin/AUTHORS.md-',
 					Output::NOTICE . '-Found additional file-language/origin/CHANGELOG.md-',
