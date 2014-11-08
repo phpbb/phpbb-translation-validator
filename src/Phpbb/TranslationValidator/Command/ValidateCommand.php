@@ -50,6 +50,11 @@ class ValidateCommand extends Command
 		$debug = $input->getOption('debug');
 		$displayNotices = $input->getOption('display-notices');
 
+		if (!in_array($phpbbVersion, array('3.0', '3.1')))
+		{
+			throw new \RuntimeException('Invalid phpbb-version, allowed versions: 3.0 and 3.1');
+		}
+
 		$output = new Output($output, $debug);
 		$output->setFormatter(new OutputFormatter($output->isDecorated()));
 
