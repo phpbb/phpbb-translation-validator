@@ -731,10 +731,16 @@ class LangKeyValidator
 					{
 						$level = Output::NOTICE;
 					}
-					else if (in_array('</a>', $sourceHtml) || $this->originLanguagePath . 'common.php' === $file && $key === 'TRANSLATION_INFO')
+					else if (
+						in_array('</a>', $sourceHtml) ||
+						$this->originLanguagePath . 'common.php' === $file && $key === 'TRANSLATION_INFO' ||
+						$this->originLanguagePath . 'help_faq.php' === $file ||
+						$this->originLanguagePath . 'help_bbcode.php' === $file
+					)
 					{
-						// Source contains a link aswell, mostly IST changed the link
-						// to better match the language
+						// Source contains a link aswell, mostly IST changed the link to better match the language
+						// It's the translation info with the credit links of the translators
+						// Or the help pages (faq and bbcode help), where links are not as bad as in other places.
 						$level = Output::WARNING;
 					}
 				}

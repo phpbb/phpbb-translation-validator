@@ -52,6 +52,22 @@ class ValidateHtmlTest extends TestBase
 				),
 			),
 			array(
+				'TRANSLATION_INFO',
+				'Additional link in translator credits', '<a href="https://www.phpbb.com/">bar foo</a>',
+				array(
+					Output::WARNING . '-String is using additional html: <a href="https://www.phpbb.com/">-language/origin/common.php-TRANSLATION_INFO',
+				),
+				'language/origin/common.php',
+			),
+			array(
+				'Additional link in help page',
+				'foobar', '<a href="https://www.phpbb.com/">bar foo</a>',
+				array(
+					Output::WARNING . '-String is using additional html: <a href="https://www.phpbb.com/">-language/origin/help_faq.php-Additional link in help page',
+				),
+				'language/origin/help_faq.php',
+			),
+			array(
 				'Additional link',
 				'foobar', '<a href="https://www.phpbb.de/">bar foo</a>',
 				array(
@@ -64,9 +80,9 @@ class ValidateHtmlTest extends TestBase
 	/**
 	* @dataProvider validateHtmlData
 	*/
-	public function testValidateHtml($key, $against_language, $validate_language, $expected)
+	public function testValidateHtml($key, $against_language, $validate_language, $expected, $file = '')
 	{
-		$this->validator->validateHtml('', $key, $against_language, $validate_language);
+		$this->validator->validateHtml($file, $key, $against_language, $validate_language);
 		$this->assertOutputMessages($expected);
 	}
 }
