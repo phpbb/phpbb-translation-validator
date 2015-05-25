@@ -19,6 +19,10 @@ class ValidateStringTest extends TestBase
 			array('String', 'foobar %s', 'foo %s bar', array()),
 			array('2 strings', 'foobar %s %s', 'foo %1$s %2$s bar', array()),
 			array('2 strings reordered', 'foobar %s %s', 'foo %2$s %1$s bar', array()),
+			array('2 strings with reuse', 'foobar %s %s', 'foo %2$s %1$s bar %2$s', array()),
+			array('2 strings with reuse/skip', 'foobar %s %s', 'foo %2$s bar %2$s', array(
+				Output::FATAL . '-Should have 2 string arguments, but has 1--2 strings with reuse/skip',
+				)),
 			array('Integer', 'foobar %d', 'foo %d bar', array()),
 			array('2 integers', 'foobar %d %d', 'foo %1$d %2$d bar', array()),
 			array('2 integers reordered', 'foobar %d %d', 'foo %2$d %1$d bar', array()),
