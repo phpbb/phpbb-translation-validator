@@ -96,7 +96,7 @@ class LangKeyValidator
 	/**
 	 * Set phpBB Version
 	 *
-	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1)
+	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1|3.2)
 	 * @return $this
 	 */
 	public function setPhpbbVersion($phpbbVersion)
@@ -575,7 +575,7 @@ class LangKeyValidator
 			{
 				$level = Output::FATAL;
 				// phpBB 3.0 Plural workarounds
-				if ($this->phpbbVersion == '3.0' && abs($against_integers - $validate_integers) === 1 &&
+				if ($this->phpbbVersion === '3.0' && abs($against_integers - $validate_integers) === 1 &&
 					($this->originLanguagePath . 'common.php' === $file && $key === 'VIEW_ONLINE_TIME')
 				)
 				{
