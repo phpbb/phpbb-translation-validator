@@ -86,7 +86,7 @@ class FileValidator
 	/**
 	 * Set phpBB Version
 	 *
-	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1)
+	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1|3.2)
 	 * @return $this
 	 */
 	public function setPhpbbVersion($phpbbVersion)
@@ -171,7 +171,7 @@ class FileValidator
 		{
 			$this->validateIsoFile($originFile);
 		}
-		else if ($this->phpbbVersion == '3.1' && substr($originFile, -4) === '.css')
+		else if ($this->phpbbVersion !== '3.0' && substr($originFile, -4) === '.css')
 		{
 			$this->validateUtf8withoutbom($originFile);
 			$this->validateCSSFile($sourceFile, $originFile);
@@ -338,7 +338,7 @@ class FileValidator
 		// Check for new liens at the end of the file
 		if (end($originContent) !== '')
 		{
-			$level = ($this->phpbbVersion == '3.1') ? Output::FATAL : Output::NOTICE;
+			$level = ($this->phpbbVersion !== '3.0') ? Output::FATAL : Output::NOTICE;
 			$this->output->addMessage($level, 'Missing new line at the end of the file', $originFile);
 		}
 	}
@@ -582,7 +582,7 @@ class FileValidator
 	 */
 	public function validateNoPhpClosingTag($originFile)
 	{
-		if ($this->phpbbVersion == '3.0')
+		if ($this->phpbbVersion === '3.0')
 		{
 			return;
 		}

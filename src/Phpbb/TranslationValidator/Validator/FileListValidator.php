@@ -83,7 +83,7 @@ class FileListValidator
 	/**
 	 * Set phpBB Version
 	 *
-	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1)
+	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1|3.2)
 	 * @return $this
 	 */
 	public function setPhpbbVersion($phpbbVersion)
@@ -190,6 +190,10 @@ class FileListValidator
 					if (substr($origin_file, -10) === '/index.htm' || $origin_file === 'index.htm')
 					{
 						$level = Output::NOTICE;
+					}
+					else if ($this->phpbbVersion === '3.2' && strpos($origin_file, 'styles/subsilver2/') === 0)
+					{
+						$level = Output::FATAL;
 					}
 					else
 					{

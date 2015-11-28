@@ -25,7 +25,7 @@ class ValidateCommand extends Command
 			->setName('validate')
 			->setDescription('Run the validator on your language pack.')
 			->addArgument('origin-iso', InputArgument::REQUIRED, 'The ISO of the language to validate')
-			->addOption('phpbb-version', null, InputOption::VALUE_OPTIONAL, 'The phpBB Version to validate against (3.0|3.1)', '3.0')
+			->addOption('phpbb-version', null, InputOption::VALUE_OPTIONAL, 'The phpBB Version to validate against (3.0|3.1|3.2)', '3.1')
 			->addOption('source-iso', null, InputOption::VALUE_OPTIONAL, 'The ISO of the language to validate against', 'en')
 			->addOption('package-dir', null, InputOption::VALUE_OPTIONAL, 'The path to the directory with the language packages', null)
 			->addOption('language-dir', null, InputOption::VALUE_OPTIONAL, 'The path to the directory with the language folders', null)
@@ -50,9 +50,9 @@ class ValidateCommand extends Command
 		$debug = $input->getOption('debug');
 		$displayNotices = $input->getOption('display-notices');
 
-		if (!in_array($phpbbVersion, array('3.0', '3.1')))
+		if (!in_array($phpbbVersion, array('3.0', '3.1', '3.2')))
 		{
-			throw new \RuntimeException('Invalid phpbb-version, allowed versions: 3.0 and 3.1');
+			throw new \RuntimeException('Invalid phpbb-version, allowed versions: 3.0, 3.1 and 3.2');
 		}
 
 		$output = new Output($output, $debug);
