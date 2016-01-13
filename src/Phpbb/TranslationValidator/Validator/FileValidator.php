@@ -594,7 +594,14 @@ class FileValidator
 		// Does the file contain anything after the last ");"
 		if (substr($fileContents, -3) !== ");\n")
 		{
-			$this->output->addMessage(Output::FATAL, 'File must not contain a PHP closing tag, but end with one new line', $originFile);
+			if (substr($fileContents, -3) !== "];\n")
+			{
+				$this->output->addMessage(Output::FATAL, 'File must not contain a PHP closing tag, but end with one new line', $originFile);
+			}
+			else if ($this->phpbbVersion === '3.1')
+			{
+				$this->output->addMessage(OUTPUT::FATAL, 'File must not contain short array syntax for any version prior to 3.2', $originFile);
+			}
 		}
 	}
 
