@@ -167,7 +167,7 @@ class FileListValidator
 			$testSourceFile = str_replace('/' . $this->originIso . '/', '/' . $this->sourceIso . '/', $origin_file);
 			if (!in_array($testSourceFile, $sourceFiles))
 			{
-				if (in_array($origin_file, array(
+				if (($this->phpbbVersion == '3.0' || $this->phpbbVersion == '3.1') && in_array($origin_file, array(
 					$this->originLanguagePath . 'AUTHORS',
 					$this->originLanguagePath . 'CHANGELOG',
 					$this->originLanguagePath . 'README',
@@ -176,7 +176,7 @@ class FileListValidator
 				{
 					$this->output->addMessage(Output::NOTICE, 'Found additional file', $origin_file);
 				}
-				else if ($this->phpbbVersion == '3.1' && in_array($origin_file, array(
+				else if (in_array($origin_file, array(
 					$this->originLanguagePath . 'AUTHORS.md',
 					$this->originLanguagePath . 'CHANGELOG.md',
 					$this->originLanguagePath . 'README.md',

@@ -20,8 +20,6 @@ class FileListTest extends \Phpbb\TranslationValidator\Tests\TestBase
 		parent::setUp();
 
 		$this->validator = new \Phpbb\TranslationValidator\Validator\FileListValidator($this->getMock('Symfony\Component\Console\Input\InputInterface'), $this->output);
-		$this->validator->setOrigin('origin', dirname(__FILE__) . '/fixtures/origin', 'language/origin/')
-			->setSource('source', dirname(__FILE__) . '/fixtures/source', 'language/source/');
 	}
 
 	public function validateFileListData()
@@ -39,11 +37,10 @@ class FileListTest extends \Phpbb\TranslationValidator\Tests\TestBase
 					Output::FATAL . '-Found additional file-subdir/additional.php-',
 					Output::FATAL . '-Found additional file-additional.txt-',
 
-					Output::ERROR . '-Found additional file-language/origin/AUTHORS.md-',
-					Output::ERROR . '-Found additional file-language/origin/CHANGELOG.md-',
-					Output::ERROR . '-Found additional file-language/origin/README.md-',
-					Output::ERROR . '-Found additional file-language/origin/VERSION.md-',
-
+					Output::NOTICE . '-Found additional file-language/origin/AUTHORS.md-',
+					Output::NOTICE . '-Found additional file-language/origin/CHANGELOG.md-',
+					Output::NOTICE . '-Found additional file-language/origin/README.md-',
+					Output::NOTICE . '-Found additional file-language/origin/VERSION.md-',
 					Output::NOTICE . '-Found additional file-language/origin/AUTHORS-',
 					Output::NOTICE . '-Found additional file-language/origin/CHANGELOG-',
 					Output::NOTICE . '-Found additional file-language/origin/README-',
@@ -75,6 +72,28 @@ class FileListTest extends \Phpbb\TranslationValidator\Tests\TestBase
 					Output::NOTICE . '-Found additional file-language/origin/index.htm-',
 				),
 			),
+			array(
+				'3.2',
+				array(
+					Output::FATAL . '-Missing required file-missing.php-',
+					Output::FATAL . '-Missing required file-missing.txt-',
+					Output::FATAL . '-Missing required file-subdir/missing.php-',
+					Output::FATAL . '-Missing required file-language/origin/LICENSE-',
+					Output::FATAL . '-Found additional file-additional.php-',
+					Output::FATAL . '-Found additional file-subdir/additional.php-',
+					Output::FATAL . '-Found additional file-additional.txt-',
+					Output::FATAL . '-Found additional file-language/origin/AUTHORS-',
+					Output::FATAL . '-Found additional file-language/origin/CHANGELOG-',
+					Output::FATAL . '-Found additional file-language/origin/README-',
+					Output::FATAL . '-Found additional file-language/origin/VERSION-',
+
+					Output::NOTICE . '-Found additional file-language/origin/AUTHORS.md-',
+					Output::NOTICE . '-Found additional file-language/origin/CHANGELOG.md-',
+					Output::NOTICE . '-Found additional file-language/origin/README.md-',
+					Output::NOTICE . '-Found additional file-language/origin/VERSION.md-',
+					Output::NOTICE . '-Found additional file-language/origin/index.htm-',
+				),
+			),
 		);
 	}
 
@@ -83,6 +102,9 @@ class FileListTest extends \Phpbb\TranslationValidator\Tests\TestBase
 	*/
 	public function testValidateFileList($phpbbVersion, $expected)
 	{
+		$this->validator->setOrigin('origin', dirname(__FILE__) . '/fixtures/'. $phpbbVersion . '/origin', 'language/origin/')
+			->setSource('source', dirname(__FILE__) . '/fixtures/'. $phpbbVersion . '/source', 'language/source/');
+
 		$this->validator
 			->setPhpbbVersion($phpbbVersion)
 			->validate();
