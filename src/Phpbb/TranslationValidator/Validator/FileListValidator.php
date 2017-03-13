@@ -201,6 +201,11 @@ class FileListValidator
 					}
 					$this->output->addMessage($level, 'Found additional file', $origin_file);
 				}
+
+				if (substr($origin_file, -13 ) === 'site_logo.gif' || substr($origin_file, -14 ) === '/site_logo.gif')
+				{
+					$this->output->addMessage(Output::FATAL, 'Found additional file', $origin_file);
+				}
 			}
 		}
 
