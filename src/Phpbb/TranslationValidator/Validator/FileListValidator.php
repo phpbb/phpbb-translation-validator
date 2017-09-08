@@ -120,6 +120,17 @@ class FileListValidator
 		$sourceFiles[] = $this->sourceLanguagePath . 'LICENSE';
 		$sourceFiles = array_unique($sourceFiles);
 
+		/*
+		* Get $lang['direction'] of translation to allow additional rtl-files for rtl-translations
+		*/
+		include($this->originPath . '/' . $this->originLanguagePath . 'common.php');
+		$direction = $lang['DIRECTION'];
+		// Throw error, if invalid direction is used 
+		if (!in_array($direction, array('rtl', 'ltr')))
+		{
+			$this->output->addMessage(Output::FATAL, 'DIRECTION needs to be rtl or ltr');
+		}
+
 		$originFiles = $this->getFileList($this->originPath);
 
 		$missingSubsilver2Files = $availableSubsilver2Files = array();
@@ -195,10 +206,16 @@ class FileListValidator
 					{
 						$level = Output::FATAL;
 					}
-					else
-					{
-						$level = (substr($origin_file, -3) !== '.md') ? Output::FATAL : Output::ERROR;
+					else if (substr($origin_file, -4 === array('.gif', '.png')) && $direction === 'rtl') {
+						$level = Output::WARNING;
 					}
+					else if (substr($origin_file, -3) !==	'.md') {
+						$level = Output::FATAL;
+					}
+					else  {
+						$level = Output::ERROR;
+					}
+
 					$this->output->addMessage($level, 'Found additional file', $origin_file);
 				}
 			}
