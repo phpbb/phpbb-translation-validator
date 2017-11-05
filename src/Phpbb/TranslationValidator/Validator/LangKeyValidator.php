@@ -675,12 +675,18 @@ class LangKeyValidator
 				$ignoreAdditional = true;
 			}
 
+			// missing closingTag allowed in: <br>, <hr>
+			$allowedMissingClosingTag = array(
+				'br',
+				'hr',
+			);
+
 			$tag = (strpos($possibleHtml, ' ') !== false) ? substr($possibleHtml, 1, strpos($possibleHtml, ' ') - 1) : substr($possibleHtml, 1, strpos($possibleHtml, '>') - 1);
 			$tag = ($openingTag) ? $tag : substr($tag, 1);
 
 			if ($openingTag)
 			{
-				if (in_array($tag, $openTags))
+				if (in_array($tag, $openTags) && !in_array($tag, $allowedMissingClosingTag))
 				{
 					if (!$failedUnclosed)
 					{
@@ -748,12 +754,6 @@ class LangKeyValidator
 				$this->output->addMessage($level, 'String is using additional html: ' . $possibleHtml, $file, $key);
 			}
 		}
-
-		// missing closingTag allowed in: br, hr
-		$allowedMissingClosingTag = array(
-			'br',
-			'hr',
-		);
 
 		if (!empty($openTags) && !$failedUnclosed && !in_array($openTags[0], $allowedMissingClosingTag))
 		{
