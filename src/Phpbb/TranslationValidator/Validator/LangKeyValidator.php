@@ -749,7 +749,13 @@ class LangKeyValidator
 			}
 		}
 
-		if (!empty($openTags) && !$failedUnclosed)
+		// missing closingTag allowed in: br, hr
+		$allowedMissingClosingTag = array(
+			'br',
+			'hr',
+		);
+
+		if (!empty($openTags) && !$failedUnclosed && !in_array($openTags[0], $allowedMissingClosingTag))
 		{
 			$this->output->addMessage(Output::FATAL, 'String is missing closing tag for html: ' . $openTags[0], $file, $key);
 		}
@@ -767,6 +773,8 @@ class LangKeyValidator
 	 *  - <samp>
 	 *  - <u>
 	 *  - <br />
+	 *  - <br>
+	 *  - <hr>
 	 * Fatal:
 	 *  - others
 	 *
@@ -786,6 +794,8 @@ class LangKeyValidator
 			'<samp>',
 			'<u>',
 			'<br />',
+			'<br>',
+			'<hr>',
 		)))
 		{
 			return Output::NOTICE;
