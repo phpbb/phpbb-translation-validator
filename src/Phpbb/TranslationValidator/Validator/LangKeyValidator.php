@@ -675,10 +675,11 @@ class LangKeyValidator
 				$ignoreAdditional = true;
 			}
 
-			// missing closingTag allowed in: <br>, <hr>
+			// missing closingTag allowed in: <br>, <hr>, <img>
 			$allowedMissingClosingTag = array(
 				'br',
 				'hr',
+				'img',
 			);
 
 			$tag = (strpos($possibleHtml, ' ') !== false) ? substr($possibleHtml, 1, strpos($possibleHtml, ' ') - 1) : substr($possibleHtml, 1, strpos($possibleHtml, '>') - 1);
@@ -686,7 +687,7 @@ class LangKeyValidator
 
 			if ($openingTag)
 			{
-				if (in_array($tag, $openTags) && !in_array($tag, $allowedMissingClosingTag))
+				if (in_array($tag, $openTags))
 				{
 					if (!$failedUnclosed)
 					{
@@ -694,7 +695,7 @@ class LangKeyValidator
 					}
 					$failedUnclosed = true;
 				}
-				else if (substr($possibleHtml, -3) !== ' />')
+				else if ((substr($possibleHtml, -3) !== ' />') && !in_array($tag, $allowedMissingClosingTag))
 				{
 					$openTags[] = $tag;
 				}
@@ -755,7 +756,7 @@ class LangKeyValidator
 			}
 		}
 
-		if (!empty($openTags) && !$failedUnclosed && !in_array($openTags[0], $allowedMissingClosingTag))
+		if (!empty($openTags) && !$failedUnclosed)
 		{
 			$this->output->addMessage(Output::FATAL, 'String is missing closing tag for html: ' . $openTags[0], $file, $key);
 		}
