@@ -695,7 +695,7 @@ class LangKeyValidator
 					}
 					$failedUnclosed = true;
 				}
-				else if ((substr($possibleHtml, -3) !== ' />') && !in_array($tag, $allowedMissingClosingTag))
+				else if (substr($possibleHtml, -3) !== ' />' && !in_array($tag, $allowedMissingClosingTag))
 				{
 					$openTags[] = $tag;
 				}
@@ -796,7 +796,7 @@ class LangKeyValidator
 			'<u>',
 			'<br />',
 			'<br>',
-			'<hr>',
+			'<hr>'
 		)))
 		{
 			return Output::NOTICE;
