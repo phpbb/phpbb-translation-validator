@@ -675,6 +675,13 @@ class LangKeyValidator
 				$ignoreAdditional = true;
 			}
 
+			// missing closingTag allowed in: <br>, <hr>, <img>
+			$allowedMissingClosingTag = array(
+				'br',
+				'hr',
+				'img',
+			);
+
 			$tag = (strpos($possibleHtml, ' ') !== false) ? substr($possibleHtml, 1, strpos($possibleHtml, ' ') - 1) : substr($possibleHtml, 1, strpos($possibleHtml, '>') - 1);
 			$tag = ($openingTag) ? $tag : substr($tag, 1);
 
@@ -688,7 +695,7 @@ class LangKeyValidator
 					}
 					$failedUnclosed = true;
 				}
-				else if (substr($possibleHtml, -3) !== ' />')
+				else if (substr($possibleHtml, -3) !== ' />' && !in_array($tag, $allowedMissingClosingTag))
 				{
 					$openTags[] = $tag;
 				}
@@ -767,6 +774,8 @@ class LangKeyValidator
 	 *  - <samp>
 	 *  - <u>
 	 *  - <br />
+	 *  - <br>
+	 *  - <hr>
 	 * Fatal:
 	 *  - others
 	 *
@@ -786,6 +795,8 @@ class LangKeyValidator
 			'<samp>',
 			'<u>',
 			'<br />',
+			'<br>',
+			'<hr>'
 		)))
 		{
 			return Output::NOTICE;
