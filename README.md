@@ -4,7 +4,7 @@ Allows to validate **phpBB** language packages.
 
 ## Requirement
 
-This extension requires php 5.3.3 or later to be set up.
+This extension requires PHP 5.6 to 7.1 to be set up.
 
 ## Installation for validating a language package locally
 
@@ -20,7 +20,7 @@ This extension requires php 5.3.3 or later to be set up.
 
 		{
 			"require-dev": {
-				"phpbb/translation-validator": "1.3.*"
+				"phpbb/translation-validator": "1.4.*"
 			}
 		}
 
