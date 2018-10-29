@@ -741,8 +741,8 @@ class LangKeyValidator
 					else if (
 						in_array('</a>', $sourceHtml) ||
 						$this->originLanguagePath . 'common.php' === $file && $key === 'TRANSLATION_INFO' ||
-						$this->originLanguagePath . 'help_faq.php' === $file ||
-						$this->originLanguagePath . 'help_bbcode.php' === $file
+						$this->originLanguagePath . 'help/faq.php' === $file ||
+						$this->originLanguagePath . 'help/bbcode.php' === $file
 					)
 					{
 						// Source contains a link aswell, mostly IST changed the link to better match the language
