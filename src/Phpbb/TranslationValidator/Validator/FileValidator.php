@@ -328,7 +328,9 @@ class FileValidator
 		{
 			foreach ($validateHtml[0] as $possibleHtml)
 			{
-				if (substr($possibleHtml, 0, 5) !== '<!-- ' || substr($possibleHtml, -4) !== ' -->')
+				if ((substr($possibleHtml, 0, 5) !== '<!-- ' || substr($possibleHtml, -4) !== ' -->')
+					&& (substr($possibleHtml, 0, 2) !== '<{' || substr($possibleHtml, -2) !== '}>')
+					)
 				{
 					$this->output->addMessage(Output::FATAL, 'Using additional HTML: ' . htmlspecialchars($possibleHtml), $originFile);
 				}
