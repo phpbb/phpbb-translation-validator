@@ -2,7 +2,7 @@
 	"name": "phpbb/translation-validator",
 	"description": "A language package validator for phpBB language packs. Language packs are required to pass the validator when submitted to the language pack database.",
 	"homepage": "https://github.com/phpbb/phpbb-translation-validator",
-	"version": "1.4.0",
+	"version": "1.4.1",
 	"license": "GPL-2.0",
 	"authors": [
 		{
