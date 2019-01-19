@@ -15,23 +15,6 @@ class ValidateNoPhpClosingTagTest extends TestBase
 	public function validateNoPhpClosingTagData()
 	{
 		return array(
-			array('3.0', 'nophpclosingtag/withouttag.php', array()),
-			array('3.0', 'nophpclosingtag/withoutnewline.php', array()),
-			array('3.0', 'nophpclosingtag/withtag.php', array()),
-			array('3.0', 'nophpclosingtag/withcrlf.php', array()),
-
-			array('3.1', 'nophpclosingtag/withouttag.php', array()),
-			array('3.1', 'nophpclosingtag/withoutnewline.php', array(
-				Output::FATAL . '-File must not contain a PHP closing tag, but end with one new line-nophpclosingtag/withoutnewline.php-',
-			)),
-			array('3.1', 'nophpclosingtag/withtag.php', array(
-				Output::FATAL . '-File must not contain a PHP closing tag, but end with one new line-nophpclosingtag/withtag.php-',
-			)),
-			array('3.1', 'nophpclosingtag/withcrlf.php', array()),
-			array('3.1', 'nophpclosingtag/shortarraysyntax.php', array(
-				Output::FATAL . '-File must not contain short array syntax for any version prior to 3.2-nophpclosingtag/shortarraysyntax.php-',
-			)),
-
 			array('3.2', 'nophpclosingtag/shortarraysyntax.php', array()),
 		);
 	}
