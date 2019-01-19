@@ -213,4 +213,44 @@ class Output implements \Phpbb\TranslationValidator\Output\OutputInterface
 		}
 		return 0;
 	}
+
+	/**
+	 * Returns whether verbosity is quiet (-q).
+	 *
+	 * @return bool true if verbosity is set to VERBOSITY_QUIET, false otherwise
+	 */
+	public function isQuiet()
+	{
+		// Empty
+	}
+
+	/**
+	 * Returns whether verbosity is verbose (-v).
+	 *
+	 * @return bool true if verbosity is set to VERBOSITY_VERBOSE, false otherwise
+	 */
+	public function isVerbose()
+	{
+		// Empty
+	}
+
+	/**
+	 * Returns whether verbosity is very verbose (-vv).
+	 *
+	 * @return bool true if verbosity is set to VERBOSITY_VERY_VERBOSE, false otherwise
+	 */
+	public function isVeryVerbose()
+	{
+		// Empty
+	}
+
+	/**
+	 * Returns whether verbosity is debug (-vvv).
+	 *
+	 * @return bool true if verbosity is set to VERBOSITY_DEBUG, false otherwise
+	 */
+	public function isDebug()
+	{
+		// Empty
+	}
 }

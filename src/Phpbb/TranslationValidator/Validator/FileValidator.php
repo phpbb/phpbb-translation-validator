@@ -8,9 +8,7 @@
  */
 namespace Phpbb\TranslationValidator\Validator;
 
-use battye\array_parser\parser;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Finder\Finder;
 use Phpbb\TranslationValidator\Output\Output;
 use Phpbb\TranslationValidator\Output\OutputInterface;
 
@@ -89,7 +87,7 @@ class FileValidator
 	/**
 	 * Set phpBB Version
 	 *
-	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1|3.2)
+	 * @param string $phpbbVersion	The phpBB Version to validate against
 	 * @return $this
 	 */
 	public function setPhpbbVersion($phpbbVersion)
@@ -186,7 +184,7 @@ class FileValidator
 		{
 			$this->validateIsoFile($originFile);
 		}
-		else if ($this->phpbbVersion !== '3.0' && substr($originFile, -4) === '.css')
+		else if (substr($originFile, -4) === '.css')
 		{
 			$this->validateUtf8withoutbom($originFile);
 			$this->validateCSSFile($sourceFile, $originFile);
@@ -379,8 +377,7 @@ class FileValidator
 		// Check for new liens at the end of the file
 		if (end($originContent) !== '')
 		{
-			$level = ($this->phpbbVersion !== '3.0') ? Output::FATAL : Output::NOTICE;
-			$this->output->addMessage($level, 'Missing new line at the end of the file', $originFile);
+			$this->output->addMessage(Output::FATAL, 'Missing new line at the end of the file', $originFile);
 		}
 	}
 
@@ -670,11 +667,6 @@ class FileValidator
 	 */
 	public function validateNoPhpClosingTag($originFile)
 	{
-		if ($this->phpbbVersion === '3.0')
-		{
-			return;
-		}
-
 		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
 		$fileContents = str_replace("\r\n", "\n", $fileContents);
 		$fileContents = str_replace("\r", "\n", $fileContents);
@@ -685,10 +677,6 @@ class FileValidator
 			if (substr($fileContents, -3) !== "];\n")
 			{
 				$this->output->addMessage(Output::FATAL, 'File must not contain a PHP closing tag, but end with one new line', $originFile);
-			}
-			else if ($this->phpbbVersion === '3.1')
-			{
-				$this->output->addMessage(OUTPUT::FATAL, 'File must not contain short array syntax for any version prior to 3.2', $originFile);
 			}
 		}
 	}

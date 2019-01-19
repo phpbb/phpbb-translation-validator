@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9e4dc782579a00e5f01f2b35a204e963",
+    "content-hash": "951c0f17e03299f1bbc85c9e0b51a6e4",
     "packages": [
         {
             "name": "battye/php-array-parser",
-            "version": "v1.0.2",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/battye/php-array-parser.git",
-                "reference": "ef33ef14942ffd83d1a770cf11abda66bc09d283"
+                "reference": "0baab9ca437275e0a19344a9678dc888e7d3e93a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/battye/php-array-parser/zipball/ef33ef14942ffd83d1a770cf11abda66bc09d283",
-                "reference": "ef33ef14942ffd83d1a770cf11abda66bc09d283",
+                "url": "https://api.github.com/repos/battye/php-array-parser/zipball/0baab9ca437275e0a19344a9678dc888e7d3e93a",
+                "reference": "0baab9ca437275e0a19344a9678dc888e7d3e93a",
                 "shasum": ""
             },
             "require": {
@@ -42,7 +42,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2019-01-19T04:47:53+00:00"
+            "time": "2019-01-19T15:57:45+00:00"
         },
         {
             "name": "symfony/console",

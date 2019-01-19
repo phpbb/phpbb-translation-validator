@@ -8,7 +8,6 @@
  */
 namespace Phpbb\TranslationValidator\Validator;
 
-use battye\array_parser\parser;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Finder\Finder;
 use Phpbb\TranslationValidator\Output\Output;
@@ -86,7 +85,7 @@ class FileListValidator
 	/**
 	 * Set phpBB Version
 	 *
-	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1|3.2)
+	 * @param string $phpbbVersion	The phpBB Version to validate against
 	 * @return $this
 	 */
 	public function setPhpbbVersion($phpbbVersion)
@@ -164,37 +163,12 @@ class FileListValidator
 			$testOriginFile = str_replace('/' . $this->sourceIso . '/', '/' . $this->originIso . '/', $sourceFile);
 			if (!in_array($testOriginFile, $originFiles))
 			{
-				if ($this->phpbbVersion === '3.1' && strpos($testOriginFile, 'styles/subsilver2/') === 0)
-				{
-					$missingSubsilver2Files[] = $testOriginFile;
-				}
-				else
-				{
-					$this->output->addMessage(Output::FATAL, 'Missing required file', $testOriginFile);
-				}
+				$this->output->addMessage(Output::FATAL, 'Missing required file', $testOriginFile);
 			}
 			else if (substr($sourceFile, -4) != '.gif' && substr($sourceFile, -12) != 'imageset.cfg')
 			{
-				if ($this->phpbbVersion === '3.1' && strpos($testOriginFile, 'styles/subsilver2/') === 0)
-				{
-					$availableSubsilver2Files[] = $testOriginFile;
-				}
 				$validFiles[$sourceFile] = $testOriginFile;
 			}
-		}
-
-		if ($this->phpbbVersion === '3.1' && !empty($availableSubsilver2Files) && !empty($missingSubsilver2Files))
-		{
-			// Either subsilver2 has to be completly there, or not at all
-			foreach ($missingSubsilver2Files as $testOriginFile)
-			{
-				$this->output->addMessage(Output::FATAL, 'Missing required file', $testOriginFile);
-			}
-		}
-		else if ($this->phpbbVersion === '3.1' && empty($availableSubsilver2Files) && !empty($missingSubsilver2Files))
-		{
-			// If subsilver2 is not there at all, we throw a little warning
-			$this->output->addMessage(Output::WARNING, 'Missing subsilver2 files');
 		}
 
 		foreach ($originFiles as $origin_file)
@@ -202,16 +176,7 @@ class FileListValidator
 			$testSourceFile = str_replace('/' . $this->originIso . '/', '/' . $this->sourceIso . '/', $origin_file);
 			if (!in_array($testSourceFile, $sourceFiles))
 			{
-				if (($this->phpbbVersion == '3.0' || $this->phpbbVersion == '3.1') && in_array($origin_file, array(
-					$this->originLanguagePath . 'AUTHORS',
-					$this->originLanguagePath . 'CHANGELOG',
-					$this->originLanguagePath . 'README',
-					$this->originLanguagePath . 'VERSION',
-				)))
-				{
-					$this->output->addMessage(Output::NOTICE, 'Found additional file', $origin_file);
-				}
-				else if (in_array($origin_file, array(
+				if (in_array($origin_file, array(
 					$this->originLanguagePath . 'AUTHORS.md',
 					$this->originLanguagePath . 'CHANGELOG.md',
 					$this->originLanguagePath . 'README.md',

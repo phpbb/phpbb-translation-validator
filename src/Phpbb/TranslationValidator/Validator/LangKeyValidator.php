@@ -96,7 +96,7 @@ class LangKeyValidator
 	/**
 	 * Set phpBB Version
 	 *
-	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1|3.2)
+	 * @param string $phpbbVersion	The phpBB Version to validate against
 	 * @return $this
 	 */
 	public function setPhpbbVersion($phpbbVersion)
@@ -146,7 +146,7 @@ class LangKeyValidator
 			return;
 		}
 
-		if ($this->phpbbVersion !== '3.0' && $key === 'PLURAL_RULE')
+		if ($key === 'PLURAL_RULE')
 		{
 			if ($validate_language < 0 || $validate_language > 15)
 			{
@@ -216,25 +216,6 @@ class LangKeyValidator
 		{
 			$this->validateArrayKey($file, $key, $against_language, $validate_language);
 		}
-		// ACL array in 3.0, removed in 3.1
-		else if ($this->phpbbVersion === '3.0' && strpos($key, 'acl_') === 0)
-		{
-			$this->validateAcl($file, $key, $against_language, $validate_language);
-		}
-		// Some special arrays in 3.0, removed in 3.1
-		else if ($this->phpbbVersion === '3.0' && (
-			$key === 'permission_cat' ||
-			$key === 'permission_type' ||
-			$key === 'tz' ||
-			$key === 'tz_zones'))
-		{
-			$this->validateArrayKey($file, $key, $against_language, $validate_language);
-		}
-		// Some special plurals in 3.0
-		else if ($this->phpbbVersion === '3.0' && ($key === 'datetime.AGO' || $key === 'NUM_POSTS_IN_QUEUE' || $key === 'USER_LAST_REMINDED'))
-		{
-			$this->validateArrayKey($file, $key, $against_language, $validate_language);
-		}
 		else
 		{
 			$against_keys = array_keys($against_language);
@@ -255,14 +236,9 @@ class LangKeyValidator
 				{
 					$this->validateArrayKey($file, $key, $against_language, $validate_language);
 				}
-				else if ($this->phpbbVersion !== '3.0' && isset($key_types['integer']))
+				else if (isset($key_types['integer']))
 				{
 					$this->validatePluralKeys($file, $key, $against_language, $validate_language);
-				}
-				else if ($this->phpbbVersion === '3.0' && isset($key_types['integer']))
-				{
-					// For 3.0 this should not happen
-					$this->output->addMessage(Output::NOTICE, 'Array has unsupported type integer', $file, $key);
 				}
 				else
 				{
@@ -284,11 +260,12 @@ class LangKeyValidator
 	 * There must not be an additional case
 	 * There might be less cases then possible
 	 *
-	 * @param	string	$file		File to validate
-	 * @param	string	$key		Key to validate
-	 * @param	array	$against_language		Original language
-	 * @param	array	$validate_language		Translated language
-	 * @return	null
+	 * @param    string $file File to validate
+	 * @param    string $key Key to validate
+	 * @param    array $against_language Original language
+	 * @param    array $validate_language Translated language
+	 * @return    null
+	 * @throws \Exception
 	 */
 	public function validatePluralKeys($file, $key, $against_language, $validate_language)
 	{
@@ -494,11 +471,6 @@ class LangKeyValidator
 				{
 					$this->output->addMessage(Output::FATAL, 'Array has invalid key: ' . $array_key, $file, $key);
 				}
-				else if ($this->phpbbVersion === '3.0' && ($key === 'datetime.AGO' || $key === 'NUM_POSTS_IN_QUEUE' || $key === 'USER_LAST_REMINDED'))
-				{
-					// 3.0 plurals
-					$this->output->addMessage(Output::WARNING, 'Array has additional key: ' . $array_key, $file, $key);
-				}
 				else
 				{
 					// Strangly used plural?
@@ -573,15 +545,7 @@ class LangKeyValidator
 		{
 			if (!$is_plural || ($is_plural && abs($against_integers - $validate_integers) !== 1))
 			{
-				$level = Output::FATAL;
-				// phpBB 3.0 Plural workarounds
-				if ($this->phpbbVersion === '3.0' && abs($against_integers - $validate_integers) === 1 &&
-					($this->originLanguagePath . 'common.php' === $file && $key === 'VIEW_ONLINE_TIME')
-				)
-				{
-					$level = Output::WARNING;
-				}
-				$this->output->addMessage($level, sprintf('Should have %1$s integer arguments, but has %2$s', $against_integers, $validate_integers), $file, $key);
+				$this->output->addMessage(Output::FATAL, sprintf('Should have %1$s integer arguments, but has %2$s', $against_integers, $validate_integers), $file, $key);
 			}
 			else if ($is_plural)
 			{

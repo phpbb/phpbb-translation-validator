@@ -112,7 +112,7 @@ class ValidatorRunner
 	/**
 	 * Set phpBB Version
 	 *
-	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1|3.2)
+	 * @param string $phpbbVersion	The phpBB Version to validate against
 	 * @return $this
 	 */
 	public function setPhpbbVersion($phpbbVersion)
