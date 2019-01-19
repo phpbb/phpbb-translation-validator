@@ -8,6 +8,7 @@
  */
 namespace Phpbb\TranslationValidator\Validator;
 
+use battye\array_parser\parser;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Finder\Finder;
 use Phpbb\TranslationValidator\Output\Output;
@@ -32,6 +33,8 @@ class FileListValidator
 
 	/** @var bool */
 	protected $debug;
+	/** @var bool */
+	protected $safeMode;
 
 	/** @var \Symfony\Component\Console\Input\InputInterface */
 	protected $input;
@@ -105,6 +108,18 @@ class FileListValidator
 	}
 
 	/**
+	 * Set safe mode
+	 *
+	 * @param $safeMode
+	 * @return $this
+	 */
+	public function setSafeMode($safeMode)
+	{
+		$this->safeMode = $safeMode;
+		return $this;
+	}
+
+	/**
 	 * Validates the directories
 	 *
 	 * Directories should not miss any files.
@@ -120,8 +135,19 @@ class FileListValidator
 		$sourceFiles[] = $this->sourceLanguagePath . 'LICENSE';
 		$sourceFiles = array_unique($sourceFiles);
 
-		//Get $lang['direction'] of translation to allow additional rtl-files for rtl-translations
-		include($this->originPath . '/' . $this->originLanguagePath . 'common.php');
+		// Get $lang['direction'] of translation to allow additional rtl-files for rtl-translations
+		$filePath = $this->originPath . '/' . $this->originLanguagePath . 'common.php';
+
+		if ($this->safeMode)
+		{
+			$lang = ValidatorRunner::langParser($filePath);
+		}
+
+		else
+		{
+			include($filePath);
+		}
+
 		$direction = $lang['DIRECTION'];
 		// Throw error, if invalid direction is used
 		if (!in_array($direction, array('rtl', 'ltr')))

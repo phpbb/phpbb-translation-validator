@@ -8,6 +8,7 @@
  */
 namespace Phpbb\TranslationValidator\Validator;
 
+use battye\array_parser\parser;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Finder\Finder;
 use Phpbb\TranslationValidator\Output\Output;
@@ -32,6 +33,8 @@ class FileValidator
 
 	/** @var bool */
 	protected $debug;
+	/** @var bool */
+	protected $safeMode;
 
 	/** @var \Symfony\Component\Console\Input\InputInterface */
 	protected $input;
@@ -123,6 +126,18 @@ class FileValidator
 	}
 
 	/**
+	 * Set safe mode
+	 *
+	 * @param $safeMode
+	 * @return $this
+	 */
+	public function setSafeMode($safeMode)
+	{
+		$this->safeMode = $safeMode;
+		return $this;
+	}
+
+	/**
 	 * Decides which validation function to use
 	 *
 	 * @param	string	$sourceFile		Source file for comparison
@@ -196,33 +211,57 @@ class FileValidator
 	 */
 	public function validateLangFile($sourceFile, $originFile)
 	{
-		ob_start();
-		/** @var $lang */
-		include($this->originPath . '/' . $originFile);
+		$originFilePath = $this->originPath . '/' . $originFile;
+		$sourceFilePath = $this->sourcePath . '/' . $sourceFile;
 
-		$defined_variables = get_defined_vars();
-		if (sizeof($defined_variables) != 3 || !isset($defined_variables['lang']) || gettype($defined_variables['lang']) != 'array')
+		if (!$this->safeMode)
 		{
-			$this->output->addMessage(Output::FATAL, 'Must only contain the lang-array', $originFile);
-			if (!isset($defined_variables['lang']) || gettype($defined_variables['lang']) != 'array')
+			ob_start();
+
+			/** @var $lang */
+			include($originFilePath);
+
+			$defined_variables = get_defined_vars();
+			if (sizeof($defined_variables) != 5 || !isset($defined_variables['lang']) || gettype($defined_variables['lang']) != 'array')
 			{
-				return;
+				$this->output->addMessage(Output::FATAL, 'Must only contain the lang-array', $originFile);
+				if (!isset($defined_variables['lang']) || gettype($defined_variables['lang']) != 'array')
+				{
+					return;
+				}
+			}
+
+			$output = ob_get_contents();
+			ob_end_clean();
+
+			if ($output !== '')
+			{
+				$this->output->addMessage(Output::FATAL, 'Must not produces output: ' . htmlspecialchars($output), $originFile);
 			}
 		}
 
-		$output = ob_get_contents();
-		ob_end_clean();
-
-		if ($output !== '')
+		else
 		{
-			$this->output->addMessage(Output::FATAL, 'Must not produces output: ' . htmlspecialchars($output), $originFile);
+			/** @var $lang */
+			$lang = ValidatorRunner::langParser($originFilePath);
+			$this->output->addMessage(Output::NOTICE, '<bg=yellow;options=bold>[Safe Mode]</> Manually run the translation validator to check for disallowed output.', $originFile);
 		}
 
 		$validate = $lang;
 		unset($lang);
 
-		/** @var $lang */
-		include($this->sourcePath . '/' . $sourceFile);
+		if (!$this->safeMode)
+		{
+			/** @var $lang */
+			include($sourceFilePath);
+		}
+
+		else
+		{
+			/** @var $lang */
+			$lang = ValidatorRunner::langParser($sourceFilePath);
+		}
+
 		$against = $lang;
 		unset($lang);
 
@@ -365,21 +404,44 @@ class FileValidator
 	 */
 	public function validateHelpFile($sourceFile, $originFile)
 	{
-		/** @var $help */
-		include($this->originPath . '/' . $originFile);
+		$originFilePath = $this->originPath . '/' . $originFile;
+		$sourceFilePath = $this->sourcePath . '/' . $sourceFile;
 
-		$defined_variables = get_defined_vars();
-		if (sizeof($defined_variables) != 3 || !isset($defined_variables['help']) || gettype($defined_variables['help']) != 'array')
+		if (!$this->safeMode)
 		{
-			$this->output->addMessage(Output::FATAL, 'Should only contain the help-array', $originFile);
-			return;
+			/** @var $help */
+			include($originFilePath);
+
+			$defined_variables = get_defined_vars();
+			if (sizeof($defined_variables) != 5 || !isset($defined_variables['help']) || gettype($defined_variables['help']) != 'array')
+			{
+				$this->output->addMessage(Output::FATAL, 'Should only contain the help-array', $originFile);
+				return;
+			}
+		}
+
+		else
+		{
+			/** @var $help */
+			$help = ValidatorRunner::langParser($originFilePath);
+			$this->output->addMessage(Output::NOTICE, '<bg=yellow;options=bold>[Safe Mode]</> Manually run the translation validator to check help variables.', $originFile);
 		}
 
 		$validate = $help;
 		unset($help);
 
-		/** @var $help */
-		include($this->sourcePath . '/' . $sourceFile);
+		if (!$this->safeMode)
+		{
+			/** @var $help */
+			include($sourceFilePath);
+		}
+
+		else
+		{
+			/** @var $help */
+			$help = ValidatorRunner::langParser($sourceFilePath);
+		}
+
 		$against = $help;
 		unset($help);
 
@@ -429,14 +491,26 @@ class FileValidator
 	 */
 	public function validateSearchSynonymsFile($originFile)
 	{
-		/** @var $synonyms */
-		include($this->originPath . '/' . $originFile);
+		$originFilePath = $this->originPath . '/' . $originFile;
 
-		$defined_variables = get_defined_vars();
-		if (sizeof($defined_variables) != 2 || !isset($defined_variables['synonyms']) || gettype($defined_variables['synonyms']) != 'array')
+		if (!$this->safeMode)
 		{
-			$this->output->addMessage(Output::FATAL, 'Must only contain the synonyms-array', $originFile);
-			return;
+			/** @var $synonyms */
+			include($originFilePath);
+
+			$defined_variables = get_defined_vars();
+			if (sizeof($defined_variables) != 3 || !isset($defined_variables['synonyms']) || gettype($defined_variables['synonyms']) != 'array')
+			{
+				$this->output->addMessage(Output::FATAL, 'Must only contain the synonyms-array', $originFile);
+				return;
+			}
+		}
+
+		else
+		{
+			/** @var $synonyms */
+			$synonyms = ValidatorRunner::langParser($originFilePath);
+			$this->output->addMessage(Output::NOTICE, '<bg=yellow;options=bold>[Safe Mode]</> Manually run the translation validator to check synonym variables.', $originFile);
 		}
 
 		foreach ($synonyms as $synonym1 => $synonym2)
@@ -461,14 +535,26 @@ class FileValidator
 	 */
 	public function validateSearchIgnoreWordsFile($originFile)
 	{
-		/** @var $words */
-		include($this->originPath . '/' . $originFile);
+		$originFilePath = $this->originPath . '/' . $originFile;
 
-		$defined_variables = get_defined_vars();
-		if (sizeof($defined_variables) != 2 || !isset($defined_variables['words']) || gettype($defined_variables['words']) != 'array')
+		if (!$this->safeMode)
 		{
-			$this->output->addMessage(Output::FATAL, 'Must only contain the words-array', $originFile);
-			return;
+			/** @var $words */
+			include($originFilePath);
+
+			$defined_variables = get_defined_vars();
+			if (sizeof($defined_variables) != 3 || !isset($defined_variables['words']) || gettype($defined_variables['words']) != 'array')
+			{
+				$this->output->addMessage(Output::FATAL, 'Must only contain the words-array', $originFile);
+				return;
+			}
+		}
+
+		else
+		{
+			/** @var $words */
+			$words = ValidatorRunner::langParser($originFilePath);
+			$this->output->addMessage(Output::NOTICE, '<bg=yellow;options=bold>[Safe Mode]</> Manually run the translation validator to check word variables.', $originFile);
 		}
 
 		foreach ($words as $word)

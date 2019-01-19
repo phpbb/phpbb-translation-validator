@@ -31,6 +31,7 @@ class ValidateCommand extends Command
 			->addOption('language-dir', null, InputOption::VALUE_OPTIONAL, 'The path to the directory with the language folders', null)
 			->addOption('debug', null, InputOption::VALUE_NONE, 'Run in debug')
 			->addOption('display-notices', 'dn', InputOption::VALUE_NONE, 'Display notices in report')
+			->addOption('safe-mode', 'sm', InputOption::VALUE_NONE, 'Run in web safe mode to parse files instead of including them')
 		;
 	}
 
@@ -49,6 +50,7 @@ class ValidateCommand extends Command
 		$languageDir = $input->getOption('language-dir');
 		$debug = $input->getOption('debug');
 		$displayNotices = $input->getOption('display-notices');
+		$safeMode = $input->getOption('safe-mode');
 
 		if (!in_array($phpbbVersion, array('3.0', '3.1', '3.2')))
 		{
@@ -59,10 +61,18 @@ class ValidateCommand extends Command
 		$output->setFormatter(new OutputFormatter($output->isDecorated()));
 
 		$output->writeln("<noticebg>Running Language Pack Validator on language $originIso.</noticebg>");
+
+		// If it's safe mode, just put a note so the person running knows it is not as thorough as running it manually
+		if ($safeMode)
+		{
+			$output->writeln('<bg=yellow;options=bold>[Safe Mode]</> Running in web safe mode; it is recommended to still run the script manually for completeness.');
+		}
+
 		$output->writeln('');
 		$runner = new ValidatorRunner($input, $output);
 		$runner->setPhpbbVersion($phpbbVersion)
-			->setDebug($debug);
+			->setDebug($debug)
+			->setSafeMode($safeMode);
 
 		if ($packageDir !== null)
 		{
