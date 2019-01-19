@@ -8,7 +8,9 @@
  */
 namespace Phpbb\TranslationValidator\Output;
 
-interface OutputInterface extends \Symfony\Component\Console\Output\OutputInterface
+use Symfony\Component\Console\Output\OutputInterface as SymfonyOutputInterface;
+
+interface OutputInterface extends SymfonyOutputInterface
 {
 	const FATAL = 4;
 	const WARNING = 3;
