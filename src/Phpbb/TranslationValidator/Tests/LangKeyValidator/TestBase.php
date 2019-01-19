@@ -17,7 +17,7 @@ class TestBase extends \Phpbb\TranslationValidator\Tests\TestBase
 	{
 		parent::setUp();
 
-		$this->validator = new \Phpbb\TranslationValidator\Validator\LangKeyValidator($this->getMock('Symfony\Component\Console\Input\InputInterface'), $this->output);
+		$this->validator = new \Phpbb\TranslationValidator\Validator\LangKeyValidator($this->getMockBuilder('Symfony\Component\Console\Input\InputInterface')->getMock(), $this->output);
 		$this->validator->setOrigin('origin', dirname(__FILE__) . '/fixtures/origin', 'language/origin/')
 			->setSource('source', dirname(__FILE__) . '/fixtures/source', 'language/source/')
 			->setPhpbbVersion('3.0')

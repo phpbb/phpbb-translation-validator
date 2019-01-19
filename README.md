@@ -41,6 +41,10 @@ Append the `--safe-mode` flag to run on a web server. This option will cause fil
 
 We use Travis-CI as a continous intergtation server and phpunit for our unit testing. See more information on the [phpBB development wiki](https://wiki.phpbb.com/Unit_Tests).
 
+To run the unit tests locally, use this command:
+
+     php vendor/phpunit/phpunit/phpunit src/Phpbb/TranslationValidator/Tests/
+
 ## License
 
 [GPLv2](license.txt)

@@ -63,7 +63,7 @@ class ValidateHtmlTest extends TestBase
 				'Additional link in help page',
 				'foobar', '<a href="https://www.phpbb.com/">bar foo</a>',
 				array(
-					Output::WARNING . '-String is using additional html: <a href="https://www.phpbb.com/">-language/origin/help_faq.php-Additional link in help page',
+					Output::ERROR . '-String is using additional html: <a href="https://www.phpbb.com/">-language/origin/help_faq.php-Additional link in help page',
 				),
 				'language/origin/help_faq.php',
 			),

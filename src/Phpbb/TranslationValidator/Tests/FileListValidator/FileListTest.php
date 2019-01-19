@@ -19,59 +19,12 @@ class FileListTest extends \Phpbb\TranslationValidator\Tests\TestBase
 	{
 		parent::setUp();
 
-		$this->validator = new \Phpbb\TranslationValidator\Validator\FileListValidator($this->getMock('Symfony\Component\Console\Input\InputInterface'), $this->output);
+		$this->validator = new \Phpbb\TranslationValidator\Validator\FileListValidator($this->getMockBuilder('Symfony\Component\Console\Input\InputInterface')->getMock(), $this->output);
 	}
 
 	public function validateFileListData()
 	{
 		return array(
-			array(
-				'3.0',
-				array(
-					Output::FATAL . '-Missing required file-missing.php-',
-					Output::FATAL . '-Missing required file-missing.txt-',
-					Output::FATAL . '-Missing required file-subdir/missing.php-',
-					Output::FATAL . '-Missing required file-language/origin/LICENSE-',
-					Output::FATAL . '-Missing required file-styles/subsilver2/nosubsilver.txt-',
-					Output::FATAL . '-Found additional file-additional.php-',
-					Output::FATAL . '-Found additional file-subdir/additional.php-',
-					Output::FATAL . '-Found additional file-additional.txt-',
-
-					Output::NOTICE . '-Found additional file-language/origin/AUTHORS.md-',
-					Output::NOTICE . '-Found additional file-language/origin/CHANGELOG.md-',
-					Output::NOTICE . '-Found additional file-language/origin/README.md-',
-					Output::NOTICE . '-Found additional file-language/origin/VERSION.md-',
-					Output::NOTICE . '-Found additional file-language/origin/AUTHORS-',
-					Output::NOTICE . '-Found additional file-language/origin/CHANGELOG-',
-					Output::NOTICE . '-Found additional file-language/origin/README-',
-					Output::NOTICE . '-Found additional file-language/origin/VERSION-',
-					Output::NOTICE . '-Found additional file-language/origin/index.htm-',
-				),
-			),
-			array(
-				'3.1',
-				array(
-					Output::FATAL . '-Missing required file-missing.php-',
-					Output::FATAL . '-Missing required file-missing.txt-',
-					Output::FATAL . '-Missing required file-subdir/missing.php-',
-					Output::FATAL . '-Missing required file-language/origin/LICENSE-',
-					Output::FATAL . '-Found additional file-additional.php-',
-					Output::FATAL . '-Found additional file-subdir/additional.php-',
-					Output::FATAL . '-Found additional file-additional.txt-',
-
-					Output::WARNING . '-Missing subsilver2 files--',
-
-					Output::NOTICE . '-Found additional file-language/origin/AUTHORS.md-',
-					Output::NOTICE . '-Found additional file-language/origin/CHANGELOG.md-',
-					Output::NOTICE . '-Found additional file-language/origin/README.md-',
-					Output::NOTICE . '-Found additional file-language/origin/VERSION.md-',
-					Output::NOTICE . '-Found additional file-language/origin/AUTHORS-',
-					Output::NOTICE . '-Found additional file-language/origin/CHANGELOG-',
-					Output::NOTICE . '-Found additional file-language/origin/README-',
-					Output::NOTICE . '-Found additional file-language/origin/VERSION-',
-					Output::NOTICE . '-Found additional file-language/origin/index.htm-',
-				),
-			),
 			array(
 				'3.2',
 				array(

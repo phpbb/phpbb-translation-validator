@@ -23,7 +23,7 @@ class TestBase extends \Phpbb\TranslationValidator\Tests\TestBase
 			define('IN_PHPBB', true);
 		}
 
-		$this->validator = new \Phpbb\TranslationValidator\Validator\FileValidator($this->getMock('Symfony\Component\Console\Input\InputInterface'), $this->output);
+		$this->validator = new \Phpbb\TranslationValidator\Validator\FileValidator($this->getMockBuilder('Symfony\Component\Console\Input\InputInterface')->getMock(), $this->output);
 		$this->validator->setOrigin('origin', dirname(__FILE__) . '/fixtures/origin', 'language/origin/')
 			->setSource('source', dirname(__FILE__) . '/fixtures/source', 'language/source/')
 			->setPhpbbVersion('3.0');

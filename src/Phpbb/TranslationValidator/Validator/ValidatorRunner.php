@@ -259,20 +259,24 @@ class ValidatorRunner
 		return isset($lang['PLURAL_RULE']) ? $lang['PLURAL_RULE'] : 1;
 	}
 
+	/**
+	 * Parse language files for lang arrays
+	 * @param $file
+	 * @return array|null
+	 */
 	public static function arrayParser($file)
 	{
-		// return parser::parse_regex('/\$lang\s*=\s*array_merge\(\$lang,\s*(?|array\(\s*(.*?)\s*\)|\[\s*(.*?)\s*\])\);/s', $file);
-		// https://regex101.com/r/OhzJeQ/3
-		// https://regex101.com/r/MFvLB9/4 ?? capture group
-		// $regex = '/\$lang\s*=\s*array_merge\(\$lang,\s*(?:array\(()|\[)\s*(.*?)\s*(?:\1\)|(?!\1)\])\);/s';//SORT OF WORKS
-		// $regex = '/\$lang\s+=\s+array_merge\(\$lang, array\((.*?)\)\);/s'; //orig
-		// $regex = '/\$lang\s*=\s*array_merge\(\$lang,\s*(?|array\(\s*(.*?)\s*\)|\[\s*(.*?)\s*\])\);/s';// in capture group 1
-
 		// Parse language files that use new or old array formats
 		$regex = '/\$lang\s*=\s*array_merge\(\$lang,\s*(?|array\((.*?)\)|\[(.*?)\])\);/s';
 		return parser::parse_regex($regex, $file);
 	}
 
+	/**
+	 * Merge parsed language entries into a single array
+	 * @param $filePath
+	 * @param string $relativePath
+	 * @return array
+	 */
 	public static function langParser($filePath, $relativePath = './')
 	{
 		$lang = [];
