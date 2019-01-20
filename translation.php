@@ -7,9 +7,11 @@
  * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  *
  */
-namespace Phpbb\TranslationValidator;
 
-require 'vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
+use Phpbb\TranslationValidator\Cli;
+
+// Run the command line script for the Translation Validator
 $app = new Cli();
 $app->run();
