@@ -277,7 +277,7 @@ class ValidatorRunner
 	 * @param string $relativePath
 	 * @return array
 	 */
-	public static function langParser($filePath, $relativePath = './')
+	public static function langParser($filePath, $relativePath = '')
 	{
 		$lang = [];
 		$parsed = self::arrayParser($relativePath . $filePath);

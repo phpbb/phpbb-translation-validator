@@ -30,8 +30,8 @@ class ValidateCommand extends Command
 			->addOption('package-dir', null, InputOption::VALUE_OPTIONAL, 'The path to the directory with the language packages', null)
 			->addOption('language-dir', null, InputOption::VALUE_OPTIONAL, 'The path to the directory with the language folders', null)
 			->addOption('debug', null, InputOption::VALUE_NONE, 'Run in debug')
-			->addOption('display-notices', 'dn', InputOption::VALUE_NONE, 'Display notices in report')
-			->addOption('safe-mode', 'sm', InputOption::VALUE_NONE, 'Run in web safe mode to parse files instead of including them')
+			->addOption('display-notices', null, InputOption::VALUE_NONE, 'Display notices in report')
+			->addOption('safe-mode', 's', InputOption::VALUE_NONE, 'Run in web safe mode to parse files instead of including them')
 		;
 	}
 
