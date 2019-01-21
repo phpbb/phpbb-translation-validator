@@ -14,7 +14,7 @@
          >
     <testsuites>
         <testsuite name="Language Pack Validator Test Suite">
-            <directory suffix="Test.php">./src/Phpbb/TranslationValidator/Tests/</directory>
+            <directory suffix="Test.php">./tests/</directory>
         </testsuite>
     </testsuites>
 </phpunit>
