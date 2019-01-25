@@ -15,9 +15,9 @@
 	"minimum-stability": "stable",
 	"require": {
 		"php": ">=5.3.3",
-		"symfony/yaml": "2.6.*",
-		"symfony/console": "2.6.*",
-		"symfony/finder": "2.6.*",
+		"symfony/yaml": "~2.6",
+		"symfony/console": "~2.6",
+		"symfony/finder": "~2.6",
 		"battye/php-array-parser": "~1.0"
 	},
 	"require-dev": {
