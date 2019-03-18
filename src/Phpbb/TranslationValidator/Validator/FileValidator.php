@@ -9,7 +9,6 @@
 namespace Phpbb\TranslationValidator\Validator;
 
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Finder\Finder;
 use Phpbb\TranslationValidator\Output\Output;
 use Phpbb\TranslationValidator\Output\OutputInterface;
 
@@ -32,6 +31,8 @@ class FileValidator
 
 	/** @var bool */
 	protected $debug;
+	/** @var bool */
+	protected $safeMode;
 
 	/** @var \Symfony\Component\Console\Input\InputInterface */
 	protected $input;
@@ -86,7 +87,7 @@ class FileValidator
 	/**
 	 * Set phpBB Version
 	 *
-	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1|3.2)
+	 * @param string $phpbbVersion	The phpBB Version to validate against
 	 * @return $this
 	 */
 	public function setPhpbbVersion($phpbbVersion)
@@ -119,6 +120,18 @@ class FileValidator
 	{
 		$this->debug = $debug;
 		$this->langkeyValidator->setDebug($debug);
+		return $this;
+	}
+
+	/**
+	 * Set safe mode
+	 *
+	 * @param $safeMode
+	 * @return $this
+	 */
+	public function setSafeMode($safeMode)
+	{
+		$this->safeMode = $safeMode;
 		return $this;
 	}
 
@@ -171,7 +184,7 @@ class FileValidator
 		{
 			$this->validateIsoFile($originFile);
 		}
-		else if ($this->phpbbVersion !== '3.0' && substr($originFile, -4) === '.css')
+		else if (substr($originFile, -4) === '.css')
 		{
 			$this->validateUtf8withoutbom($originFile);
 			$this->validateCSSFile($sourceFile, $originFile);
@@ -196,33 +209,57 @@ class FileValidator
 	 */
 	public function validateLangFile($sourceFile, $originFile)
 	{
-		ob_start();
-		/** @var $lang */
-		include($this->originPath . '/' . $originFile);
+		$originFilePath = $this->originPath . '/' . $originFile;
+		$sourceFilePath = $this->sourcePath . '/' . $sourceFile;
 
-		$defined_variables = get_defined_vars();
-		if (sizeof($defined_variables) != 3 || !isset($defined_variables['lang']) || gettype($defined_variables['lang']) != 'array')
+		if (!$this->safeMode)
 		{
-			$this->output->addMessage(Output::FATAL, 'Must only contain the lang-array', $originFile);
-			if (!isset($defined_variables['lang']) || gettype($defined_variables['lang']) != 'array')
+			ob_start();
+
+			/** @var $lang */
+			include($originFilePath);
+
+			$defined_variables = get_defined_vars();
+			if (sizeof($defined_variables) != 5 || !isset($defined_variables['lang']) || gettype($defined_variables['lang']) != 'array')
 			{
-				return;
+				$this->output->addMessage(Output::FATAL, 'Must only contain the lang-array', $originFile);
+				if (!isset($defined_variables['lang']) || gettype($defined_variables['lang']) != 'array')
+				{
+					return;
+				}
+			}
+
+			$output = ob_get_contents();
+			ob_end_clean();
+
+			if ($output !== '')
+			{
+				$this->output->addMessage(Output::FATAL, 'Must not produces output: ' . htmlspecialchars($output), $originFile);
 			}
 		}
 
-		$output = ob_get_contents();
-		ob_end_clean();
-
-		if ($output !== '')
+		else
 		{
-			$this->output->addMessage(Output::FATAL, 'Must not produces output: ' . htmlspecialchars($output), $originFile);
+			/** @var $lang */
+			$lang = ValidatorRunner::langParser($originFilePath);
+			$this->output->addMessage(Output::NOTICE, '<bg=yellow;options=bold>[Safe Mode]</> Manually run the translation validator to check for disallowed output.', $originFile);
 		}
 
 		$validate = $lang;
 		unset($lang);
 
-		/** @var $lang */
-		include($this->sourcePath . '/' . $sourceFile);
+		if (!$this->safeMode)
+		{
+			/** @var $lang */
+			include($sourceFilePath);
+		}
+
+		else
+		{
+			/** @var $lang */
+			$lang = ValidatorRunner::langParser($sourceFilePath);
+		}
+
 		$against = $lang;
 		unset($lang);
 
@@ -340,8 +377,7 @@ class FileValidator
 		// Check for new liens at the end of the file
 		if (end($originContent) !== '')
 		{
-			$level = ($this->phpbbVersion !== '3.0') ? Output::FATAL : Output::NOTICE;
-			$this->output->addMessage($level, 'Missing new line at the end of the file', $originFile);
+			$this->output->addMessage(Output::FATAL, 'Missing new line at the end of the file', $originFile);
 		}
 	}
 
@@ -365,21 +401,44 @@ class FileValidator
 	 */
 	public function validateHelpFile($sourceFile, $originFile)
 	{
-		/** @var $help */
-		include($this->originPath . '/' . $originFile);
+		$originFilePath = $this->originPath . '/' . $originFile;
+		$sourceFilePath = $this->sourcePath . '/' . $sourceFile;
 
-		$defined_variables = get_defined_vars();
-		if (sizeof($defined_variables) != 3 || !isset($defined_variables['help']) || gettype($defined_variables['help']) != 'array')
+		if (!$this->safeMode)
 		{
-			$this->output->addMessage(Output::FATAL, 'Should only contain the help-array', $originFile);
-			return;
+			/** @var $help */
+			include($originFilePath);
+
+			$defined_variables = get_defined_vars();
+			if (sizeof($defined_variables) != 5 || !isset($defined_variables['help']) || gettype($defined_variables['help']) != 'array')
+			{
+				$this->output->addMessage(Output::FATAL, 'Should only contain the help-array', $originFile);
+				return;
+			}
+		}
+
+		else
+		{
+			/** @var $help */
+			$help = ValidatorRunner::langParser($originFilePath);
+			$this->output->addMessage(Output::NOTICE, '<bg=yellow;options=bold>[Safe Mode]</> Manually run the translation validator to check help variables.', $originFile);
 		}
 
 		$validate = $help;
 		unset($help);
 
-		/** @var $help */
-		include($this->sourcePath . '/' . $sourceFile);
+		if (!$this->safeMode)
+		{
+			/** @var $help */
+			include($sourceFilePath);
+		}
+
+		else
+		{
+			/** @var $help */
+			$help = ValidatorRunner::langParser($sourceFilePath);
+		}
+
 		$against = $help;
 		unset($help);
 
@@ -429,14 +488,26 @@ class FileValidator
 	 */
 	public function validateSearchSynonymsFile($originFile)
 	{
-		/** @var $synonyms */
-		include($this->originPath . '/' . $originFile);
+		$originFilePath = $this->originPath . '/' . $originFile;
 
-		$defined_variables = get_defined_vars();
-		if (sizeof($defined_variables) != 2 || !isset($defined_variables['synonyms']) || gettype($defined_variables['synonyms']) != 'array')
+		if (!$this->safeMode)
 		{
-			$this->output->addMessage(Output::FATAL, 'Must only contain the synonyms-array', $originFile);
-			return;
+			/** @var $synonyms */
+			include($originFilePath);
+
+			$defined_variables = get_defined_vars();
+			if (sizeof($defined_variables) != 3 || !isset($defined_variables['synonyms']) || gettype($defined_variables['synonyms']) != 'array')
+			{
+				$this->output->addMessage(Output::FATAL, 'Must only contain the synonyms-array', $originFile);
+				return;
+			}
+		}
+
+		else
+		{
+			/** @var $synonyms */
+			$synonyms = ValidatorRunner::langParser($originFilePath);
+			$this->output->addMessage(Output::NOTICE, '<bg=yellow;options=bold>[Safe Mode]</> Manually run the translation validator to check synonym variables.', $originFile);
 		}
 
 		foreach ($synonyms as $synonym1 => $synonym2)
@@ -461,14 +532,26 @@ class FileValidator
 	 */
 	public function validateSearchIgnoreWordsFile($originFile)
 	{
-		/** @var $words */
-		include($this->originPath . '/' . $originFile);
+		$originFilePath = $this->originPath . '/' . $originFile;
 
-		$defined_variables = get_defined_vars();
-		if (sizeof($defined_variables) != 2 || !isset($defined_variables['words']) || gettype($defined_variables['words']) != 'array')
+		if (!$this->safeMode)
 		{
-			$this->output->addMessage(Output::FATAL, 'Must only contain the words-array', $originFile);
-			return;
+			/** @var $words */
+			include($originFilePath);
+
+			$defined_variables = get_defined_vars();
+			if (sizeof($defined_variables) != 3 || !isset($defined_variables['words']) || gettype($defined_variables['words']) != 'array')
+			{
+				$this->output->addMessage(Output::FATAL, 'Must only contain the words-array', $originFile);
+				return;
+			}
+		}
+
+		else
+		{
+			/** @var $words */
+			$words = ValidatorRunner::langParser($originFilePath);
+			$this->output->addMessage(Output::NOTICE, '<bg=yellow;options=bold>[Safe Mode]</> Manually run the translation validator to check word variables.', $originFile);
 		}
 
 		foreach ($words as $word)
@@ -584,11 +667,6 @@ class FileValidator
 	 */
 	public function validateNoPhpClosingTag($originFile)
 	{
-		if ($this->phpbbVersion === '3.0')
-		{
-			return;
-		}
-
 		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
 		$fileContents = str_replace("\r\n", "\n", $fileContents);
 		$fileContents = str_replace("\r", "\n", $fileContents);
@@ -599,10 +677,6 @@ class FileValidator
 			if (substr($fileContents, -3) !== "];\n")
 			{
 				$this->output->addMessage(Output::FATAL, 'File must not contain a PHP closing tag, but end with one new line', $originFile);
-			}
-			else if ($this->phpbbVersion === '3.1')
-			{
-				$this->output->addMessage(OUTPUT::FATAL, 'File must not contain short array syntax for any version prior to 3.2', $originFile);
 			}
 		}
 	}

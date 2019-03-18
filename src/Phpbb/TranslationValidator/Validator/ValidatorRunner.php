@@ -8,6 +8,7 @@
  */
 namespace Phpbb\TranslationValidator\Validator;
 
+use battye\array_parser\parser;
 use Symfony\Component\Console\Input\InputInterface;
 use Phpbb\TranslationValidator\Output\Output;
 use Phpbb\TranslationValidator\Output\OutputInterface;
@@ -31,6 +32,8 @@ class ValidatorRunner
 
 	/** @var bool */
 	protected $debug;
+	/** @var bool */
+	protected $safeMode;
 
 	/** @var int */
 	protected $numFatal = 0;
@@ -95,9 +98,21 @@ class ValidatorRunner
 	}
 
 	/**
+	 * Set safe mode (if true, don't include any PHP files)
+	 *
+	 * @param $safeMode
+	 * @return $this
+	 */
+	public function setSafeMode($safeMode)
+	{
+		$this->safeMode = $safeMode;
+		return $this;
+	}
+
+	/**
 	 * Set phpBB Version
 	 *
-	 * @param string $phpbbVersion	The phpBB Version to validate against (3.0|3.1|3.2)
+	 * @param string $phpbbVersion	The phpBB Version to validate against
 	 * @return $this
 	 */
 	public function setPhpbbVersion($phpbbVersion)
@@ -129,6 +144,7 @@ class ValidatorRunner
 			->setOrigin($this->originIso, $this->originPath, $this->originLanguagePath)
 			->setPhpbbVersion($this->phpbbVersion)
 			->setDebug($this->debug)
+			->setSafeMode($this->safeMode)
 			->validate();
 
 		if (empty($validateFiles))
@@ -153,7 +169,8 @@ class ValidatorRunner
 			->setOrigin($this->originIso, $this->originPath, $this->originLanguagePath)
 			->setPhpbbVersion($this->phpbbVersion)
 			->setPluralRule($pluralRule)
-			->setDebug($this->debug);
+			->setDebug($this->debug)
+			->setSafeMode($this->safeMode);
 
 		foreach ($validateFiles as $sourceFile => $originFile)
 		{
@@ -215,9 +232,19 @@ class ValidatorRunner
 	 */
 	protected function guessPluralRule()
 	{
-		if (file_exists($this->originPath . '/' . $this->originLanguagePath . 'common.php'))
+		$filePath = $this->originPath . '/' . $this->originLanguagePath . 'common.php';
+
+		if (file_exists($filePath))
 		{
-			include($this->originPath . '/' . $this->originLanguagePath . 'common.php');
+			if ($this->safeMode)
+			{
+				$lang = self::langParser($filePath);
+			}
+
+			else
+			{
+				include($filePath);
+			}
 
 			if (!isset($lang['PLURAL_RULE']))
 			{
@@ -230,5 +257,36 @@ class ValidatorRunner
 		}
 
 		return isset($lang['PLURAL_RULE']) ? $lang['PLURAL_RULE'] : 1;
+	}
+
+	/**
+	 * Parse language files for lang arrays
+	 * @param $file
+	 * @return array|null
+	 */
+	public static function arrayParser($file)
+	{
+		// Parse language files that use new or old array formats
+		$regex = '/\$lang\s*=\s*array_merge\(\$lang,\s*(?|array\((.*?)\)|\[(.*?)\])\);/s';
+		return parser::parse_regex($regex, $file);
+	}
+
+	/**
+	 * Merge parsed language entries into a single array
+	 * @param $filePath
+	 * @param string $relativePath
+	 * @return array
+	 */
+	public static function langParser($filePath, $relativePath = '')
+	{
+		$lang = [];
+		$parsed = self::arrayParser($relativePath . $filePath);
+
+		foreach ($parsed as $parse)
+		{
+			$lang = array_merge($lang, $parse);
+		}
+
+		return $lang;
 	}
 }
