@@ -3,12 +3,18 @@
 	"description": "A language package validator for phpBB language packs. Language packs are required to pass the validator when submitted to the language pack database.",
 	"homepage": "https://github.com/phpbb/phpbb-translation-validator",
 	"version": "1.5.0",
-	"license": "GPL-2.0",
+	"license": "GPL-2.0-only",
 	"authors": [
 		{
 			"name": "Joas Schilling",
 			"email": "nickvergessen@phpbb.com",
 			"homepage": "http://www.phpbb.com/",
+			"role": "Developer"
+		},
+		{
+			"name": "Battye",
+			"email": "battye@phpbb.com",
+			"homepage": "https://www.phpbb.com",
 			"role": "Developer"
 		}
 	],
