@@ -267,7 +267,7 @@ class ValidatorRunner
 	public static function arrayParser($file)
 	{
 		// Parse language files that use new or old array formats
-		$regex = '/\$lang\s*=\s*array_merge\(\$lang,\s*(?|array\((.*?)\)|\[(.*?)\])\);/s';
+		$regex = '/\$lang\s*=\s*array_merge\s*\(\$lang,\s*(?|array\s*\((.*?)\)|\[(.*?)\])\);/s';
 		return parser::parse_regex($regex, $file);
 	}
 
