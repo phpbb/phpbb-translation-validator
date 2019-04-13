@@ -4,16 +4,20 @@ This console application allows you to validate [phpBB](https://www.phpbb.com) l
 
 ## Requirements
 
-This extension requires PHP 5.3.3 or above.
+This extension requires PHP 5.5.9 or above.
 
 ### Installation
 
-Firstly, download the British English (`en`) language pack from phpBB.com as this is the default source language. Then clone this repository and download the dependencies:
+Firstly, download the latest British English (`en`) [language pack from phpBB.com](http://www.phpbb.com/customise/db/translation/british_english/) as this is the default source language. Then clone this repository and download the dependencies:
 
     git clone https://github.com/phpbb/phpbb-translation-validator.git
-    composer install
-    
-For the easiest results, create a directory called `3.2` in the root of the Translation Validator. Upload the `en` language page into this directory, along with the languages you wish to test.
+    composer.phar install
+
+For the easiest results, create a directory called `3.2` in the root of the Translation Validator. Upload the `en` language page into this directory, along with the languages you wish to test. Which leads e.g. to:
+
+    phpbb-translation-validator/3.2/en/
+    phpbb-translation-validator/3.2/fr/
+    phpbb-translation-validator/translation.php
 
 The simplest way to validate is to then run this command (the final argument is the language you wish to test and that has already been uploaded to the `3.2` directory; eg. `fr` for French):
 
