@@ -5,10 +5,10 @@ php:
   - 7.1
 
 install:
-  - php composer.phar install --dev --no-interaction --prefer-source
+  - composer install --dev --no-interaction --prefer-source
 
 script:
-  - bin/phpunit
+  - vendor/phpunit/phpunit/phpunit
 
 matrix:
   allow_failures:
