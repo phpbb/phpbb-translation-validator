@@ -39,6 +39,81 @@ class FileValidator
 	/** @var \Phpbb\TranslationValidator\Output\OutputInterface */
 	protected $output;
 
+	/** @var array List from https://developers.google.com/recaptcha/docs/language */
+	private $reCaptchaLanguages = [
+		'ar',
+		'af',
+		'am',
+		'hy',
+		'az',
+		'eu',
+		'bn',
+		'bg',
+		'ca',
+		'zh-HK',
+		'zh-CN',
+		'zh-TW',
+		'hr',
+		'cs',
+		'da',
+		'nl',
+		'en-GB',
+		'en',
+		'et',
+		'fil',
+		'fi',
+		'fr',
+		'fr-CA',
+		'gl',
+		'ka',
+		'de',
+		'de-AT',
+		'de-CH',
+		'el',
+		'gu',
+		'iw',
+		'hi',
+		'hu',
+		'is',
+		'id',
+		'it',
+		'ja',
+		'kn',
+		'ko',
+		'lo',
+		'lv',
+		'lt',
+		'ms',
+		'ml',
+		'mr',
+		'mn',
+		'no',
+		'fa',
+		'pl',
+		'pt',
+		'pt-BR',
+		'pt-PT',
+		'ro',
+		'ru',
+		'sr',
+		'si',
+		'sk',
+		'sl',
+		'es',
+		'es-419',
+		'sw',
+		'sv',
+		'ta',
+		'te',
+		'th',
+		'tr',
+		'uk',
+		'ur',
+		'vi',
+		'zu',
+		'', // Allow empty strings
+	];
+
 	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
@@ -280,6 +355,28 @@ class FileValidator
 			{
 				$this->output->addMessage(Output::FATAL, 'Must not contain key: ' . $validateLangKey, $originFile);
 			}
+		}
+
+		// Check reCaptcha file
+		if ($originFile === $this->originLanguagePath . 'captcha_recaptcha.php')
+		{
+			$this->validateReCaptchaValue($originFile, $validate);
+		}
+	}
+
+	/**
+	 * Check that the reCaptcha key provided is allowed
+	 * @param $originFile
+	 * @param array $validate
+	 */
+	public function validateReCaptchaValue($originFile, $validate)
+	{
+		// The key 'RECAPTCHA_LANG' must match the list provided by Google, or be left empty
+		// If any other key is used, we will show an error
+		if (array_key_exists('RECAPTCHA_LANG', $validate) && !in_array($validate['RECAPTCHA_LANG'], $this->reCaptchaLanguages))
+		{
+			// The supplied value doesn't match the allowed values
+			$this->output->addMessage(Output::WARNING, 'reCaptcha must match a language/country code on https://developers.google.com/recaptcha/docs/language - if no code exists for your language you can use "en" or leave the string empty', $originFile, 'RECAPTCHA_LANG');
 		}
 	}
 
