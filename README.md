@@ -45,9 +45,9 @@ Add the TranslationValidator as a dependency:
 			}
 		}
 
-Then add the `php translation.php` call you run locally to your `.travis.yml` file.
+Then add a `php vendor/bin/translation.php` call to your `.travis.yml` file.
 
-We use Travis-CI as a continous intergtation server and phpunit for our unit testing. See more information on the [phpBB development wiki](https://wiki.phpbb.com/Unit_Tests).
+We use Travis-CI as a continuous integration server and phpunit for our unit testing. See more information on the [phpBB development wiki](https://wiki.phpbb.com/Unit_Tests).
 
 To run the unit tests locally, use this command:
 
