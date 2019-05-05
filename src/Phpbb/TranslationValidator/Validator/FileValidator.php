@@ -376,7 +376,7 @@ class FileValidator
 		if (array_key_exists('RECAPTCHA_LANG', $validate) && !in_array($validate['RECAPTCHA_LANG'], $this->reCaptchaLanguages))
 		{
 			// The supplied value doesn't match the allowed values
-			$this->output->addMessage(Output::WARNING, 'reCaptcha must match a language/country code on https://developers.google.com/recaptcha/docs/language - if no code exists for your language you can use "en" or leave the string empty', $originFile, 'RECAPTCHA_LANG');
+			$this->output->addMessage(Output::ERROR, 'reCaptcha must match a language/country code on https://developers.google.com/recaptcha/docs/language - if no code exists for your language you can use "en" or leave the string empty', $originFile, 'RECAPTCHA_LANG');
 		}
 	}
 
