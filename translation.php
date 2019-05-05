@@ -8,10 +8,12 @@
  *
  */
 
+const TRANSLATION_VALIDATOR_VERSION = '1.5.1';
+
 require 'vendor/autoload.php';
 
 use Phpbb\TranslationValidator\Cli;
 
 // Run the command line script for the Translation Validator
-$app = new Cli();
+$app = new Cli(TRANSLATION_VALIDATOR_VERSION);
 $app->run();

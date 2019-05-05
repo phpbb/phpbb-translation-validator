@@ -53,6 +53,14 @@ To run the unit tests locally, use this command:
 
      php vendor/phpunit/phpunit/phpunit tests/
 
+## Contributing
+
+If you notice any problems with this application, please raise an issue at https://github.com/phpbb/phpbb-translation-validator/issues.
+
+To submit your own code contributions, please fork the project and submit a pull request at https://github.com/phpbb/phpbb-translation-validator/pulls.
+
+When a new version is released, the version number will be updated in `composer.json` and `translation.php`. A new tag will be created and the package will become available at https://packagist.org/packages/phpbb/translation-validator.
+
 ## License
 
 [GPLv2](license.txt)
