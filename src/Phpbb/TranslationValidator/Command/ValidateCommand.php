@@ -52,9 +52,9 @@ class ValidateCommand extends Command
 		$displayNotices = $input->getOption('display-notices');
 		$safeMode = $input->getOption('safe-mode');
 
-		if (!in_array($phpbbVersion, array('3.2')))
+		if (!in_array($phpbbVersion, array('3.2', '3.3')))
 		{
-			throw new \RuntimeException('Invalid phpbb-version, allowed versions: 3.2');
+			throw new \RuntimeException('Invalid phpbb-version, allowed versions: 3.2 and 3.3');
 		}
 
 		$output = new Output($output, $debug);

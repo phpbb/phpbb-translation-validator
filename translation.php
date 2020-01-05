@@ -8,7 +8,7 @@
  *
  */
 
-const TRANSLATION_VALIDATOR_VERSION = '1.5.1';
+const TRANSLATION_VALIDATOR_VERSION = '1.5.2';
 
 require 'vendor/autoload.php';
 
