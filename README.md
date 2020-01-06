@@ -13,17 +13,19 @@ Firstly, download the latest British English (`en`) [language pack from phpBB.co
     git clone https://github.com/phpbb/phpbb-translation-validator.git
     composer.phar install
 
-For the easiest results, create a directory called `3.2` in the root of the Translation Validator. Upload the `en` language page into this directory, along with the languages you wish to test. Which leads e.g. to:
+For the easiest results, create a directory called `3.2` or `3.3` in the root of the Translation Validator. Upload the `en` language page into this directory, along with the languages you wish to test. Which leads e.g. to:
 
     phpbb-translation-validator/3.2/en/
     phpbb-translation-validator/3.2/fr/
+    phpbb-translation-validator/3.3/en/
+    phpbb-translation-validator/3.3/fr/
     phpbb-translation-validator/translation.php
 
 The simplest way to validate is to then run this command (the final argument is the language you wish to test and that has already been uploaded to the `3.2` directory; eg. `fr` for French):
 
      php translation.php validate fr
 
-There are more arguments that can be supplied. For example, suppose you wanted to have your `3.2` directory in a different location, you wanted to explicitly specify phpBB version 3.2, you wanted to run in safe mode and you wanted to see all notices displayed - you would run this command:
+There are more arguments that can be supplied. For example, suppose you wanted to have your `3.2` directory in a different location, you wanted to explicitly specify phpBB version 3.2 (default validation is against 3.3), you wanted to run in safe mode and you wanted to see all notices displayed - you would run this command:
 
      php translation.php validate fr 
         --package-dir=/path/to/your/3.2 
