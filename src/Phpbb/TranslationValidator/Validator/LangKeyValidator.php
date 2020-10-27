@@ -606,9 +606,6 @@ class LangKeyValidator
 			'SUPPORT_BODY',
 			'UPDATE_INSTALLATION_EXPLAIN',
 			'OVERVIEW_BODY',
-		)) || $this->originLanguagePath . 'ucp.php' === $file && in_array($key, array(
-			'TERMS_OF_USE_CONTENT',
-			'PRIVACY_POLICY',
 		)))
 		{
 			$sourceString = '<p>' . $sourceString . '</p>';
@@ -714,6 +711,11 @@ class LangKeyValidator
 						// Or the help pages (faq and bbcode help), where links are not as bad as in other places.
 						$level = Output::WARNING;
 					}
+				}
+
+				if ($this->originLanguagePath . 'ucp.php' === $file && ($key === 'TERMS_OF_USE_CONTENT' || $key === 'PRIVACY_POLICY'))
+				{
+					$level = Output::ERROR;
 				}
 
 				$this->output->addMessage($level, 'String is using additional html: ' . $possibleHtml, $file, $key);
