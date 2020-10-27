@@ -713,7 +713,7 @@ class LangKeyValidator
 					}
 				}
 
-				if ($this->originLanguagePath . 'ucp.php' === $file && ($key === 'TERMS_OF_USE_CONTENT' || $key === 'PRIVACY_POLICY'))
+				if ($this->originLanguagePath . 'ucp.php' === $file && in_array($key, array('TERMS_OF_USE_CONTENT', 'PRIVACY_POLICY')))
 				{
 					$level = Output::ERROR;
 				}
