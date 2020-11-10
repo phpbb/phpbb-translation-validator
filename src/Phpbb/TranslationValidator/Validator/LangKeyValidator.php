@@ -606,16 +606,10 @@ class LangKeyValidator
 			'SUPPORT_BODY',
 			'UPDATE_INSTALLATION_EXPLAIN',
 			'OVERVIEW_BODY',
-		)))
-		{
-			$sourceString = '<p>' . $sourceString . '</p>';
-			$originString = '<p>' . $originString . '</p>';
-		}
-		// Check for 3.2
-		if ($this->phpbbVersion == '3.2' && ($this->originLanguagePath . 'ucp.php' === $file && in_array($key, array(
+		)) || ($this->phpbbVersion == '3.2' && ($this->originLanguagePath . 'ucp.php' === $file && in_array($key, array( //Check for 3.2
 			'TERMS_OF_USE_CONTENT',
 			'PRIVACY_POLICY',
-		))))
+		)))))
 		{
 			$sourceString = '<p>' . $sourceString . '</p>';
 			$originString = '<p>' . $originString . '</p>';
