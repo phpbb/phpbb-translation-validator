@@ -611,6 +611,15 @@ class LangKeyValidator
 			$sourceString = '<p>' . $sourceString . '</p>';
 			$originString = '<p>' . $originString . '</p>';
 		}
+		// Check for 3.2
+		if ($this->phpbbVersion == '3.2' && ($this->originLanguagePath . 'ucp.php' === $file && in_array($key, array(
+			'TERMS_OF_USE_CONTENT',
+			'PRIVACY_POLICY',
+		))))
+		{
+			$sourceString = '<p>' . $sourceString . '</p>';
+			$originString = '<p>' . $originString . '</p>';
+		}
 
 		$sourceHtml = $originHtml = $openTags = array();
 		preg_match_all('/\<.+?\>/', $sourceString, $sourceHtml);
@@ -713,7 +722,7 @@ class LangKeyValidator
 					}
 				}
 
-				if ($this->originLanguagePath . 'ucp.php' === $file && in_array($key, array('TERMS_OF_USE_CONTENT', 'PRIVACY_POLICY')))
+				if ($this->originLanguagePath . 'ucp.php' === $file && in_array($key, array('TERMS_OF_USE_CONTENT', 'PRIVACY_POLICY')) && ($this->phpbbVersion != '3.2'))
 				{
 					$level = Output::ERROR;
 				}
