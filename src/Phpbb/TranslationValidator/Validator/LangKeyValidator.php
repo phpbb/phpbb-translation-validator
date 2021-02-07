@@ -16,6 +16,8 @@ use Phpbb\TranslationValidator\Output\OutputInterface;
 class LangKeyValidator
 {
 	/** @var string */
+	protected $direction;
+	/** @var string */
 	protected $originIso;
 	/** @var string */
 	protected $originPath;
@@ -59,6 +61,17 @@ class LangKeyValidator
 	{
 		$this->input = $input;
 		$this->output = $output;
+	}
+
+	/**
+	 * Set the language direction
+	 * @param $direction
+	 * @return $this
+	 */
+	public function setDirection($direction)
+	{
+		$this->direction = $direction;
+		return $this;
 	}
 
 	/**
@@ -775,6 +788,11 @@ class LangKeyValidator
 			preg_match('#^<a href="([a-zA-Z0-9_\:\&\/\?\.\-\#]+)" rel="external">$#', $html))
 		{
 			return Output::ERROR;
+		}
+
+		if ($this->direction == 'rtl' && (strpos($html, 'ltr') !== false || strpos($html, 'rtl') !== false))
+		{
+			return Output::WARNING; // be more lenient for RTL
 		}
 
 		return Output::FATAL;

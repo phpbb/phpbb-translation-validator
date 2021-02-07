@@ -16,6 +16,8 @@ use Phpbb\TranslationValidator\Output\OutputInterface;
 class FileListValidator
 {
 	/** @var string */
+	protected $direction = 'ltr';
+	/** @var string */
 	protected $originIso;
 	/** @var string */
 	protected $originPath;
@@ -147,9 +149,9 @@ class FileListValidator
 			include($filePath);
 		}
 
-		$direction = $lang['DIRECTION'];
+		$this->direction = $lang['DIRECTION'];
 		// Throw error, if invalid direction is used
-		if (!in_array($direction, array('rtl', 'ltr')))
+		if (!in_array($this->direction, array('rtl', 'ltr')))
 		{
 			$this->output->addMessage(Output::FATAL, 'DIRECTION needs to be rtl or ltr');
 		}
@@ -195,7 +197,7 @@ class FileListValidator
 					{
 						$level = Output::FATAL;
 					}
-					else if (in_array(substr($origin_file, -4), array('.gif', '.png')) && $direction === 'rtl')
+					else if (in_array(substr($origin_file, -4), array('.gif', '.png')) && $this->direction === 'rtl')
 					{
 						$level = Output::WARNING;
 					}
@@ -245,5 +247,14 @@ class FileListValidator
 		}
 
 		return $files;
+	}
+
+	/**
+	 * Get the language direction - we want to be more lenient for rtl languages
+	 * @return string
+	 */
+	public function getDirection()
+	{
+		return $this->direction;
 	}
 }
