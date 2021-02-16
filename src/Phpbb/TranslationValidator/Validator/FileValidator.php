@@ -15,6 +15,8 @@ use Phpbb\TranslationValidator\Output\OutputInterface;
 class FileValidator
 {
 	/** @var string */
+	protected $direction;
+	/** @var string */
 	protected $originIso;
 	/** @var string */
 	protected $originPath;
@@ -38,6 +40,9 @@ class FileValidator
 	protected $input;
 	/** @var \Phpbb\TranslationValidator\Output\OutputInterface */
 	protected $output;
+
+	/** @var LangKeyValidator  */
+	protected $langKeyValidator;
 
 	/** @var array List from https://developers.google.com/recaptcha/docs/language */
 	private $reCaptchaLanguages = [
@@ -122,7 +127,19 @@ class FileValidator
 	{
 		$this->input = $input;
 		$this->output = $output;
-		$this->langkeyValidator = new LangKeyValidator($input, $output);
+		$this->langKeyValidator = new LangKeyValidator($input, $output);
+	}
+
+	/**
+	 * Set the language direction
+	 * @param $direction
+	 * @return $this
+	 */
+	public function setDirection($direction)
+	{
+		$this->direction = $direction;
+		$this->langKeyValidator->setDirection($direction);
+		return $this;
 	}
 
 	/**
@@ -138,7 +155,7 @@ class FileValidator
 		$this->originIso = $originIso;
 		$this->originPath = $originPath;
 		$this->originLanguagePath = $originLanguagePath;
-		$this->langkeyValidator->setOrigin($originIso, $originPath, $originLanguagePath);
+		$this->langKeyValidator->setOrigin($originIso, $originPath, $originLanguagePath);
 		return $this;
 	}
 
@@ -155,7 +172,7 @@ class FileValidator
 		$this->sourceIso = $sourceIso;
 		$this->sourcePath = $sourcePath;
 		$this->sourceLanguagePath = $sourceLanguagePath;
-		$this->langkeyValidator->setSource($sourceIso, $sourcePath, $sourceLanguagePath);
+		$this->langKeyValidator->setSource($sourceIso, $sourcePath, $sourceLanguagePath);
 		return $this;
 	}
 
@@ -168,7 +185,7 @@ class FileValidator
 	public function setPhpbbVersion($phpbbVersion)
 	{
 		$this->phpbbVersion = $phpbbVersion;
-		$this->langkeyValidator->setPhpbbVersion($phpbbVersion);
+		$this->langKeyValidator->setPhpbbVersion($phpbbVersion);
 		return $this;
 	}
 
@@ -181,7 +198,7 @@ class FileValidator
 	public function setPluralRule($pluralRule)
 	{
 		$this->pluralRule = $pluralRule;
-		$this->langkeyValidator->setPluralRule($pluralRule);
+		$this->langKeyValidator->setPluralRule($pluralRule);
 		return $this;
 	}
 
@@ -194,7 +211,7 @@ class FileValidator
 	public function setDebug($debug)
 	{
 		$this->debug = $debug;
-		$this->langkeyValidator->setDebug($debug);
+		$this->langKeyValidator->setDebug($debug);
 		return $this;
 	}
 
@@ -346,7 +363,7 @@ class FileValidator
 				continue;
 			}
 
-			$this->langkeyValidator->validate($originFile, $againstLangKey, $againstLanguage, $validate[$againstLangKey]);
+			$this->langKeyValidator->validate($originFile, $againstLangKey, $againstLanguage, $validate[$againstLangKey]);
 		}
 
 		foreach ($validate as $validateLangKey => $validateLanguage)
@@ -555,13 +572,13 @@ class FileValidator
 			if (isset($help[0]))
 			{
 				$compare = isset($against[$entry][0]) ? $against[$entry][0] : '';
-				$this->langkeyValidator->validate($originFile, $entry . '.0', $compare, $help[0]);
+				$this->langKeyValidator->validate($originFile, $entry . '.0', $compare, $help[0]);
 			}
 
 			if (isset($help[1]))
 			{
 				$compare = isset($against[$entry][1]) ? $against[$entry][1] : '';
-				$this->langkeyValidator->validate($originFile, $entry . '.1', $compare, $help[1]);
+				$this->langKeyValidator->validate($originFile, $entry . '.1', $compare, $help[1]);
 			}
 			$entry++;
 		}
@@ -817,7 +834,8 @@ class FileValidator
 		}
 		if (!empty($additionalRules))
 		{
-			$this->output->addMessage(Output::FATAL, 'Stylesheet file has additional CSS rules: ' . implode(', ', $additionalRules), $originFile);
+			$additionalRulesLevel = ($this->direction == 'rtl') ? Output::WARNING : Output::FATAL; // be more lenient for RTL
+			$this->output->addMessage($additionalRulesLevel, 'Stylesheet file has additional CSS rules: ' . implode(', ', $additionalRules), $originFile);
 		}
 	}
 

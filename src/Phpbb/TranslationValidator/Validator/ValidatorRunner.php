@@ -138,9 +138,9 @@ class ValidatorRunner
 	 */
 	public function runValidators()
 	{
-		$filelistValidator = new FileListValidator($this->input, $this->output);
+		$fileListValidator = new FileListValidator($this->input, $this->output);
 
-		$validateFiles = $filelistValidator->setSource($this->sourceIso, $this->sourcePath, $this->sourceLanguagePath)
+		$validateFiles = $fileListValidator->setSource($this->sourceIso, $this->sourcePath, $this->sourceLanguagePath)
 			->setOrigin($this->originIso, $this->originPath, $this->originLanguagePath)
 			->setPhpbbVersion($this->phpbbVersion)
 			->setDebug($this->debug)
@@ -164,9 +164,10 @@ class ValidatorRunner
 		$this->maxProgress = sizeof($validateFiles) + 1;
 		$this->progressLength = 11 + strlen($this->maxProgress) * 2;
 
-		$filelistValidator = new FileValidator($this->input, $this->output);
-		$filelistValidator->setSource($this->sourceIso, $this->sourcePath, $this->sourceLanguagePath)
+		$fileValidator = new FileValidator($this->input, $this->output);
+		$fileValidator->setSource($this->sourceIso, $this->sourcePath, $this->sourceLanguagePath)
 			->setOrigin($this->originIso, $this->originPath, $this->originLanguagePath)
+			->setDirection($fileListValidator->getDirection())
 			->setPhpbbVersion($this->phpbbVersion)
 			->setPluralRule($pluralRule)
 			->setDebug($this->debug)
@@ -176,7 +177,7 @@ class ValidatorRunner
 		{
 			$this->output->writelnIfDebug('');
 			$this->output->writelnIfDebug("Validating file: $originFile");
-			$filelistValidator->validate($sourceFile, $originFile);
+			$fileValidator->validate($sourceFile, $originFile);
 			$this->printErrorLevel($this->output);
 
 			usleep(31250);//125000);
