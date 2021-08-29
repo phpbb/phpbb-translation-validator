@@ -35,6 +35,10 @@ There are more arguments that can be supplied. For example, suppose you wanted t
 
 The `--safe-mode` flag indicates that you want to parse files instead of directly including them. This is useful if you want to run validations on a web server.
 
+If you are missing the English language files for the official Viglink extension, they can be easily donwloaded using this command:
+
+    php translation.php download --files=phpbb-extensions/viglink --phpbb-version=3.3
+
 ## Tests
 
 [![Build Status](https://travis-ci.org/phpbb/phpbb-translation-validator.png?branch=master)](https://travis-ci.org/phpbb/phpbb-translation-validator)
