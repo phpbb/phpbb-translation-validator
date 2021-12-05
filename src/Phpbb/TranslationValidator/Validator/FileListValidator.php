@@ -10,6 +10,7 @@ namespace Phpbb\TranslationValidator\Validator;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Finder\Finder;
+use Phpbb\TranslationValidator\Command\DownloadCommand;
 use Phpbb\TranslationValidator\Output\Output;
 use Phpbb\TranslationValidator\Output\OutputInterface;
 
@@ -210,7 +211,16 @@ class FileListValidator
 						$level = Output::ERROR;
 					}
 
-					$this->output->addMessage($level, 'Found additional file', $origin_file);
+					// Treat some official extensions differently
+					if (strpos($origin_file, DownloadCommand::VIGLINK_PATH) !== false)
+					{
+						$this->output->addMessage($level, 'No source file for the official extension found - to download, run: php translation.php download --files=phpbb-extensions/viglink', $origin_file);
+					}
+
+					else
+					{
+						$this->output->addMessage($level, 'Found additional file', $origin_file);
+					}
 				}
 
 				if (substr($origin_file, -14) === '/site_logo.gif')

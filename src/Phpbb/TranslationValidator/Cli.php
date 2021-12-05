@@ -8,6 +8,7 @@
  */
 namespace Phpbb\TranslationValidator;
 
+use Phpbb\TranslationValidator\Command\DownloadCommand;
 use Phpbb\TranslationValidator\Command\ValidateCommand;
 use Symfony\Component\Console\Application;
 
@@ -16,7 +17,10 @@ class Cli extends Application
 	protected function getDefaultCommands()
 	{
 		$commands = parent::getDefaultCommands();
+
 		$commands[] = new ValidateCommand();
+		$commands[] = new DownloadCommand();
+
 		return $commands;
 	}
 }
