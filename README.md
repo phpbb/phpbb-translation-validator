@@ -41,9 +41,9 @@ If you are missing the English language files for the official Viglink extension
 
 ## Tests
 
-[![Build Status](https://travis-ci.org/phpbb/phpbb-translation-validator.png?branch=master)](https://travis-ci.org/phpbb/phpbb-translation-validator)
+![GitHub Actions CI](https://github.com/phpbb/phpbb-translation-validator/actions/workflows/phpunit.yaml/badge.svg?branch=master)
 
-Add the TranslationValidator as a dependency:
+In your project you can add phpBB Translation Validator as a dependency:
 
 		{
 			"require-dev": {
@@ -51,9 +51,9 @@ Add the TranslationValidator as a dependency:
 			}
 		}
 
-Then add a `php vendor/bin/translation.php` call to your `.travis.yml` file.
+Then add a `php vendor/bin/translation.php` call to your workflow.
 
-We use Travis-CI as a continuous integration server and phpunit for our unit testing. See more information on the [phpBB development wiki](https://wiki.phpbb.com/Unit_Tests).
+We use GitHub Actions as a continuous integration server and phpunit for our unit testing.
 
 To run the unit tests locally, use this command:
 

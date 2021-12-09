@@ -1,0 +1,29 @@
+# .github/workflows/phpunit.yaml
+name: phpunit
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.0', '7.1', '7.2', '7.3', '7.4']
+
+    name: PHP ${{ matrix.php }} tests
+    steps:
+      - run: echo "This job for ${{ github.ref }} was automatically triggered by a ${{ github.event_name }} event on ${{ runner.os }}."
+
+      # Basically git clone
+      - uses: actions/checkout@v2
+
+      # Use PHP of specific version
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none # disable xdebug, pcov
+
+      # If we use two steps like this, we can better see if composer or the test failed
+      - run: composer install --dev --no-interaction --prefer-source
+      - run: vendor/phpunit/phpunit/phpunit
+      - run: echo "This job's status is ${{ job.status }}."
