@@ -15,7 +15,7 @@ class FileListTest extends \Phpbb\TranslationValidator\Tests\TestBase
 	/** @var \Phpbb\TranslationValidator\Validator\FileListValidator */
 	protected $validator;
 
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 

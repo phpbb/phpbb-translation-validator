@@ -87,7 +87,7 @@ class Output implements \Phpbb\TranslationValidator\Output\OutputInterface
 	 *
 	 * @api
 	 */
-	public function getVerbosity()
+	public function getVerbosity(): int
 	{
 		return $this->output->getVerbosity();
 	}

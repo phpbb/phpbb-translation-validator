@@ -13,7 +13,7 @@ class TestBase extends \Phpbb\TranslationValidator\Tests\TestBase
 	/** @var \Phpbb\TranslationValidator\Validator\LangKeyValidator */
 	protected $validator;
 
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 
