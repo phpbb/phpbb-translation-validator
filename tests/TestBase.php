@@ -8,12 +8,12 @@
  */
 namespace Phpbb\TranslationValidator\Tests;
 
-class TestBase extends \PHPUnit_Framework_TestCase
+class TestBase extends \PHPUnit\Framework\TestCase
 {
 	/** @var \Phpbb\TranslationValidator\Output\Output */
 	protected $output;
 
-	public function setUp()
+	public function setUp(): void
 	{
 		parent::setUp();
 

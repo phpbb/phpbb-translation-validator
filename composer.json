@@ -20,19 +20,22 @@
 	],
 	"minimum-stability": "stable",
 	"require": {
-		"php": ">=5.5.9",
-		"symfony/yaml": "~3.0",
-		"symfony/console": "~3.0",
-		"symfony/finder": "~3.0",
+		"php": "~7.4",
+		"symfony/yaml": "~3.4",
+		"symfony/console": "~3.4",
+		"symfony/finder": "~3.4",
 		"battye/php-array-parser": "~1.0"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "~5.7"
+		"phpunit/phpunit": "~9.0"
 	},
 	"bin": [
 		"translation.php"
 	],
 	"config": {
+		"platform": {
+			"php": "7.4.33"
+		},
 		"bin-dir": "bin"
 	},
 	"autoload": {
