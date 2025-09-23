@@ -111,7 +111,7 @@ class Output implements \Phpbb\TranslationValidator\Output\OutputInterface
 	 *
 	 * @api
 	 */
-	public function isDecorated()
+	public function isDecorated(): bool
 	{
 		return $this->output->isDecorated();
 	}
@@ -135,7 +135,7 @@ class Output implements \Phpbb\TranslationValidator\Output\OutputInterface
 	 *
 	 * @api
 	 */
-	public function getFormatter()
+	public function getFormatter(): \Symfony\Component\Console\Formatter\OutputFormatterInterface
 	{
 		return $this->output->getFormatter();
 	}
@@ -219,7 +219,7 @@ class Output implements \Phpbb\TranslationValidator\Output\OutputInterface
 	 *
 	 * @return bool true if verbosity is set to VERBOSITY_QUIET, false otherwise
 	 */
-	public function isQuiet()
+	public function isQuiet(): bool
 	{
 		// TODO: Implement isQuiet() method.
 	}
@@ -229,7 +229,7 @@ class Output implements \Phpbb\TranslationValidator\Output\OutputInterface
 	 *
 	 * @return bool true if verbosity is set to VERBOSITY_VERBOSE, false otherwise
 	 */
-	public function isVerbose()
+	public function isVerbose(): bool
 	{
 		// TODO: Implement isVerbose() method.
 	}
@@ -239,7 +239,7 @@ class Output implements \Phpbb\TranslationValidator\Output\OutputInterface
 	 *
 	 * @return bool true if verbosity is set to VERBOSITY_VERY_VERBOSE, false otherwise
 	 */
-	public function isVeryVerbose()
+	public function isVeryVerbose(): bool
 	{
 		// TODO: Implement isVeryVerbose() method.
 	}
@@ -249,7 +249,7 @@ class Output implements \Phpbb\TranslationValidator\Output\OutputInterface
 	 *
 	 * @return bool true if verbosity is set to VERBOSITY_DEBUG, false otherwise
 	 */
-	public function isDebug()
+	public function isDebug(): bool
 	{
 		// TODO: Implement isDebug() method.
 	}
