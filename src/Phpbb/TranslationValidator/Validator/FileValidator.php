@@ -248,9 +248,13 @@ class FileValidator
 		{
 			$this->validateEmail($sourceFile, $originFile);
 		}
-		else if (strpos($originFile, $this->originLanguagePath . 'help_') === 0 && substr($originFile, -4) === '.php')
+		else if ($originFile == $this->originLanguagePath . 'search_synonyms.php')
 		{
-			$this->validateHelpFile($sourceFile, $originFile);
+			$this->validateSearchSynonymsFile($originFile);
+		}
+		else if ($originFile == $this->originLanguagePath . 'search_ignore_words.php')
+		{
+			$this->validateSearchIgnoreWordsFile($originFile);
 		}
 		else if (substr($originFile, -4) === '.php')
 		{
@@ -488,96 +492,91 @@ class FileValidator
 	}
 
 	/**
-	 * Validates a help_*.php file
+	 * Validates the search_synonyms.php file
 	 *
-	 * Files must only contain the variable $help.
-	 * This variable must be an array of arrays.
-	 * Subarrays must only have the indexes 0 and 1,
-	 * with 0 being the headline and 1 being the description.
-	 *
-	 * Files must contain an entry with 0 and 1 being '--',
-	 * causing the column break in the page.
+	 * Files must only contain the variable $synonyms.
+	 * This variable must be an array of string => string entries.
 	 *
 	 * @todo		Check for template vars and html
-	 * @todo		Check for triple --- and other typos of it.
 	 *
-	 * @param	string	$sourceFile		Source file for comparison
 	 * @param	string	$originFile		File to validate
 	 * @return	null
 	 */
-	public function validateHelpFile($sourceFile, $originFile)
+	public function validateSearchSynonymsFile($originFile)
 	{
 		$originFilePath = $this->originPath . '/' . $originFile;
-		$sourceFilePath = $this->sourcePath . '/' . $sourceFile;
 
 		if (!$this->safeMode)
 		{
-			/** @var $help */
+			/** @var $synonyms */
 			include($originFilePath);
 
 			$defined_variables = get_defined_vars();
-			if (sizeof($defined_variables) != 5 || !isset($defined_variables['help']) || gettype($defined_variables['help']) != 'array')
+			if (sizeof($defined_variables) != 3 || !isset($defined_variables['synonyms']) || gettype($defined_variables['synonyms']) != 'array')
 			{
-				$this->output->addMessage(Output::FATAL, 'Should only contain the help-array', $originFile);
+				$this->output->addMessage(Output::FATAL, 'Must only contain the synonyms-array', $originFile);
 				return;
 			}
 		}
 
 		else
 		{
-			/** @var $help */
-			$help = ValidatorRunner::langParser($originFilePath);
-			$this->output->addMessage(Output::NOTICE, '<bg=yellow;options=bold>[Safe Mode]</> Manually run the translation validator to check help variables.', $originFile);
+			/** @var $synonyms */
+			$synonyms = ValidatorRunner::langParser($originFilePath);
+			$this->output->addMessage(Output::NOTICE, '<bg=yellow;options=bold>[Safe Mode]</> Manually run the translation validator to check synonym variables.', $originFile);
 		}
 
-		$validate = $help;
-		unset($help);
+		foreach ($synonyms as $synonym1 => $synonym2)
+		{
+			if (gettype($synonym1) != 'string' || gettype($synonym2) != 'string')
+			{
+				$this->output->addMessage(Output::FATAL, 'Must only contain entries of type string => string: ' . serialize($synonym1) . ' => ' . serialize($synonym2), $originFile);
+			}
+		}
+	}
+
+	/**
+	 * Validates the search_ignore_words.php file
+	 *
+	 * Files must only contain the variable $words.
+	 * This variable must be an array of string entries.
+	 *
+	 * @todo		Check for template vars and html
+	 *
+	 * @param	string	$originFile		File to validate
+	 * @return	null
+	 */
+	public function validateSearchIgnoreWordsFile($originFile)
+	{
+		$originFilePath = $this->originPath . '/' . $originFile;
 
 		if (!$this->safeMode)
 		{
-			/** @var $help */
-			include($sourceFilePath);
+			/** @var $words */
+			include($originFilePath);
+
+			$defined_variables = get_defined_vars();
+			if (sizeof($defined_variables) != 3 || !isset($defined_variables['words']) || gettype($defined_variables['words']) != 'array')
+			{
+				$this->output->addMessage(Output::FATAL, 'Must only contain the words-array', $originFile);
+				return;
+			}
 		}
 
 		else
 		{
-			/** @var $help */
-			$help = ValidatorRunner::langParser($sourceFilePath);
+			/** @var $words */
+			$words = ValidatorRunner::langParser($originFilePath);
+			$this->output->addMessage(Output::NOTICE, '<bg=yellow;options=bold>[Safe Mode]</> Manually run the translation validator to check word variables.', $originFile);
 		}
 
-		$against = $help;
-		unset($help);
-
-		$column_breaks = 0;
-		$entry = 0;
-		foreach ($validate as $help)
+		foreach ($words as $word)
 		{
-			if (gettype($help) != 'array' || sizeof($help) != 2 || !isset($help[0]) || !isset($help[1]))
+			if (gettype($word) != 'string')
 			{
-				$this->output->addMessage(Output::FATAL, 'Found invalid entry: ' . serialize($help), $originFile, $entry);
+				//@todo use $i
+				$this->output->addMessage(Output::FATAL, 'Must only contain entries of type string: ' . serialize($word), $originFile);
 			}
-			else if ($help[0] == '--' && $help[1] == '--')
-			{
-				$column_breaks++;
-			}
-
-			if (isset($help[0]))
-			{
-				$compare = isset($against[$entry][0]) ? $against[$entry][0] : '';
-				$this->langKeyValidator->validate($originFile, $entry . '.0', $compare, $help[0]);
-			}
-
-			if (isset($help[1]))
-			{
-				$compare = isset($against[$entry][1]) ? $against[$entry][1] : '';
-				$this->langKeyValidator->validate($originFile, $entry . '.1', $compare, $help[1]);
-			}
-			$entry++;
-		}
-
-		if ($column_breaks != 1)
-		{
-			$this->output->addMessage(Output::FATAL, 'Must have exactly one column break entry', $originFile);
 		}
 	}
 
