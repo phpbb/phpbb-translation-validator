@@ -557,7 +557,7 @@ class FileValidator
 	 */
 	public function validateJsonFile($originFile)
 	{
-		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
+        $fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
 		$jsonContent = json_decode($fileContents, true);
 
         if (!$jsonContent['name'] == (substr($originFile, 21) === 'phpbb/phpbb-language-'))
@@ -583,7 +583,7 @@ class FileValidator
         {
             $this->output->addMessage(Output::FATAL, 'The defined version should not be empty.', $originFile);
         }
-        elseif (preg_match('^(\d+\.)?(\d+\.)?(\*|\d+)$', $jsonContent['version']))
+        elseif (preg_match('/^(\d+\.)?(\d+\.)?(\*|\d+)$/', $jsonContent['version']))
         {
             $this->output->addMessage(Output::FATAL, 'The defined version is in the wrong format.', $originFile);
         }
@@ -617,12 +617,12 @@ class FileValidator
             $this->output->addMessage(Output::FATAL, 'The extra section is missing.', $originFile);
         }
         // language-iso must be valid
-        if (preg_match('^(?:[a-z]*_?){0,2}[a-z]*$', $jsonContent['extra']['language-iso']))
+        if (preg_match('/^(?:[a-z]*_?){0,2}[a-z]*$/', $jsonContent['extra']['language-iso']))
         {
-            $this->output->addMessage(Output::FATAL, 'The language-iso should only contain small letters from a to z or maximum two underscores.', $originFile);
+            $this->output->addMessage(Output::FATAL, 'The language-iso should only contain small letters from a to z and maximum two underscores.', $originFile);
         }
         // Check for english name
-        if ($jsonContent['extra']['english-name'] == '' || preg_match('^[a-zA-Z\s]+$', $jsonContent['extra']['english-name']))
+        if ($jsonContent['extra']['english-name'] == '' || preg_match('/^[a-zA-Z\s]+$/', $jsonContent['extra']['english-name']))
         {
             $this->output->addMessage(Output::ERROR, 'The english-name value should only contain letters aA-zZ and spaces.', $originFile);
         }
@@ -632,12 +632,12 @@ class FileValidator
             $this->output->addMessage(Output::ERROR, 'The local-name value should not be empty.', $originFile);
         }
         // Check for valid phpBB-Version, we accept: 4.0.0, 4.0.0-a1 or 4.0.0-b1 or 4.0.0-RC1
-        if (!preg_match('^\d+\.\d+\.\d+(-(?:a|b|RC)\d+)?$', $jsonContent['extra']['phpbb-version']) || $jsonContent['extra']['phpbb-version'] == '' )
+        if (!preg_match('/^\d+\.\d+\.\d+(-(?:a|b|RC)\d+)?$/', $jsonContent['extra']['phpbb-version']) || $jsonContent['extra']['phpbb-version'] == '' )
         {
             $this->output->addMessage(Output::FATAL, 'The phpbb-version value should not be empty and contain a valid version number.', $originFile);
         }
         // Check for valid direction
-        $direction = $jsonContent['extra']['phpbb-direction'];
+        $direction = $jsonContent['extra']['direction'];
         if (!in_array($direction, array('ltr', 'rtl')))
         {
             $this->output->addMessage(Output::FATAL, 'The direction can only be rtl or ltr.', $originFile);
@@ -648,7 +648,7 @@ class FileValidator
             $this->output->addMessage(Output::FATAL, 'The user-lang must be defined.', $originFile);
         }
         // Check for plural-rule
-        if (!preg_match('^(?:[0-9]|1[0-5])$', $jsonContent['extra']['plural-rule']))
+        if (!preg_match('/^(?:[0-9]|1[0-5])$/', $jsonContent['extra']['plural-rule']))
         {
             $this->output->addMessage(Output::FATAL, 'Plural rules does not have a valid value.', $originFile);
         }
