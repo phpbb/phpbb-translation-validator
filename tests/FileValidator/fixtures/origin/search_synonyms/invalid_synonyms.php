@@ -1,3 +1,0 @@
-<?php
-
-$synonyms = 'aber';

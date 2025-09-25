@@ -1,5 +1,0 @@
-<?php
-
-$foobar = array(
-	'aber',
-);
