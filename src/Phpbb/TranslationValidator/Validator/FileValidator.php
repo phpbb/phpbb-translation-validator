@@ -248,10 +248,6 @@ class FileValidator
 		{
 			$this->validateEmail($sourceFile, $originFile);
 		}
-		else if (strpos($originFile, $this->originLanguagePath . 'help_') === 0 && substr($originFile, -4) === '.php')
-		{
-			$this->validateHelpFile($sourceFile, $originFile);
-		}
 		else if (substr($originFile, -4) === '.php')
 		{
 			$this->validateLangFile($sourceFile, $originFile);
@@ -486,101 +482,7 @@ class FileValidator
 			$this->output->addMessage(Output::FATAL, 'Missing new line at the end of the file', $originFile);
 		}
 	}
-
-	/**
-	 * Validates a help_*.php file
-	 *
-	 * Files must only contain the variable $help.
-	 * This variable must be an array of arrays.
-	 * Subarrays must only have the indexes 0 and 1,
-	 * with 0 being the headline and 1 being the description.
-	 *
-	 * Files must contain an entry with 0 and 1 being '--',
-	 * causing the column break in the page.
-	 *
-	 * @todo		Check for template vars and html
-	 * @todo		Check for triple --- and other typos of it.
-	 *
-	 * @param	string	$sourceFile		Source file for comparison
-	 * @param	string	$originFile		File to validate
-	 * @return	null
-	 */
-	public function validateHelpFile($sourceFile, $originFile)
-	{
-		$originFilePath = $this->originPath . '/' . $originFile;
-		$sourceFilePath = $this->sourcePath . '/' . $sourceFile;
-
-		if (!$this->safeMode)
-		{
-			/** @var $help */
-			include($originFilePath);
-
-			$defined_variables = get_defined_vars();
-			if (sizeof($defined_variables) != 5 || !isset($defined_variables['help']) || gettype($defined_variables['help']) != 'array')
-			{
-				$this->output->addMessage(Output::FATAL, 'Should only contain the help-array', $originFile);
-				return;
-			}
-		}
-
-		else
-		{
-			/** @var $help */
-			$help = ValidatorRunner::langParser($originFilePath);
-			$this->output->addMessage(Output::NOTICE, '<bg=yellow;options=bold>[Safe Mode]</> Manually run the translation validator to check help variables.', $originFile);
-		}
-
-		$validate = $help;
-		unset($help);
-
-		if (!$this->safeMode)
-		{
-			/** @var $help */
-			include($sourceFilePath);
-		}
-
-		else
-		{
-			/** @var $help */
-			$help = ValidatorRunner::langParser($sourceFilePath);
-		}
-
-		$against = $help;
-		unset($help);
-
-		$column_breaks = 0;
-		$entry = 0;
-		foreach ($validate as $help)
-		{
-			if (gettype($help) != 'array' || sizeof($help) != 2 || !isset($help[0]) || !isset($help[1]))
-			{
-				$this->output->addMessage(Output::FATAL, 'Found invalid entry: ' . serialize($help), $originFile, $entry);
-			}
-			else if ($help[0] == '--' && $help[1] == '--')
-			{
-				$column_breaks++;
-			}
-
-			if (isset($help[0]))
-			{
-				$compare = isset($against[$entry][0]) ? $against[$entry][0] : '';
-				$this->langKeyValidator->validate($originFile, $entry . '.0', $compare, $help[0]);
-			}
-
-			if (isset($help[1]))
-			{
-				$compare = isset($against[$entry][1]) ? $against[$entry][1] : '';
-				$this->langKeyValidator->validate($originFile, $entry . '.1', $compare, $help[1]);
-			}
-			$entry++;
-		}
-
-		if ($column_breaks != 1)
-		{
-			$this->output->addMessage(Output::FATAL, 'Must have exactly one column break entry', $originFile);
-		}
-	}
-
+    
 	/**
 	 * Validates the LICENSE file
 	 *
