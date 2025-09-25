@@ -4,7 +4,7 @@ This console application allows you to validate [phpBB](https://www.phpbb.com) l
 
 ## Requirements
 
-This extension requires PHP 5.5.9 or above.
+This tool requires PHP 8.1 or above.
 
 ### Installation
 
@@ -47,7 +47,7 @@ In your project you can add phpBB Translation Validator as a dependency:
 
 		{
 			"require-dev": {
-				"phpbb/translation-validator": "1.5.*"
+				"phpbb/translation-validator": "1.6.*"
 			}
 		}
 

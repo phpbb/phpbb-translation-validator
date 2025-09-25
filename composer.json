@@ -2,21 +2,27 @@
 	"name": "phpbb/translation-validator",
 	"description": "A language package validator for phpBB language packs. Language packs are required to pass the validator when submitted to the language pack database.",
 	"homepage": "https://github.com/phpbb/phpbb-translation-validator",
-	"version": "1.6.0",
+	"version": "1.6.1",
 	"license": "GPL-2.0-only",
 	"authors": [
 		{
 			"name": "Joas Schilling",
 			"email": "nickvergessen@phpbb.com",
-			"homepage": "http://www.phpbb.com/",
-			"role": "Developer"
+			"homepage": "https://www.phpbb.com/",
+			"role": "Former Developer"
 		},
 		{
 			"name": "Battye",
 			"email": "battye@phpbb.com",
 			"homepage": "https://www.phpbb.com",
 			"role": "Developer"
-		}
+		},
+        {
+          "name": "Christian Schnegelberger",
+          "email": "crizzo@phpbb.com",
+          "homepage": "https://www.phpbb.com",
+          "role": "Developer"
+        }
 	],
 	"minimum-stability": "stable",
 	"require": {
@@ -34,7 +40,7 @@
 	],
 	"config": {
 		"platform": {
-			"php": "7.4.33"
+			"php": "8.1"
 		},
 		"bin-dir": "bin"
 	},
