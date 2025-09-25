@@ -560,9 +560,9 @@ class FileValidator
         $fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
 		$jsonContent = json_decode($fileContents, true);
 
-        if (!$jsonContent['name'] == (substr($originFile, 21) === 'phpbb/phpbb-language-'))
+        if (!str_starts_with($jsonContent['name'], 'phpbb/phpbb-language-'))
         {
-            $this->output->addMessage(Output::FATAL, 'File must have name value which starts with phpbb/phpbb-language- following by the language iso code', $originFile);
+            $this->output->addMessage(Output::FATAL, 'Name should start with phpbb/phpbb-language- followed by the language iso code', $originFile);
         }
 
         if (!array_key_exists('description', $jsonContent))
@@ -617,7 +617,7 @@ class FileValidator
             $this->output->addMessage(Output::FATAL, 'The extra section is missing.', $originFile);
         }
         // language-iso must be valid
-        if (preg_match('/^(?:[a-z]*_?){0,2}[a-z]*$/', $jsonContent['extra']['language-iso']))
+        if (!preg_match('/^(?:[a-z]*_?){0,2}[a-z]*$/', $jsonContent['extra']['language-iso']))
         {
             $this->output->addMessage(Output::FATAL, 'The language-iso should only contain small letters from a to z and maximum two underscores.', $originFile);
         }
