@@ -119,6 +119,47 @@ class FileValidator
 		'', // Allow empty strings
 	];
 
+    /** @var array List from https://developers.cloudflare.com/turnstile/reference/supported-languages/ */
+    private $reTurnstilesLanguages = [
+        'ar',
+        'bg',
+        'zh',
+        'hr',
+        'cs',
+        'da',
+        'nl',
+        'en',
+        'fa',
+        'fi',
+        'fr',
+        'de',
+        'el',
+        'he',
+        'hi',
+        'hu',
+        'id',
+        'it',
+        'ja',
+        'ko',
+        'lt',
+        'ms',
+        'nb',
+        'pl',
+        'pt',
+        'ro',
+        'ru',
+        'sr',
+        'sk',
+        'sl',
+        'es',
+        'sv',
+        'tl',
+        'th',
+        'tr',
+        'uk',
+        'vi',
+        '', // Allow empty strings
+    ];
 	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
@@ -260,9 +301,9 @@ class FileValidator
 		{
 			$this->validateLicenseFile($originFile);
 		}
-		else if ($originFile === $this->originLanguagePath . 'iso.txt')
+		else if ($originFile === $this->originLanguagePath . 'composer.json')
 		{
-			$this->validateIsoFile($originFile);
+			$this->validateJsonFile($originFile);
 		}
 		else if (substr($originFile, -4) === '.css')
 		{
@@ -361,32 +402,10 @@ class FileValidator
 				$this->output->addMessage(Output::FATAL, 'Must not contain key: ' . $validateLangKey, $originFile);
 			}
 		}
-
-		// Check reCaptcha file
-		if ($originFile === $this->originLanguagePath . 'captcha_recaptcha.php')
-		{
-			$this->validateReCaptchaValue($originFile, $validate);
-		}
 	}
 
 	/**
-	 * Check that the reCaptcha key provided is allowed
-	 * @param $originFile
-	 * @param array $validate
-	 */
-	public function validateReCaptchaValue($originFile, $validate)
-	{
-		// The key 'RECAPTCHA_LANG' must match the list provided by Google, or be left empty
-		// If any other key is used, we will show an error
-		if (array_key_exists('RECAPTCHA_LANG', $validate) && !in_array($validate['RECAPTCHA_LANG'], $this->reCaptchaLanguages))
-		{
-			// The supplied value doesn't match the allowed values
-			$this->output->addMessage(Output::ERROR, 'reCaptcha must match a language/country code on https://developers.google.com/recaptcha/docs/language - if no code exists for your language you can use "en" or leave the string empty', $originFile, 'RECAPTCHA_LANG');
-		}
-	}
-
-	/**
-	 * Validates a email .txt file
+	 * Validates an email .txt file
 	 *
 	 * Emails must have a subject when the source file has one, otherwise must not have one.
 	 * Emails must have a signature when the source file has one, otherwise must not have one.
@@ -521,26 +540,129 @@ class FileValidator
 	}
 
 	/**
-	 * Validates the iso.txt file
+	 * Validates the composer.json file
 	 *
-	 * Should only contain 3 lines:
-	 * 1. English name of the language
-	 * 2. Native name of the language
-	 * 3. Line with information about the author
+	 * Should be valid and contain the necessary information:
+	 * Mandatory:
+     *      name, description, type, version, homepage, license
+     *      Authors: name (optional: email and homepage)
+     *      Extra: language-iso, english-name, local-name,
+     *              phpbb-version, direction, user-lang, plural-rule,
+     *              recaptcha-lang, turnstile-lang
+	 * Optional:
+     *      Support: urls to: forum, wiki, issues etc
 	 *
 	 * @param	string	$originFile		File to validate
 	 * @return	null
 	 */
-	public function validateIsoFile($originFile)
+	public function validateJsonFile($originFile)
 	{
 		$fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
-		$isoFile = explode("\n", $fileContents);
+		$jsonContent = json_decode($fileContents, true);
 
-		if (sizeof($isoFile) != 3)
-		{
-			$this->output->addMessage(Output::FATAL, 'Must contain exactly 3 lines: 1. English name, 2. Native name, 3. Author information', $originFile);
-		}
-	}
+        if (!$jsonContent['name'] == (substr($originFile, 21) === 'phpbb/phpbb-language-'))
+        {
+            $this->output->addMessage(Output::FATAL, 'File must have name value which starts with phpbb/phpbb-language- following by the language iso code', $originFile);
+        }
+
+        if (!array_key_exists('description', $jsonContent))
+        {
+            $this->output->addMessage(Output::FATAL, 'File must contain a description value', $originFile);
+        }
+        // Check if the type is correctly defined
+        if (!$jsonContent['type'] == 'phpbb-language')
+        {
+            $this->output->addMessage(Output::FATAL, 'File must contain a type with the value "phpbb-language"', $originFile);
+        }
+        // Check if there is a valid version definition
+        if (!array_key_exists('version', $jsonContent))
+        {
+            $this->output->addMessage(Output::FATAL, 'Language pack needs a version definition.', $originFile);
+        }
+        elseif ($jsonContent['version'] == '')
+        {
+            $this->output->addMessage(Output::FATAL, 'The defined version should not be empty.', $originFile);
+        }
+        elseif (preg_match('^(\d+\.)?(\d+\.)?(\*|\d+)$', $jsonContent['version']))
+        {
+            $this->output->addMessage(Output::FATAL, 'The defined version is in the wrong format.', $originFile);
+        }
+        // Homepage should be at least an empty string
+        if (!array_key_exists('homepage', $jsonContent))
+        {
+            $this->output->addMessage(Output::FATAL, 'The homepage value is missing, can be an empty string.', $originFile);
+        }
+        // Check for the correct license value
+        if (!$jsonContent['license'] == 'GPL-2.0')
+        {
+            $this->output->addMessage(Output::FATAL, 'The license value has to be "GPL-2.0"', $originFile);
+        }
+        // Check for the authors
+        if (!array_key_exists('authors', $jsonContent))
+        {
+            $this->output->addMessage(Output::FATAL, 'The authors value is missing.', $originFile);
+        }
+        // Check for support, authors should at least give one contact option!
+        if (!array_key_exists('support', $jsonContent))
+        {
+            $this->output->addMessage(Output::FATAL, 'The support value is missing.', $originFile);
+	    }
+        elseif (count ($jsonContent['support']) < 1)
+        {
+            $this->output->addMessage(Output::FATAL, 'The support value has not sub values. Please provide at least one contact option e.g. forum, email.', $originFile);
+        }
+        // Check for the extra-section
+        if (!array_key_exists('extra', $jsonContent))
+        {
+            $this->output->addMessage(Output::FATAL, 'The extra section is missing.', $originFile);
+        }
+        // language-iso must be valid
+        if (preg_match('^(?:[a-z]*_?){0,2}[a-z]*$', $jsonContent['extra']['language-iso']))
+        {
+            $this->output->addMessage(Output::FATAL, 'The language-iso should only contain small letters from a to z or maximum two underscores.', $originFile);
+        }
+        // Check for english name
+        if ($jsonContent['extra']['english-name'] == '' || preg_match('^[a-zA-Z\s]+$', $jsonContent['extra']['english-name']))
+        {
+            $this->output->addMessage(Output::ERROR, 'The english-name value should only contain letters aA-zZ and spaces.', $originFile);
+        }
+        // Check for local name
+        if ($jsonContent['extra']['local-name'] == '')
+        {
+            $this->output->addMessage(Output::ERROR, 'The local-name value should not be empty.', $originFile);
+        }
+        // Check for valid phpBB-Version, we accept: 4.0.0, 4.0.0-a1 or 4.0.0-b1 or 4.0.0-RC1
+        if (!preg_match('^\d+\.\d+\.\d+(-(?:a|b|RC)\d+)?$', $jsonContent['extra']['phpbb-version']) || $jsonContent['extra']['phpbb-version'] == '' )
+        {
+            $this->output->addMessage(Output::FATAL, 'The phpbb-version value should not be empty and contain a valid version number.', $originFile);
+        }
+        // Check for valid direction
+        $direction = $jsonContent['extra']['phpbb-direction'];
+        if (!in_array($direction, array('ltr', 'rtl')))
+        {
+            $this->output->addMessage(Output::FATAL, 'The direction can only be rtl or ltr.', $originFile);
+        }
+        // Check for user-lang: en-gb
+        if (!isset($jsonContent['extra']['user-lang']) || $jsonContent['extra']['user-lang'] == '')
+        {
+            $this->output->addMessage(Output::FATAL, 'The user-lang must be defined.', $originFile);
+        }
+        // Check for plural-rule
+        if (!preg_match('^(?:[0-9]|1[0-5])$', $jsonContent['extra']['plural-rule']))
+        {
+            $this->output->addMessage(Output::FATAL, 'Plural rules does not have a valid value.', $originFile);
+        }
+        // Check for valid recaptcha-lang: en-GB
+        if (!in_array($jsonContent['extra']['recaptcha-lang'], $this->reCaptchaLanguages))
+        {
+            $this->output->addMessage(Output::ERROR, 'reCaptcha must match a language/country code on https://developers.google.com/recaptcha/docs/language - if no code exists for your language you can use "en" or leave the string empty', $originFile);
+        }
+        // Check for valid turnstile-lang: en (should be in: https://developers.cloudflare.com/turnstile/reference/supported-languages/ )
+        if (!in_array($jsonContent['extra']['turnstile-lang'], $this->reTurnstilesLanguages))
+        {
+            $this->output->addMessage(Output::ERROR, 'Turnstile must match a 2-digit-language code from https://developers.cloudflare.com/turnstile/reference/supported-languages/ ', $originFile);
+        }
+    }
 
 	/**
 	 * Validates whether a file checks for the IN_PHPBB constant
