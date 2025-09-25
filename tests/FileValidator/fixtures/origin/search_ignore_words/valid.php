@@ -1,5 +1,0 @@
-<?php
-
-$words = array(
-	'aber',
-);
