@@ -233,14 +233,20 @@ class ValidatorRunner
 	 */
 	protected function guessPluralRule(): int
 	{
-		// TODO: Check for safeMode and langParser integration here in that function
         $filePath = $this->originPath . '/' . $this->originLanguagePath . 'composer.json';
 
         if (file_exists($filePath))
         {
-
-            $fileContents = (string) file_get_contents($filePath);
-            $jsonContent = json_decode($fileContents, true);
+            // Safe mode for safe execution on a server
+            if ($this->safeMode)
+            {
+                $jsonContent = self::langParser($filePath);
+            }
+            else
+            {
+                $fileContents = (string) file_get_contents($filePath);
+                $jsonContent = json_decode($fileContents, true);
+            }
 
             if (!isset($jsonContent['extra']['plural-rule']))
             {
