@@ -268,6 +268,16 @@ class FileValidator
 		return $this;
 	}
 
+    /**
+     * Open the composer.json of the language pack and
+     * save it to an array, accessible for the following functions
+     */
+     public function openComposerJson($originFile)
+     {
+        $fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
+         return json_decode($fileContents, true);
+     }
+
 	/**
 	 * Decides which validation function to use
 	 *
@@ -557,8 +567,7 @@ class FileValidator
 	 */
 	public function validateJsonFile($originFile)
 	{
-        $fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
-		$jsonContent = json_decode($fileContents, true);
+        $jsonContent = $this->openComposerJson($originFile);
 
         if (!str_starts_with($jsonContent['name'], 'phpbb/phpbb-language-'))
         {
@@ -660,8 +669,8 @@ class FileValidator
      */
     public function validateCaptchaValues($originFile)
     {
-        $fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
-        $jsonContent = json_decode($fileContents, true);
+        $jsonContent = $this->openComposerJson($originFile);
+
         // The key 'RECAPTCHA_LANG' must match the list provided by Google, or be left empty
         // Check for valid recaptcha-lang: en-GB
         if (!in_array($jsonContent['extra']['recaptcha-lang'], $this->reCaptchaLanguages))
