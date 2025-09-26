@@ -41,10 +41,10 @@ class ValidateLangTest extends TestBase
 	/**
 	 * Test the reCaptcha checks
 	 */
-	public function testValidateLangReCaptcha()
+	public function testValidateLangCaptchas()
 	{
 		// Failure - as we supply a key that isn't valid
-		$reCaptchaLanguage = ['RECAPTCHA_LANG' => 'incorrect'];
+		$reCaptchaLanguage = 'incorrect';
 		$this->validator->validateCaptchaValues('', $reCaptchaLanguage);
 
 		$output = $this->output->getMessages();
@@ -54,7 +54,7 @@ class ValidateLangTest extends TestBase
 		$this->assertEquals($output[0], $expected);
 
 		// Pass - as 'en' is valid
-		$reCaptchaLanguage['RECAPTCHA_LANG'] = 'en';
+		$reCaptchaLanguage = 'en';
 		$this->validator->validateCaptchaValues('', $reCaptchaLanguage);
 
 		$this->assertEquals($this->output->getMessageCount(Output::ERROR), 1); // Shouldn't change in size as no error added

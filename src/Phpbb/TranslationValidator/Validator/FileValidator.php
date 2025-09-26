@@ -667,10 +667,15 @@ class FileValidator
      * Check that the reCaptcha and Turnstile key provided is allowed
      * @param $originFile
      */
-    public function validateCaptchaValues($originFile)
+    public function validateCaptchaValues($originFile, $optParams = '')
     {
         $jsonContent = $this->openComposerJson($originFile);
 
+        if (!$optParams == '')
+        {
+            $jsonContent['extra']['recaptcha-lang'] = $optParams;
+            //$jsonContent['extra']['turnstile-lang'] = $optParams;
+        }
         // The key 'RECAPTCHA_LANG' must match the list provided by Google, or be left empty
         // Check for valid recaptcha-lang: en-GB
         if (!in_array($jsonContent['extra']['recaptcha-lang'], $this->reCaptchaLanguages))
