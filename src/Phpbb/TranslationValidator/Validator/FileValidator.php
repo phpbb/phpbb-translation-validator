@@ -581,12 +581,12 @@ class FileValidator
         // Check if the description contains only words and punctuation, not URLs.
         elseif (preg_match('/\b(?:www|https)\b|(?:\.[a-z]{2,})/i', $jsonContent['description']))
         {
-            $this->output->addMessage(Output::FATAL, 'The description should only contain words - no URLs.', $originFile);
+            $this->output->addMessage(Output::ERROR, 'The description should only contain words - no URLs.', $originFile);
         }
         // Check if the type is correctly defined
         if ($jsonContent['type'] != 'phpbb-language')
         {
-            $this->output->addMessage(Output::FATAL, 'File must contain a type with the value "phpbb-language"', $originFile);
+            $this->output->addMessage(Output::FATAL, 'Type must be exactly: "phpbb-language"', $originFile);
         }
         // Check if there is a valid version definition
         if (!array_key_exists('version', $jsonContent))
@@ -599,12 +599,12 @@ class FileValidator
         }
         elseif (!preg_match('/^(\d+\.)?(\d+\.)?(\*|\d+)$/', $jsonContent['version']))
         {
-            $this->output->addMessage(Output::FATAL, 'The defined version is in the wrong format.', $originFile);
+            $this->output->addMessage(Output::ERROR, 'The defined version is in the wrong format.', $originFile);
         }
         // Homepage should be at least an empty string
         if (!preg_match('/(?:https?:\/\/|www\.)[^\s]+|(?:\b[a-z0-9-]+\.(?:com|net|org|info|io|co|biz|me|xyz|ai|app|dev|tech|tv|us|uk|de|fr|ru|jp|cn|in)\b)/i', $jsonContent['homepage']) && $jsonContent['homepage'] != '')
         {
-            $this->output->addMessage(Output::FATAL, 'The homepage value allows only URLs or can be left empty.', $originFile);
+            $this->output->addMessage(Output::ERROR, 'The homepage value allows only URLs or can be left empty.', $originFile);
         }
         // Check for the correct license value
         if ($jsonContent['license'] != 'GPL-2.0-only')
@@ -614,16 +614,16 @@ class FileValidator
         // Check for the authors
         if (!array_key_exists('authors', $jsonContent))
         {
-            $this->output->addMessage(Output::FATAL, 'The authors value is missing.', $originFile);
+            $this->output->addMessage(Output::ERROR, 'The authors value is missing.', $originFile);
         }
         // Check for support, authors should at least give one contact option!
         if (!array_key_exists('support', $jsonContent))
         {
-            $this->output->addMessage(Output::FATAL, 'The support value is missing.', $originFile);
+            $this->output->addMessage(Output::ERROR, 'The support value is missing.', $originFile);
 	    }
         elseif (count ($jsonContent['support']) < 1)
         {
-            $this->output->addMessage(Output::FATAL, 'The support value has not sub values. Please provide at least one contact option e.g. forum, email.', $originFile);
+            $this->output->addMessage(Output::ERROR, 'The support value has not sub values. Please provide at least one contact option e.g. forum, email.', $originFile);
         }
         // Check for the extra-section
         if (!array_key_exists('extra', $jsonContent))
