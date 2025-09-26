@@ -579,7 +579,7 @@ class FileValidator
             $this->output->addMessage(Output::FATAL, 'File must contain a description value', $originFile);
         }
         // Check if the type is correctly defined
-        if (!$jsonContent['type'] == 'phpbb-language')
+        if ($jsonContent['type'] != 'phpbb-language')
         {
             $this->output->addMessage(Output::FATAL, 'File must contain a type with the value "phpbb-language"', $originFile);
         }
