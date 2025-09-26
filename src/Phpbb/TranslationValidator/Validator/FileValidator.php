@@ -641,7 +641,7 @@ class FileValidator
             $this->output->addMessage(Output::FATAL, 'Language iso is not valid', $originFile);
         }
         // Check for english name
-        if ($jsonContent['extra']['english-name'] == '' || preg_match('/^[a-zA-Z\s]+$/', $jsonContent['extra']['english-name']))
+        if ($jsonContent['extra']['english-name'] == '' || !preg_match('/^[a-zA-Z\s]+$/', $jsonContent['extra']['english-name']))
         {
             $this->output->addMessage(Output::ERROR, 'The english-name value should only contain letters aA-zZ and spaces.', $originFile);
         }
