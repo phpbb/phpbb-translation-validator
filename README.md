@@ -19,11 +19,11 @@ For the easiest results, create a directory called `4.0` in the root of the Tran
     phpbb-translation-validator/4.0/de/
     phpbb-translation-validator/translation.php
 
-The simplest way to validate is to then run this command (the final argument is the language you wish to test and that has already been uploaded to the `3.2` directory; eg. `fr` for French):
+The simplest way to validate is to then run this command (the final argument is the language you wish to test and that has already been uploaded to the `4.0` directory; eg. `fr` for French):
 
      php translation.php validate fr
 
-There are more arguments that can be supplied. For example, suppose you wanted to have your `3.2` directory in a different location, you wanted to explicitly specify phpBB version 3.2 (default validation is against 3.3), you wanted to run in safe mode and you wanted to see all notices displayed - you would run this command:
+There are more arguments that can be supplied. For example, suppose you wanted to have your `4.x` directory in a different location, you wanted to explicitly specify phpBB version 4.x (default validation is against 4.0), you wanted to run in safe mode and you wanted to see all notices displayed - you would run this command:
 
      php translation.php validate fr 
         --package-dir=/path/to/your/4.0 
