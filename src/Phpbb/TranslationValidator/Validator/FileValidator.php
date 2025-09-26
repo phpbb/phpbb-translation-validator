@@ -304,6 +304,7 @@ class FileValidator
 		else if ($originFile === $this->originLanguagePath . 'composer.json')
 		{
 			$this->validateJsonFile($originFile);
+            $this->validateCaptchaValues($originFile);
 		}
 		else if (substr($originFile, -4) === '.css')
 		{
@@ -547,8 +548,7 @@ class FileValidator
      *      name, description, type, version, homepage, license
      *      Authors: name (optional: email and homepage)
      *      Extra: language-iso, english-name, local-name,
-     *              phpbb-version, direction, user-lang, plural-rule,
-     *              recaptcha-lang, turnstile-lang
+     *              phpbb-version, direction, user-lang, plural-rule
 	 * Optional:
      *      Support: urls to: forum, wiki, issues etc
 	 *
@@ -652,15 +652,27 @@ class FileValidator
         {
             $this->output->addMessage(Output::FATAL, 'Plural rules does not have a valid value.', $originFile);
         }
+    }
+
+    /**
+     * Check that the reCaptcha and Turnstile key provided is allowed
+     * @param $originFile
+     */
+    public function validateCaptchaValues($originFile)
+    {
+        $fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
+        $jsonContent = json_decode($fileContents, true);
+        // The key 'RECAPTCHA_LANG' must match the list provided by Google, or be left empty
         // Check for valid recaptcha-lang: en-GB
         if (!in_array($jsonContent['extra']['recaptcha-lang'], $this->reCaptchaLanguages))
         {
-            $this->output->addMessage(Output::ERROR, 'reCaptcha must match a language/country code on https://developers.google.com/recaptcha/docs/language - if no code exists for your language you can use "en" or leave the string empty', $originFile);
+            $this->output->addMessage(Output::ERROR, 'reCaptcha must match a language/country code on https://developers.google.com/recaptcha/docs/language - if no code exists for your language you can use "en".', $originFile);
         }
-        // Check for valid turnstile-lang: en (should be in: https://developers.cloudflare.com/turnstile/reference/supported-languages/ )
+        // Check for valid turnstile-lang: en
+        // (should be in: https://developers.cloudflare.com/turnstile/reference/supported-languages/ )
         if (!in_array($jsonContent['extra']['turnstile-lang'], $this->reTurnstilesLanguages))
         {
-            $this->output->addMessage(Output::ERROR, 'Turnstile must match a 2-digit-language code from https://developers.cloudflare.com/turnstile/reference/supported-languages/ ', $originFile);
+            $this->output->addMessage(Output::ERROR, 'Turnstile must match a 2-digit-language code from https://developers.cloudflare.com/turnstile/reference/supported-languages/ - if no code exists for your language you can use "en".', $originFile);
         }
     }
 
