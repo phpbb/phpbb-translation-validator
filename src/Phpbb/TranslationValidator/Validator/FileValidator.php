@@ -573,10 +573,15 @@ class FileValidator
         {
             $this->output->addMessage(Output::FATAL, 'Name should start with phpbb/phpbb-language- followed by the language iso code', $originFile);
         }
-
-        if (!array_key_exists('description', $jsonContent))
+        // Check for an existing description
+        if (!array_key_exists('description', $jsonContent) || $jsonContent['description'] == '')
         {
-            $this->output->addMessage(Output::FATAL, 'File must contain a description value', $originFile);
+            $this->output->addMessage(Output::FATAL, 'Description is missing', $originFile);
+        }
+        // Check if the description contains only words and punctuation, not URLs.
+        elseif (preg_match('/\b(?:www|https)\b|(?:\.[a-z]{2,})/i', $jsonContent['description']))
+        {
+            $this->output->addMessage(Output::FATAL, 'The description should only contain words - no URLs.', $originFile);
         }
         // Check if the type is correctly defined
         if ($jsonContent['type'] != 'phpbb-language')
@@ -597,9 +602,9 @@ class FileValidator
             $this->output->addMessage(Output::FATAL, 'The defined version is in the wrong format.', $originFile);
         }
         // Homepage should be at least an empty string
-        if (!array_key_exists('homepage', $jsonContent))
+        if (!preg_match('/(?:https?:\/\/|www\.)[^\s]+|(?:\b[a-z0-9-]+\.(?:com|net|org|info|io|co|biz|me|xyz|ai|app|dev|tech|tv|us|uk|de|fr|ru|jp|cn|in)\b)/i', $jsonContent['homepage']) && $jsonContent['homepage'] != '')
         {
-            $this->output->addMessage(Output::FATAL, 'The homepage value is missing, can be an empty string.', $originFile);
+            $this->output->addMessage(Output::FATAL, 'The homepage value allows only URLs or can be left empty.', $originFile);
         }
         // Check for the correct license value
         if ($jsonContent['license'] != 'GPL-2.0-only')
