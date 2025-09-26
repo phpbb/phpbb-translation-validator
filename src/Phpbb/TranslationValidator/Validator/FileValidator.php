@@ -274,7 +274,8 @@ class FileValidator
      */
      public function openComposerJson($originFile)
      {
-        $fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
+         $fileContents = (string) file_get_contents($this->originPath . '/' . $originFile);
+
          return json_decode($fileContents, true);
      }
 
@@ -623,7 +624,7 @@ class FileValidator
 	    }
         elseif (count ($jsonContent['support']) < 1)
         {
-            $this->output->addMessage(Output::ERROR, 'The support value has not sub values. Please provide at least one contact option e.g. forum, email.', $originFile);
+            $this->output->addMessage(Output::ERROR, 'The support category has no values. Please provide at least one contact option e.g. forum or email.', $originFile);
         }
         // Check for the extra-section
         if (!array_key_exists('extra', $jsonContent))
