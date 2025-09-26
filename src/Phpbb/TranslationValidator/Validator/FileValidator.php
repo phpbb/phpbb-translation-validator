@@ -592,7 +592,7 @@ class FileValidator
         {
             $this->output->addMessage(Output::FATAL, 'The defined version should not be empty.', $originFile);
         }
-        elseif (preg_match('/^(\d+\.)?(\d+\.)?(\*|\d+)$/', $jsonContent['version']))
+        elseif (!preg_match('/^(\d+\.)?(\d+\.)?(\*|\d+)$/', $jsonContent['version']))
         {
             $this->output->addMessage(Output::FATAL, 'The defined version is in the wrong format.', $originFile);
         }
