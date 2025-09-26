@@ -655,8 +655,8 @@ class FileValidator
             $this->output->addMessage(Output::FATAL, 'The phpbb-version value should not be empty and contain a valid version number.', $originFile);
         }
         // Check for valid direction
-        $direction = $jsonContent['extra']['direction'];
-        if (!in_array($direction, array('ltr', 'rtl')))
+        $textDirection = $jsonContent['extra']['direction'];
+        if (!in_array($textDirection, array('ltr', 'rtl')))
         {
             $this->output->addMessage(Output::FATAL, 'The direction can only be rtl or ltr.', $originFile);
         }
