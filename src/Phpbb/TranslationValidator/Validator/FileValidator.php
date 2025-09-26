@@ -602,9 +602,9 @@ class FileValidator
             $this->output->addMessage(Output::FATAL, 'The homepage value is missing, can be an empty string.', $originFile);
         }
         // Check for the correct license value
-        if (!$jsonContent['license'] == 'GPL-2.0')
+        if ($jsonContent['license'] != 'GPL-2.0-only')
         {
-            $this->output->addMessage(Output::FATAL, 'The license value has to be "GPL-2.0"', $originFile);
+            $this->output->addMessage(Output::FATAL, 'The license value has to be "GPL-2.0-only"', $originFile);
         }
         // Check for the authors
         if (!array_key_exists('authors', $jsonContent))
