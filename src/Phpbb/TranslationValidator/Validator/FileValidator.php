@@ -315,7 +315,7 @@ class FileValidator
 		else if ($originFile === $this->originLanguagePath . 'composer.json')
 		{
 			$this->validateJsonFile($originFile);
-            $this->validateCaptchaValues($originFile);
+			$this->validateCaptchaValues($originFile);
 		}
 		else if (substr($originFile, -4) === '.css')
 		{
