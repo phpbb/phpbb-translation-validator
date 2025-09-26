@@ -48,7 +48,7 @@ class ValidateLangTest extends TestBase
 		$this->validator->validateCaptchaValues('', $reCaptchaLanguage);
 
 		$output = $this->output->getMessages();
-		$expected = Output::ERROR . '-reCaptcha must match a language/country code on https://developers.google.com/recaptcha/docs/language - if no code exists for your language you can use "en" or leave the string empty--RECAPTCHA_LANG';
+		$expected = Output::ERROR . '-reCaptcha must match a language/country code on https://developers.google.com/recaptcha/docs/language - if no code exists for your language you can use "en".--';
 
 		$this->assertEquals($this->output->getMessageCount(Output::ERROR), 1);
 		$this->assertEquals($output[0], $expected);

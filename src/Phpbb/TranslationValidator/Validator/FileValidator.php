@@ -680,10 +680,9 @@ class FileValidator
     {
         $jsonContent = $this->openComposerJson($originFile);
 
-        if (!$optParams == '')
+        if ($optParams != '')
         {
             $jsonContent['extra']['recaptcha-lang'] = $optParams;
-            //$jsonContent['extra']['turnstile-lang'] = $optParams;
         }
         // The key 'RECAPTCHA_LANG' must match the list provided by Google, or be left empty
         // Check for valid recaptcha-lang: en-GB
