@@ -630,6 +630,10 @@ class FileValidator
         {
             $this->output->addMessage(Output::FATAL, 'The language-iso should only contain small letters from a to z and maximum two underscores.', $originFile);
         }
+        elseif ($jsonContent['extra']['language-iso'] != $this->originIso)
+        {
+            $this->output->addMessage(Output::FATAL, 'Language iso is not valid', $originFile);
+        }
         // Check for english name
         if ($jsonContent['extra']['english-name'] == '' || preg_match('/^[a-zA-Z\s]+$/', $jsonContent['extra']['english-name']))
         {
