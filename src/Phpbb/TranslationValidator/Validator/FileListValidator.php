@@ -194,10 +194,6 @@ class FileListValidator
 					{
 						$level = Output::NOTICE;
 					}
-					else if ($this->phpbbVersion === '3.2' && strpos($origin_file, 'styles/subsilver2/') === 0)
-					{
-						$level = Output::FATAL;
-					}
 					else if (in_array(substr($origin_file, -4), array('.gif', '.png')) && $this->direction === 'rtl')
 					{
 						$level = Output::WARNING;

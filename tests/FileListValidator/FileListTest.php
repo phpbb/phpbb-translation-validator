@@ -26,7 +26,7 @@ class FileListTest extends \Phpbb\TranslationValidator\Tests\TestBase
 	{
 		return array(
 			array(
-				'3.2',
+				'4.0',
 				array(
 					Output::FATAL . '-Missing required file-missing.php-',
 					Output::FATAL . '-Missing required file-missing.txt-',

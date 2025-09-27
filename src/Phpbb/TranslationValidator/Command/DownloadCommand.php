@@ -31,9 +31,8 @@ class DownloadCommand extends Command
 			->setName('download')
 			->setDescription('If you are missing important files, this tool can automatically download them for you.')
 			->addOption('files', null, InputOption::VALUE_REQUIRED, 'Which files do you want to download?', 'phpbb-extensions/viglink')
-			->addOption('phpbb-version', null, InputOption::VALUE_OPTIONAL, 'The phpBB version you use to validate against', '3.3');
+			->addOption('phpbb-version', null, InputOption::VALUE_OPTIONAL, 'The phpBB version you use to validate against', '4.0');
 	}
-
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		$files = $input->getOption('files');

@@ -15,7 +15,7 @@ class ValidateNoPhpClosingTagTest extends TestBase
 	public function validateNoPhpClosingTagData()
 	{
 		return array(
-			array('3.2', 'nophpclosingtag/shortarraysyntax.php', array()),
+			array('4.0', 'nophpclosingtag/shortarraysyntax.php', array()),
 		);
 	}
 
