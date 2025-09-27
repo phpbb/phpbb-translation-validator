@@ -619,10 +619,7 @@ class LangKeyValidator
 			'SUPPORT_BODY',
 			'UPDATE_INSTALLATION_EXPLAIN',
 			'OVERVIEW_BODY',
-		)) || ($this->phpbbVersion == '3.2' && ($this->originLanguagePath . 'ucp.php' === $file && in_array($key, array( //Check for 3.2
-			'TERMS_OF_USE_CONTENT',
-			'PRIVACY_POLICY',
-		)))))
+		)))
 		{
 			$sourceString = '<p>' . $sourceString . '</p>';
 			$originString = '<p>' . $originString . '</p>';
@@ -727,11 +724,6 @@ class LangKeyValidator
 						// Or the help pages (faq and bbcode help), where links are not as bad as in other places.
 						$level = Output::WARNING;
 					}
-				}
-
-				if ($this->originLanguagePath . 'ucp.php' === $file && in_array($key, array('TERMS_OF_USE_CONTENT', 'PRIVACY_POLICY')) && ($this->phpbbVersion != '3.2'))
-				{
-					$level = Output::ERROR;
 				}
 
 				$this->output->addMessage($level, 'String is using additional html: ' . $possibleHtml, $file, $key);

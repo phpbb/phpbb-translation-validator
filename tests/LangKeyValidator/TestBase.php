@@ -20,7 +20,7 @@ class TestBase extends \Phpbb\TranslationValidator\Tests\TestBase
 		$this->validator = new \Phpbb\TranslationValidator\Validator\LangKeyValidator($this->getMockBuilder('Symfony\Component\Console\Input\InputInterface')->getMock(), $this->output);
 		$this->validator->setOrigin('origin', dirname(__FILE__) . '/fixtures/origin', 'language/origin/')
 			->setSource('source', dirname(__FILE__) . '/fixtures/source', 'language/source/')
-			->setPhpbbVersion('3.2')
+			->setPhpbbVersion('4.0')
 			->setPluralRule(1);
 	}
 }

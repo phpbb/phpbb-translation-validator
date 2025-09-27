@@ -228,36 +228,37 @@ class ValidatorRunner
 	}
 
 	/**
-	 * Try to find the plural rule for the language
+	 * Try to find the plural rule for the language in composer.json
 	 * @return int
 	 */
-	protected function guessPluralRule()
+	protected function guessPluralRule(): int
 	{
-		$filePath = $this->originPath . '/' . $this->originLanguagePath . 'common.php';
+        $filePath = $this->originPath . '/' . $this->originLanguagePath . 'composer.json';
 
-		if (file_exists($filePath))
-		{
-			if ($this->safeMode)
-			{
-				$lang = self::langParser($filePath);
-			}
+        if (file_exists($filePath))
+        {
+            // Safe mode for safe execution on a server
+            if ($this->safeMode)
+            {
+                $jsonContent = self::langParser($filePath);
+            }
+            else
+            {
+                $fileContents = (string) file_get_contents($filePath);
+                $jsonContent = json_decode($fileContents, true);
+            }
 
-			else
-			{
-				include($filePath);
-			}
-
-			if (!isset($lang['PLURAL_RULE']))
-			{
-				$this->output->writelnIfDebug("<info>No plural rule set, falling back to plural rule #1</info>");
-			}
-		}
+            if (!isset($jsonContent['extra']['plural-rule']))
+            {
+                $this->output->writelnIfDebug("<info>No plural rule set, falling back to plural rule #1</info>");
+            }
+        }
 		else
 		{
-			$this->output->writelnIfDebug("<info>Could not find common.php, falling back to plural rule #1</info>");
+			$this->output->writelnIfDebug("<info>Could not find composer.json, falling back to plural rule #1</info>");
 		}
 
-		return isset($lang['PLURAL_RULE']) ? $lang['PLURAL_RULE'] : 1;
+		return $jsonContent['extra']['plural-rule'] ?? 1;
 	}
 
 	/**
@@ -278,7 +279,7 @@ class ValidatorRunner
 	 * @param string $relativePath
 	 * @return array
 	 */
-	public static function langParser($filePath, $relativePath = '')
+	public static function langParser($filePath, string $relativePath = '')
 	{
 		$lang = [];
 		$parsed = self::arrayParser($relativePath . $filePath);

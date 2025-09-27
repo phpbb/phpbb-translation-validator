@@ -137,20 +137,21 @@ class FileListValidator
 		$sourceFiles[] = $this->sourceLanguagePath . 'LICENSE';
 		$sourceFiles = array_unique($sourceFiles);
 
-		// Get $lang['direction'] of translation to allow additional rtl-files for rtl-translations
-		$filePath = $this->originPath . '/' . $this->originLanguagePath . 'common.php';
+		// Get extra->direction from composer.json to allow additional rtl-files for rtl-translations
+		$filePath = $this->originPath . '/' . $this->originLanguagePath . 'composer.json';
 
+		// Safe mode for safe execution on a server
 		if ($this->safeMode)
 		{
-			$lang = ValidatorRunner::langParser($filePath);
+			$jsonContent = self::langParser($filePath);
 		}
-
 		else
 		{
-			include($filePath);
+			$fileContents = (string) file_get_contents($filePath);
+			$jsonContent = json_decode($fileContents, true);
 		}
 
-		$this->direction = $lang['DIRECTION'];
+		$this->direction = $jsonContent['extra']['direction'];
 		// Throw error, if invalid direction is used
 		if (!in_array($this->direction, array('rtl', 'ltr')))
 		{
@@ -159,7 +160,6 @@ class FileListValidator
 
 		$originFiles = $this->getFileList($this->originPath);
 
-		$missingSubsilver2Files = $availableSubsilver2Files = array();
 		$validFiles = array();
 		foreach ($sourceFiles as $sourceFile)
 		{
@@ -193,10 +193,6 @@ class FileListValidator
 					if (substr($origin_file, -10) === '/index.htm' || $origin_file === 'index.htm')
 					{
 						$level = Output::NOTICE;
-					}
-					else if ($this->phpbbVersion === '3.2' && strpos($origin_file, 'styles/subsilver2/') === 0)
-					{
-						$level = Output::FATAL;
 					}
 					else if (in_array(substr($origin_file, -4), array('.gif', '.png')) && $this->direction === 'rtl')
 					{
