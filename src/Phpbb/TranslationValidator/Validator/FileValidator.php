@@ -30,6 +30,8 @@ class FileValidator
 	protected $sourceLanguagePath;
 	/** @var string */
 	protected $phpbbVersion;
+	/** @var int */
+	protected $pluralRule;
 
 	/** @var bool */
 	protected $debug;
